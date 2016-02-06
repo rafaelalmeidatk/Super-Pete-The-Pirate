@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="10" height="8" tilewidth="32" tileheight="32" nextobjectid="1">
+ <tileset firstgid="1" name="basictile" tilewidth="32" tileheight="32" tilecount="2" columns="2">
+  <image source="../imgs/tilesets/basictile.png" width="64" height="32"/>
+ </tileset>
+ <imagelayer name="Camada de Imagem 1">
+  <image source="../imgs/tilesets/hills.png"/>
+ </imagelayer>
+ <layer name="Block" width="10" height="8">
+  <data encoding="csv">
+1,1,1,1,1,1,1,1,1,1,
+1,0,0,0,0,0,0,0,0,1,
+1,0,0,0,0,0,0,0,0,1,
+1,0,0,0,0,0,0,0,0,1,
+1,0,0,0,0,0,0,0,0,1,
+1,0,0,0,0,0,0,0,0,1,
+1,0,0,0,0,0,0,0,0,1,
+1,1,1,1,1,1,1,1,1,1
+</data>
+ </layer>
+</map>
