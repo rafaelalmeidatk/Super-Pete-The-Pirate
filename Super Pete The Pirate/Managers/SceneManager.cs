@@ -6,6 +6,9 @@ using MonoGame.Extended.Sprites;
 using MonoGame.Extended.ViewportAdapters;
 using Super_Pete_The_Pirate.Scenes;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
 namespace Super_Pete_The_Pirate
 {
@@ -61,7 +64,7 @@ namespace Super_Pete_The_Pirate
 
         private SceneManager()
         {
-            _currentScene = new SceneMap();
+            _currentScene = new SceneTitle();
         }
 
         public void LoadContent(ContentManager Content)
