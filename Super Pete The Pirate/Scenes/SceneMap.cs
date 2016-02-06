@@ -27,16 +27,11 @@ namespace Super_Pete_The_Pirate.Scenes
         private float _cameraSmooth = 0.1f;
         private int _playerCameraOffsetX = 40;
 
-        //--------------------------------------------------
-        // Viewport
-
-        private ViewportAdapter _viewportAdapter;
-
         //----------------------//------------------------//
 
         public Camera2D GetCamera()
         {
-            return _camera;
+            return _camera; // aaa
         }
 
         public override void LoadContent()
