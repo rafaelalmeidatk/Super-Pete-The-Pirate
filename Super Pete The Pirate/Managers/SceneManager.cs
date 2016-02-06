@@ -64,7 +64,7 @@ namespace Super_Pete_The_Pirate
 
         private SceneManager()
         {
-            _currentScene = new SceneTitle();
+            _currentScene = new SceneMap();
         }
 
         public void LoadContent(ContentManager Content)

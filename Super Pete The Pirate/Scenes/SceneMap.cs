@@ -42,12 +42,13 @@ namespace Super_Pete_The_Pirate.Scenes
             _camera = new Camera2D(SceneManager.Instance.ViewportAdapter);
             GameMap.Instance.LoadMap(Content, 1);
             _player = new Player(ImageManager.loadCharacter("Player"));
-            _player.Position = new Vector2(35, 36);
+            _player.Position = new Vector2(35, GameMap.Instance.MapHeight - _player.CharacterSprite.GetFrameHeight() * 2);
         }
 
         public override void Update(GameTime gameTime)
         {
             _player.Update(gameTime);
+            DebugValues["gameTime"] = (_player.CharacterSprite.GetCurrentFramesList().Delay).ToString();
             UpdateCamera();
             base.Update(gameTime);
         }
@@ -57,7 +58,7 @@ namespace Super_Pete_The_Pirate.Scenes
             var size = SceneManager.Instance.WindowSize;
             var viewport = SceneManager.Instance.ViewportAdapter;
             var newPosition = _player.Position - new Vector2(viewport.VirtualWidth / 2f, viewport.VirtualHeight / 2f);
-            var playerOffsetX = _playerCameraOffsetX + _player.CharacterSprite.GetFrameWidth() / 2;
+            var playerOffsetX = _playerCameraOffsetX + _player.CharacterSprite.GetColliderWidth() / 2;
             var playerOffsetY = _player.CharacterSprite.GetFrameHeight() / 2;
             var x = MathHelper.Lerp(_camera.Position.X, newPosition.X + playerOffsetX, _cameraSmooth);
             x = MathHelper.Clamp(x, 0.0f, GameMap.Instance.MapWidth - viewport.VirtualWidth);

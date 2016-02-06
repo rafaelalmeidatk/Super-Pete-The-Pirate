@@ -52,6 +52,8 @@
     <Compile Include="Scenes\SceneMap.cs" />
     <Compile Include="Scenes\SceneTitle.cs" />
     <Compile Include="Sprites\CharacterSprite.cs" />
+    <Compile Include="Sprites\FramesList.cs" />
+    <Compile Include="Sprites\SpriteCollider.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MonoGame.Extended, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">

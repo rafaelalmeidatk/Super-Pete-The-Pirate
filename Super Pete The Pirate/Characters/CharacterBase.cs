@@ -3,6 +3,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Super_Pete_The_Pirate.Sprites;
 
 namespace Super_Pete_The_Pirate
 {
@@ -12,6 +13,15 @@ namespace Super_Pete_The_Pirate
         // Character sprite
 
         public CharacterSprite CharacterSprite;
+
+        //--------------------------------------------------
+        // Combat system
+
+        protected bool _requestAttack;
+        protected bool _isAttacking;
+        protected int _attackType;
+        protected float _attackCooldown;
+        protected string[] _attackFrameList;
 
         //--------------------------------------------------
         // Physics variables
@@ -74,16 +84,18 @@ namespace Super_Pete_The_Pirate
         {
             get
             {
-                int left = (int)Math.Round(Position.X) + _localBounds.X;
-                int top = (int)Math.Round(Position.Y) + _localBounds.Y;
-                return new Rectangle(left, top, CharacterSprite.GetFrameWidth(), CharacterSprite.GetFrameHeight());
+                var collider = CharacterSprite.GetBlockCollider();
+                int left = (int)Math.Round(Position.X) + collider.OffsetX;
+                int top = (int)Math.Round(Position.Y) + collider.OffsetY;
+                return new Rectangle(left, top, collider.Width, collider.Height);
             }
         }
 
         //--------------------------------------------------
         // Colliders
 
-        private Texture2D _colliderTexture;
+        private Texture2D _colliderRedTexture;
+        private Texture2D _colliderYellowTexture;
 
         //----------------------//------------------------//
 
@@ -91,8 +103,11 @@ namespace Super_Pete_The_Pirate
         {
             CharacterSprite = new CharacterSprite(texture);
 
-            _colliderTexture = new Texture2D(SceneManager.Instance.GraphicsDevice, 1, 1, false, SurfaceFormat.Color);
-            _colliderTexture.SetData<Color>(new Color[] { Color.Red });
+            _colliderRedTexture = new Texture2D(SceneManager.Instance.GraphicsDevice, 1, 1, false, SurfaceFormat.Color);
+            _colliderRedTexture.SetData<Color>(new Color[] { Color.Red });
+
+            _colliderYellowTexture = new Texture2D(SceneManager.Instance.GraphicsDevice, 1, 1, false, SurfaceFormat.Color);
+            _colliderYellowTexture.SetData<Color>(new Color[] { Color.Yellow });
 
             // Calculate bounds within texture size.  
             int width = (int)(32);
@@ -100,21 +115,46 @@ namespace Super_Pete_The_Pirate
             int height = (int)(32);
             int top = 32 - height;
             _localBounds = new Rectangle(left, top, width, height);
+
+            // Battle system init
+            _requestAttack = false;
+            _isAttacking = false;
+            _attackType = 0;
+            _attackCooldown = 0f;
+        }
+
+        private Texture2D GetColliderTexture(SpriteCollider collider)
+        {
+            return collider.Type == SpriteCollider.ColliderType.Block ? _colliderRedTexture : _colliderYellowTexture;
         }
 
         public virtual void Update(GameTime gameTime)
         {
             ApplyPhysics(gameTime);
-
             _movement = 0.0f;
             _isJumping = false;
+
+            UpdateAttack(gameTime);
 
             UpdateSprite(gameTime);
         }
 
+        private void UpdateAttack(GameTime gameTime)
+        {
+            if (_isAttacking)
+            {
+                if (CharacterSprite.Looped)
+                {
+                    _isAttacking = false;
+                }
+            }
+        }
+
         private void UpdateSprite(GameTime gameTime)
         {
-            if (Velocity.Y != 0)
+            if (_isAttacking)
+                CharacterSprite.SetFrameList(_attackFrameList[_attackType]);
+            else if (Velocity.Y != 0)
                 CharacterSprite.SetFrameList("jumping");
             else if (InputManager.Instace.KeyDown(Keys.Left) || InputManager.Instace.KeyDown(Keys.Right))
                 CharacterSprite.SetFrameList("walking");
@@ -285,6 +325,8 @@ namespace Super_Pete_The_Pirate
         }
         #endregion
 
+        #region Draw
+
         public void DrawCharacter(SpriteBatch spriteBatch)
         {
             CharacterSprite.Draw(spriteBatch, new Vector2(BoundingRectangle.X, BoundingRectangle.Y));
@@ -292,7 +334,10 @@ namespace Super_Pete_The_Pirate
 
         public void DrawColliderBox(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(_colliderTexture, BoundingRectangle, Color.White * 0.5f);
+            foreach(var collider in CharacterSprite.GetCurrentFramesList().Colliders)
+                spriteBatch.Draw(GetColliderTexture(collider), collider.BoundingBox, Color.White * 0.5f);
         }
+
+        #endregion
     }
 }
