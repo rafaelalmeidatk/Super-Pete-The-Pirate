@@ -10,6 +10,8 @@ using MonoGame.Extended;
 using MonoGame.Extended.Sprites;
 using MonoGame.Extended.Maps.Tiled;
 using MonoGame.Extended.ViewportAdapters;
+using Microsoft.Xna.Framework.Input;
+using Super_Pete_The_Pirate.Characters;
 
 namespace Super_Pete_The_Pirate.Scenes
 {
@@ -19,6 +21,13 @@ namespace Super_Pete_The_Pirate.Scenes
         // Player
 
         private Player _player;
+
+        //--------------------------------------------------
+        // Enemies
+
+        private List<Enemy> _enemies;
+        private List<Enemy> _enemiesToErase;
+        public List<Enemy> Enemies { get { return _enemies; } }
 
         //--------------------------------------------------
         // Camera stuff
@@ -41,14 +50,38 @@ namespace Super_Pete_The_Pirate.Scenes
             var viewportSize = SceneManager.Instance.VirtualSize;
             _camera = new Camera2D(SceneManager.Instance.ViewportAdapter);
             GameMap.Instance.LoadMap(Content, 1);
+
+            // Player init
             _player = new Player(ImageManager.loadCharacter("Player"));
             _player.Position = new Vector2(35, GameMap.Instance.MapHeight - _player.CharacterSprite.GetFrameHeight() * 2);
+
+            // Enemies init
+            _enemies = new List<Enemy>();
+            _enemiesToErase = new List<Enemy>();
+            CreateEnemy(150, GameMap.Instance.MapHeight - _player.CharacterSprite.GetFrameHeight() * 2);
+        }
+
+        public void CreateEnemy(int x, int y)
+        {
+            var newEnemy = new Enemy(ImageManager.loadCharacter("Player"));
+            newEnemy.Position = new Vector2(x, y);
+            _enemies.Add(newEnemy);
         }
 
         public override void Update(GameTime gameTime)
         {
             _player.Update(gameTime);
-            DebugValues["gameTime"] = (_player.CharacterSprite.GetCurrentFramesList().Delay).ToString();
+
+            foreach (var enemy in _enemies)
+            {
+                enemy.Update(gameTime);
+                if (enemy.RequestErase)
+                    _enemiesToErase.Add(enemy);
+            }
+
+            foreach (var enemy in _enemiesToErase)
+                _enemies.Remove(enemy);
+
             UpdateCamera();
             base.Update(gameTime);
         }
@@ -74,14 +107,20 @@ namespace Super_Pete_The_Pirate.Scenes
             // Draw the camera (with the map)
             GameMap.Instance.Draw(_camera, spriteBatch);
 
-            // Begin the player draw
             spriteBatch.Begin(transformMatrix: _camera.GetViewMatrix(), samplerState: SamplerState.PointClamp);
 
+            // Begin the player draw
             _player.DrawCharacter(spriteBatch);
-
-            // Draw colliders
             if (SceneManager.Instance.DebugMode)
                 _player.DrawColliderBox(spriteBatch);
+
+            // Draw the enemies
+            foreach (var enemy in _enemies)
+            {
+                enemy.DrawCharacter(spriteBatch);
+                if (SceneManager.Instance.DebugMode)
+                    enemy.DrawColliderBox(spriteBatch);
+            }
 
             spriteBatch.End();
         }

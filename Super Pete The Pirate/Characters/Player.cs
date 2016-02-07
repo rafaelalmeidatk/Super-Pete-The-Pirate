@@ -4,16 +4,21 @@ using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
 using System;
 using Super_Pete_The_Pirate.Sprites;
+using System.Diagnostics;
+using Super_Pete_The_Pirate.Scenes;
 
 namespace Super_Pete_The_Pirate
 {
     class Player : CharacterBase
     {
-
+        //--------------------------------------------------
+        // Attacks constants
 
         private const int NormalAttack = 0;
         private const int AerialAttack = 1;
-        private const int Shot = 2;
+        private const int ShotAttack = 2;
+
+        public bool tes = false;
 
         //----------------------//------------------------//
 
@@ -46,9 +51,10 @@ namespace Super_Pete_The_Pirate
                 new Rectangle(0, 32, 32, 32)
             });
 
-            CharacterSprite.CreateFrameList("attack_sword", 40);
+            CharacterSprite.CreateFrameList("attack_sword", 50);
             CharacterSprite.AddCollider("attack_sword", new Rectangle(0, 0, 32, 32));
-            CharacterSprite.AddCollider("attack_sword", new Rectangle(41, 14, 22, 5), SpriteCollider.ColliderType.Attack);
+            CharacterSprite.AddAttackCollider("attack_sword", new Rectangle(41, 14, 22, 5), 64);
+            CharacterSprite.AddFramesToAttack("attack_sword", 1, 2);
             CharacterSprite.AddFrames("attack_sword", new List<Rectangle>()
             {
                 new Rectangle(32, 32, 32, 32),
@@ -62,7 +68,7 @@ namespace Super_Pete_The_Pirate
             _attackFrameList = new string[]
             {
                 "attack_sword",
-                "attack_aero",
+                "attack_aerial",
                 "attack_shot"
             };
         }
@@ -71,6 +77,20 @@ namespace Super_Pete_The_Pirate
         {
             CheckKeys(gameTime);
             base.Update(gameTime);
+        }
+
+        public override void UpdateFrameList()
+        {
+            if (_dying)
+                CharacterSprite.SetIfFrameListExists("dying");
+            else if (_isAttacking)
+                CharacterSprite.SetFrameList(_attackFrameList[_attackType]);
+            else if (Velocity.Y != 0)
+                CharacterSprite.SetFrameList("jumping");
+            else if (InputManager.Instace.KeyDown(Keys.Left) || InputManager.Instace.KeyDown(Keys.Right))
+                CharacterSprite.SetFrameList("walking");
+            else
+                CharacterSprite.SetFrameList("stand");
         }
 
         private void CheckKeys(GameTime gameTime)
@@ -86,13 +106,30 @@ namespace Super_Pete_The_Pirate
                 CharacterSprite.SetDirection(SpriteDirection.Right);
                 _movement = 1.0f;
             }
+
             _isJumping = InputManager.Instace.KeyDown(Keys.Up);
 
             // Attack
             if (InputManager.Instace.KeyPressed(Keys.A) && !_isAttacking)
             {
-                _isAttacking = true;
-                _attackType = NormalAttack;
+                RequestAttack(NormalAttack);
+            }
+        }
+
+        public override void DoAttack()
+        {
+            var damage = _attackType == ShotAttack ? 2 : 1;
+            var enemies = ((SceneMap)SceneManager.Instance.GetCurrentScene()).Enemies;
+            foreach (var attackCollider in CharacterSprite.GetCurrentFramesList().Colliders)
+            {
+                if (attackCollider.Type != SpriteCollider.ColliderType.Attack) continue;
+                foreach (var enemy in enemies)
+                {
+                    if (attackCollider.BoundingBox.Intersects(enemy.BoundingRectangle))
+                    {
+                        enemy.ReceiveAttack(damage);
+                    }
+                }
             }
         }
     }

@@ -39,6 +39,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Characters\CharacterBase.cs" />
+    <Compile Include="Characters\Enemy.cs" />
     <Compile Include="Characters\Player.cs" />
     <Compile Include="Extensions\RectangleExtensions.cs" />
     <Compile Include="GameMain.cs" />

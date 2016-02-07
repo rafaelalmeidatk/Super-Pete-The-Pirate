@@ -22,6 +22,12 @@ namespace Super_Pete_The_Pirate
         protected int _attackType;
         protected float _attackCooldown;
         protected string[] _attackFrameList;
+        protected bool _requestErase;
+        public bool RequestErase { get { return _requestErase; } }
+
+        protected int _hp;
+        protected bool _dying;
+        public bool Dying { get { return _dying; } }
 
         //--------------------------------------------------
         // Physics variables
@@ -78,8 +84,7 @@ namespace Super_Pete_The_Pirate
         protected bool _isJumping;
         protected bool _wasJumping;
         protected float _jumpTime;
-
-        protected Rectangle _localBounds;
+        
         public Rectangle BoundingRectangle
         {
             get
@@ -109,23 +114,36 @@ namespace Super_Pete_The_Pirate
             _colliderYellowTexture = new Texture2D(SceneManager.Instance.GraphicsDevice, 1, 1, false, SurfaceFormat.Color);
             _colliderYellowTexture.SetData<Color>(new Color[] { Color.Yellow });
 
-            // Calculate bounds within texture size.  
-            int width = (int)(32);
-            int left = (32 - width) / 2;
-            int height = (int)(32);
-            int top = 32 - height;
-            _localBounds = new Rectangle(left, top, width, height);
-
             // Battle system init
             _requestAttack = false;
             _isAttacking = false;
-            _attackType = 0;
+            _attackType = -1;
             _attackCooldown = 0f;
+
+            _hp = 0;
         }
 
         private Texture2D GetColliderTexture(SpriteCollider collider)
         {
             return collider.Type == SpriteCollider.ColliderType.Block ? _colliderRedTexture : _colliderYellowTexture;
+        }
+
+        public void RequestAttack(int type)
+        {
+            _requestAttack = true;
+            _attackType = type;
+        }
+
+        public void ReceiveAttack(int damage)
+        {
+            if (_dying) return;
+            CharacterSprite.RequestImmunityAnimation();
+            _hp = _hp - damage < 0 ? 0 : _hp - damage;
+            if (_hp == 0)
+            {
+                CharacterSprite.RequestDyingAnimation();
+                _dying = true;
+            }
         }
 
         public virtual void Update(GameTime gameTime)
@@ -135,8 +153,8 @@ namespace Super_Pete_The_Pirate
             _isJumping = false;
 
             UpdateAttack(gameTime);
-
             UpdateSprite(gameTime);
+            if (CharacterSprite.DyingAnimationEnded) _requestErase = true;
         }
 
         private void UpdateAttack(GameTime gameTime)
@@ -146,21 +164,41 @@ namespace Super_Pete_The_Pirate
                 if (CharacterSprite.Looped)
                 {
                     _isAttacking = false;
+                    _attackType = -1;
+                } else
+                {
+                    var sprite = CharacterSprite;
+                    if (sprite.GetCurrentFramesList().FramesToAttack.Contains(sprite.CurrentFrame))
+                    {
+                        DoAttack();
+                    }
                 }
             }
+
+            if (_requestAttack)
+            {
+                _isAttacking = true;
+                _requestAttack = false;
+            }
+        }
+
+        public virtual void DoAttack() { }
+
+        public virtual void UpdateFrameList()
+        {
+            if (_dying)
+                CharacterSprite.SetIfFrameListExists("dying");
+            else if (_isAttacking)
+                CharacterSprite.SetFrameList(_attackFrameList[_attackType]);
+            else if (Velocity.Y != 0)
+                CharacterSprite.SetFrameList("jumping");
+            else
+                CharacterSprite.SetFrameList("stand");
         }
 
         private void UpdateSprite(GameTime gameTime)
         {
-            if (_isAttacking)
-                CharacterSprite.SetFrameList(_attackFrameList[_attackType]);
-            else if (Velocity.Y != 0)
-                CharacterSprite.SetFrameList("jumping");
-            else if (InputManager.Instace.KeyDown(Keys.Left) || InputManager.Instace.KeyDown(Keys.Right))
-                CharacterSprite.SetFrameList("walking");
-            else
-                CharacterSprite.SetFrameList("stand");
-
+            UpdateFrameList();
             CharacterSprite.SetPosition(Position);
             CharacterSprite.Update(gameTime);
         }

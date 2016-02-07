@@ -30,6 +30,7 @@ namespace Super_Pete_The_Pirate
         private int _currentFrame;
         private string _currentFrameList;
         private Dictionary<string, FramesList> _framesList;
+        public int CurrentFrame { get { return _currentFrame; } }
         public string CurrentFrameList { get { return _currentFrameList; } }
 
         private bool _looped;
@@ -39,6 +40,20 @@ namespace Super_Pete_The_Pirate
         // Animation delay
         
         private int _delayTick;
+
+        //--------------------------------------------------
+        // Battle System visual stuff
+
+        private int _immunityTick;
+        private float _immunityTimeElapsed;
+        private float _immunityMaxTime;
+        private bool _immunityAnimation;
+        private float _immunityAlphaStore;
+
+        private bool _dyingAnimation;
+        private bool _skipDyingAnimationFrames;
+        private bool _dyingAnimationEnded;
+        public bool DyingAnimationEnded { get { return _dyingAnimationEnded; } }
 
         //--------------------------------------------------
         // Collider
@@ -57,6 +72,16 @@ namespace Super_Pete_The_Pirate
             _delayTick = 0;
             _framesList = new Dictionary<string, FramesList>();
             _looped = false;
+            
+            _immunityMaxTime = 0.5f;
+            _immunityTick = 0;
+            _immunityTimeElapsed = 0;
+            _immunityAnimation = false;
+            _immunityAlphaStore = Alpha;
+
+            _dyingAnimation = false;
+            _dyingAnimationEnded = false;
+
             Origin = Vector2.Zero;
         }
 
@@ -64,6 +89,7 @@ namespace Super_Pete_The_Pirate
         {
             _framesList[name] = new FramesList(delay);
             _framesList[name].Colliders = new List<SpriteCollider>();
+            _framesList[name].FramesToAttack = new List<int>();
         }
 
         public void AddFrames(string name, List<Rectangle> frames)
@@ -77,11 +103,18 @@ namespace Super_Pete_The_Pirate
             _framesList[name].Colliders.Add(collider);
         }
 
-        public void AddCollider(string name, Rectangle rectangle, SpriteCollider.ColliderType type)
+        public void AddAttackCollider(string name, Rectangle rectangle, int attackWidth)
         {
             var collider = new SpriteCollider(rectangle.X, rectangle.Y, rectangle.Width, rectangle.Height);
-            collider.Type = type;
+            collider.Type = SpriteCollider.ColliderType.Attack;
+            collider.AttackWidth = attackWidth;
             _framesList[name].Colliders.Add(collider);
+        }
+
+        public void AddFramesToAttack(string name, params int[] frames)
+        {
+            for (var i = 0; i < frames.Length; i++)
+                _framesList[name].FramesToAttack.Add(frames[i]);
         }
 
         public void SetFrameList(string name)
@@ -95,11 +128,22 @@ namespace Super_Pete_The_Pirate
             }
         }
 
+        public void SetIfFrameListExists(string name)
+        {
+            if (_framesList.ContainsKey(name))
+                SetFrameList(name);
+        }
+
         public void SetPosition(Vector2 position)
         {
             Position = new Vector2((int)position.X, (int)position.Y);
             foreach (var collider in GetCurrentFramesList().Colliders)
-                collider.Position = position;
+            {
+                var offsetX = 0f;
+                if (Effect == SpriteEffects.FlipHorizontally && collider.Type == SpriteCollider.ColliderType.Attack)
+                    offsetX = (collider.AttackWidth - GetBlockCollider().Width) + collider.OffsetX - (collider.AttackWidth - (collider.OffsetX + collider.Width));
+                collider.Position = new Vector2(Position.X - offsetX, position.Y);
+            }
         }
 
         public void SetDirection(SpriteDirection direction)
@@ -108,6 +152,20 @@ namespace Super_Pete_The_Pirate
                 Effect = SpriteEffects.FlipHorizontally;
             else
                 Effect = SpriteEffects.None;
+        }
+
+        public void RequestImmunityAnimation()
+        {
+            _immunityAnimation = true;
+            _immunityTick = 0;
+            _immunityTimeElapsed = 0;
+        }
+
+        public void RequestDyingAnimation()
+        {
+            _dyingAnimation = true;
+            if (!_framesList.ContainsKey("dying"))
+                _skipDyingAnimationFrames = true;
         }
 
         public FramesList GetCurrentFramesList()
@@ -147,6 +205,12 @@ namespace Super_Pete_The_Pirate
 
         public void Update(GameTime gameTime)
         {
+            if (_immunityAnimation)
+                UpdateImmunityAnimation(gameTime);
+
+            if (_dyingAnimation)
+                UpdateDying(gameTime);
+
             if (_framesList[_currentFrameList].Loop)
             {
                 _delayTick += gameTime.ElapsedGameTime.Milliseconds;
@@ -163,10 +227,45 @@ namespace Super_Pete_The_Pirate
             }
         }
 
+        private void UpdateImmunityAnimation(GameTime gameTime)
+        {
+            Alpha = _immunityTick == 0 ? 1f : 0.2f;
+            _immunityTimeElapsed += (float)gameTime.ElapsedGameTime.TotalSeconds;
+            if (_immunityTimeElapsed > _immunityMaxTime)
+            {
+                _immunityAnimation = false;
+                _immunityTick = 0;
+                _immunityTimeElapsed = 0f;
+                Alpha = _immunityAlphaStore;
+            }
+            else
+            {
+                _immunityTick = _immunityTick == 0 ? 1 : 0;
+            }
+        }
+
+        public void UpdateDying(GameTime gameTime)
+        {
+            if ((_framesList.ContainsKey("dying") && _currentFrameList == "dying" && _looped) || _skipDyingAnimationFrames)
+            {
+                Alpha -= 0.05f;
+                if (Alpha <= 0f)
+                {
+                    _dyingAnimationEnded = true;
+                    _dyingAnimation = false;
+                }
+            }
+        }
+
         public void Draw(SpriteBatch spriteBatch, Vector2 position)
         {
+            if (Effect == SpriteEffects.FlipHorizontally && GetBlockCollider().Width < GetCurrentFramesList().Frames[_currentFrame].Width)
+            {
+                var offsetX = GetCurrentFramesList().Frames[_currentFrame].Width - GetBlockCollider().Width;
+                position.X -= offsetX;
+            }
             spriteBatch.Draw(TextureRegion.Texture, position, _framesList[_currentFrameList].Frames[_currentFrame],
-                Color, Rotation, Origin, Scale, Effect, 0);
+                Color * Alpha, Rotation, Origin, Scale, Effect, 0);
         }
     }
 }

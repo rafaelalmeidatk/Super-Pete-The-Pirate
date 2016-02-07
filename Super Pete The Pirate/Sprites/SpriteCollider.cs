@@ -15,6 +15,7 @@ namespace Super_Pete_The_Pirate.Sprites
         }
         public int Width { get; set; }
         public int Height { get; set; }
+        public int AttackWidth { get; set; }
         public int OffsetX { get; set; }
         public int OffsetY { get; set; }
         public Vector2 Position { get; set; }

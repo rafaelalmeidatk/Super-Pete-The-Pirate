@@ -13,6 +13,7 @@ namespace Super_Pete_The_Pirate.Sprites
         public bool Loop { get; set; }
         public List<SpriteCollider> Colliders { get; set; }
         public SpriteCollider Collider { get { return Colliders[0]; } }
+        public List<int> FramesToAttack { get; set; }
         public FramesList(int delay)
         {
             Delay = delay;

@@ -37,7 +37,7 @@ namespace Super_Pete_The_Pirate
         // Transition
 
         private SceneBase _currentScene, _newScene;
-        public Sprite _transitionImage;
+        private Sprite _transitionImage;
         private bool _isTransitioning = false;
         public bool IsTransitioning { get { return _isTransitioning; } }
         private bool _beginTransitionFade = false;
@@ -65,6 +65,16 @@ namespace Super_Pete_The_Pirate
         private SceneManager()
         {
             _currentScene = new SceneMap();
+        }
+
+        public void RequestExit()
+        {
+            RequestingExit = true;
+        }
+
+        public SceneBase GetCurrentScene()
+        {
+            return _currentScene;
         }
 
         public void LoadContent(ContentManager Content)
@@ -143,11 +153,6 @@ namespace Super_Pete_The_Pirate
                     _isTransitioning = false;
                 }
             }
-        }
-
-        public void RequestExit()
-        {
-            RequestingExit = true;
         }
     }
 }
