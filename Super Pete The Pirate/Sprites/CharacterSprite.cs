@@ -22,7 +22,7 @@ namespace Super_Pete_The_Pirate
 
     //----------------------//------------------------//
 
-    class CharacterSprite : Sprite
+    public class CharacterSprite : Sprite
     {
         //--------------------------------------------------
         // Frames stuff
@@ -61,6 +61,14 @@ namespace Super_Pete_The_Pirate
         public SpriteCollider Collider
         {
             get { return GetCurrentFramesList().Collider; }
+        }
+
+        public Rectangle BoundingBox
+        {
+            get
+            {
+                return new Rectangle((int)Position.X, (int)Position.Y, GetCurrentFrameRectangle().Width, GetCurrentFrameRectangle().Height);
+            }
         }
 
         //----------------------//------------------------//
@@ -166,6 +174,11 @@ namespace Super_Pete_The_Pirate
             _dyingAnimation = true;
             if (!_framesList.ContainsKey("dying"))
                 _skipDyingAnimationFrames = true;
+        }
+
+        public Rectangle GetCurrentFrameRectangle()
+        {
+            return GetCurrentFramesList().Frames[_currentFrame];
         }
 
         public FramesList GetCurrentFramesList()

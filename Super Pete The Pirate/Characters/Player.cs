@@ -53,7 +53,7 @@ namespace Super_Pete_The_Pirate
 
             CharacterSprite.CreateFrameList("attack_sword", 50);
             CharacterSprite.AddCollider("attack_sword", new Rectangle(0, 0, 32, 32));
-            CharacterSprite.AddAttackCollider("attack_sword", new Rectangle(41, 14, 22, 5), 64);
+            CharacterSprite.AddAttackCollider("attack_sword", new Rectangle(41, 0, 22, 5), 64); // new Rectangle(41, 14, 22, 5)
             CharacterSprite.AddFramesToAttack("attack_sword", 1, 2);
             CharacterSprite.AddFrames("attack_sword", new List<Rectangle>()
             {

@@ -142,10 +142,5 @@ namespace Super_Pete_The_Pirate
             DrawTileColliders(spriteBatch);
             spriteBatch.End();
         }
-
-        public bool IsMapLoaded()
-        {
-            return _tiledMap != null;
-        }
     }
 }

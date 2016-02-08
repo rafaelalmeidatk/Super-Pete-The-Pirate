@@ -72,6 +72,8 @@ namespace Super_Pete_The_Pirate.Scenes
         {
             _player.Update(gameTime);
 
+            DebugValues["pixel collision"] = CollisionManager.IntersectCharacterSpritePixels(_player.CharacterSprite, _enemies[0].CharacterSprite).ToString();
+
             foreach (var enemy in _enemies)
             {
                 enemy.Update(gameTime);
