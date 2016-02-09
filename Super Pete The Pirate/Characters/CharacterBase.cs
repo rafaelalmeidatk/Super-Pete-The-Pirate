@@ -20,14 +20,17 @@ namespace Super_Pete_The_Pirate
         protected bool _requestAttack;
         protected bool _isAttacking;
         protected int _attackType;
-        protected float _attackCooldown;
+        protected float _attackCooldownTick;
         protected string[] _attackFrameList;
         protected bool _requestErase;
         public bool RequestErase { get { return _requestErase; } }
+        public float AttackCooldown { get; set; }
 
         protected int _hp;
         protected bool _dying;
         public bool Dying { get { return _dying; } }
+
+        public bool IsImunity { get { return CharacterSprite.ImmunityAnimationActive; } }
 
         //--------------------------------------------------
         // Physics variables
@@ -118,9 +121,10 @@ namespace Super_Pete_The_Pirate
             _requestAttack = false;
             _isAttacking = false;
             _attackType = -1;
-            _attackCooldown = 0f;
+            _attackCooldownTick = 0f;
+            AttackCooldown = 0f;
 
-            _hp = 0;
+            _hp = 1;
         }
 
         private Texture2D GetColliderTexture(SpriteCollider collider)
@@ -130,13 +134,16 @@ namespace Super_Pete_The_Pirate
 
         public void RequestAttack(int type)
         {
-            _requestAttack = true;
-            _attackType = type;
+            if (_attackCooldownTick <= 0f)
+            {
+                _requestAttack = true;
+                _attackType = type;
+            }
         }
 
         public void ReceiveAttack(int damage)
         {
-            if (_dying) return;
+            if (_dying || IsImunity) return;
             CharacterSprite.RequestImmunityAnimation();
             _hp = _hp - damage < 0 ? 0 : _hp - damage;
             if (_hp == 0)
@@ -152,9 +159,19 @@ namespace Super_Pete_The_Pirate
             _movement = 0.0f;
             _isJumping = false;
 
+            UpdateAttackCooldown(gameTime);
             UpdateAttack(gameTime);
             UpdateSprite(gameTime);
             if (CharacterSprite.DyingAnimationEnded) _requestErase = true;
+        }
+
+        private void UpdateAttackCooldown(GameTime gameTime)
+        {
+            if (_attackCooldownTick > 0f)
+            {
+                _attackCooldownTick -= (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+            }
+                
         }
 
         private void UpdateAttack(GameTime gameTime)
@@ -179,6 +196,7 @@ namespace Super_Pete_The_Pirate
             {
                 _isAttacking = true;
                 _requestAttack = false;
+                _attackCooldownTick = AttackCooldown;
             }
         }
 

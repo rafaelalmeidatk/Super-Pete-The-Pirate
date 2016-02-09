@@ -35,10 +35,10 @@ namespace Super_Pete_The_Pirate
 
         private bool _looped;
         public bool Looped { get { return _looped; } }
-        
+
         //--------------------------------------------------
         // Animation delay
-        
+
         private int _delayTick;
 
         //--------------------------------------------------
@@ -49,6 +49,7 @@ namespace Super_Pete_The_Pirate
         private float _immunityMaxTime;
         private bool _immunityAnimation;
         private float _immunityAlphaStore;
+        public bool ImmunityAnimationActive { get { return _immunityAnimation; } }
 
         private bool _dyingAnimation;
         private bool _skipDyingAnimationFrames;
@@ -80,7 +81,7 @@ namespace Super_Pete_The_Pirate
             _delayTick = 0;
             _framesList = new Dictionary<string, FramesList>();
             _looped = false;
-            
+
             _immunityMaxTime = 0.5f;
             _immunityTick = 0;
             _immunityTimeElapsed = 0;
@@ -108,6 +109,7 @@ namespace Super_Pete_The_Pirate
         public void AddCollider(string name, Rectangle rectangle)
         {
             var collider = new SpriteCollider(rectangle.X, rectangle.Y, rectangle.Width, rectangle.Height);
+            collider.Type = SpriteCollider.ColliderType.Block;
             _framesList[name].Colliders.Add(collider);
         }
 
@@ -141,7 +143,7 @@ namespace Super_Pete_The_Pirate
             if (_framesList.ContainsKey(name))
                 SetFrameList(name);
         }
-
+        
         public void SetPosition(Vector2 position)
         {
             Position = new Vector2((int)position.X, (int)position.Y);
@@ -149,7 +151,8 @@ namespace Super_Pete_The_Pirate
             {
                 var offsetX = 0f;
                 if (Effect == SpriteEffects.FlipHorizontally && collider.Type == SpriteCollider.ColliderType.Attack)
-                    offsetX = (collider.AttackWidth - GetBlockCollider().Width) + collider.OffsetX - (collider.AttackWidth - (collider.OffsetX + collider.Width));
+                    offsetX = (collider.OffsetX - GetBlockCollider().OffsetX) + (collider.AttackWidth - (GetBlockCollider().Width + GetBlockCollider().OffsetX)) - (collider.AttackWidth - (collider.OffsetX + collider.Width));
+
                 collider.Position = new Vector2(Position.X - offsetX, position.Y);
             }
         }
@@ -272,11 +275,11 @@ namespace Super_Pete_The_Pirate
 
         public void Draw(SpriteBatch spriteBatch, Vector2 position)
         {
-            if (Effect == SpriteEffects.FlipHorizontally && GetBlockCollider().Width < GetCurrentFramesList().Frames[_currentFrame].Width)
-            {
-                var offsetX = GetCurrentFramesList().Frames[_currentFrame].Width - GetBlockCollider().Width;
-                position.X -= offsetX;
-            }
+            if (Effect == SpriteEffects.FlipHorizontally)
+                position.X -= GetCurrentFrameRectangle().Width - (GetBlockCollider().OffsetX + GetBlockCollider().Width);
+            else
+                position.X -= GetBlockCollider().OffsetX;
+            position.Y -= GetBlockCollider().OffsetY;
             spriteBatch.Draw(TextureRegion.Texture, position, _framesList[_currentFrameList].Frames[_currentFrame],
                 Color * Alpha, Rotation, Origin, Scale, Effect, 0);
         }

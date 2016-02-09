@@ -53,7 +53,7 @@ namespace Super_Pete_The_Pirate.Scenes
 
             // Player init
             _player = new Player(ImageManager.loadCharacter("Player"));
-            _player.Position = new Vector2(35, GameMap.Instance.MapHeight - _player.CharacterSprite.GetFrameHeight() * 2);
+            _player.Position = new Vector2(32, GameMap.Instance.MapHeight - _player.CharacterSprite.GetFrameHeight() * 2);
 
             // Enemies init
             _enemies = new List<Enemy>();
@@ -71,8 +71,6 @@ namespace Super_Pete_The_Pirate.Scenes
         public override void Update(GameTime gameTime)
         {
             _player.Update(gameTime);
-
-            DebugValues["pixel collision"] = CollisionManager.IntersectCharacterSpritePixels(_player.CharacterSprite, _enemies[0].CharacterSprite).ToString();
 
             foreach (var enemy in _enemies)
             {

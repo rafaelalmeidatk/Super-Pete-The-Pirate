@@ -25,7 +25,7 @@ namespace Super_Pete_The_Pirate
         public Player(Texture2D texture) : base(texture)
         {
             CharacterSprite.CreateFrameList("stand", 150);
-            CharacterSprite.AddCollider("stand", new Rectangle(0, 0, 32, 32));
+            CharacterSprite.AddCollider("stand", new Rectangle(9, 2, 17, 30));
             CharacterSprite.AddFrames("stand", new List<Rectangle>()
             {
                 new Rectangle(0, 0, 32, 32),
@@ -35,7 +35,7 @@ namespace Super_Pete_The_Pirate
             });
 
             CharacterSprite.CreateFrameList("walking", 120);
-            CharacterSprite.AddCollider("walking", new Rectangle(0, 0, 32, 32));
+            CharacterSprite.AddCollider("walking", new Rectangle(9, 2, 17, 30));
             CharacterSprite.AddFrames("walking", new List<Rectangle>()
             {
                 new Rectangle(128, 0, 32, 32),
@@ -45,15 +45,15 @@ namespace Super_Pete_The_Pirate
             });
 
             CharacterSprite.CreateFrameList("jumping", 0);
-            CharacterSprite.AddCollider("jumping", new Rectangle(0, 0, 32, 32));
+            CharacterSprite.AddCollider("jumping", new Rectangle(9, 2, 17, 30));
             CharacterSprite.AddFrames("jumping", new List<Rectangle>()
             {
                 new Rectangle(0, 32, 32, 32)
             });
 
             CharacterSprite.CreateFrameList("attack_sword", 50);
-            CharacterSprite.AddCollider("attack_sword", new Rectangle(0, 0, 32, 32));
-            CharacterSprite.AddAttackCollider("attack_sword", new Rectangle(41, 0, 22, 5), 64); // new Rectangle(41, 14, 22, 5)
+            CharacterSprite.AddCollider("attack_sword", new Rectangle(9, 2, 17, 30));
+            CharacterSprite.AddAttackCollider("attack_sword", new Rectangle(31, 14, 32, 6), 64); // new Rectangle(41, 14, 22, 5)
             CharacterSprite.AddFramesToAttack("attack_sword", 1, 2);
             CharacterSprite.AddFrames("attack_sword", new List<Rectangle>()
             {
@@ -62,7 +62,10 @@ namespace Super_Pete_The_Pirate
                 new Rectangle(128, 32, 64, 32)
             });
 
-            Position = new Vector2(50, 160);
+            CharacterSprite.CreateFrameList("attack_aerial", 50);
+            //CharacterSprite.AddCollider("attack_aerial", new Rectangle()
+
+            Position = new Vector2(32, 160);
 
             // Attacks setup
             _attackFrameList = new string[]
@@ -71,6 +74,8 @@ namespace Super_Pete_The_Pirate
                 "attack_aerial",
                 "attack_shot"
             };
+
+            AttackCooldown = 300f;
         }
 
         public override void Update(GameTime gameTime)
