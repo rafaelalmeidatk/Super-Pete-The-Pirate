@@ -54,6 +54,7 @@
     <Compile Include="Scenes\SceneMap.cs" />
     <Compile Include="Scenes\SceneTitle.cs" />
     <Compile Include="Sprites\CharacterSprite.cs" />
+    <Compile Include="Sprites\FrameInfo.cs" />
     <Compile Include="Sprites\FramesList.cs" />
     <Compile Include="Sprites\SpriteCollider.cs" />
   </ItemGroup>

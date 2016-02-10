@@ -58,7 +58,12 @@ namespace Super_Pete_The_Pirate.Scenes
             // Enemies init
             _enemies = new List<Enemy>();
             _enemiesToErase = new List<Enemy>();
-            CreateEnemy(150, GameMap.Instance.MapHeight - _player.CharacterSprite.GetFrameHeight() * 2);
+
+            CreateEnemy(128, 96);
+            CreateEnemy(224, 96);
+
+            CreateEnemy(128, 192);
+            CreateEnemy(224, 192);
         }
 
         public void CreateEnemy(int x, int y)

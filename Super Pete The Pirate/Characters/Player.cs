@@ -22,8 +22,17 @@ namespace Super_Pete_The_Pirate
 
         //----------------------//------------------------//
 
+        //CharacterSprite.AddFrames("stand", new List<Rectangle>()
+        //    {
+        //        new Rectangle(0, 0, 32, 32),
+        //        new Rectangle(32, 0, 32, 32),
+        //        new Rectangle(64, 0, 32, 32),
+        //        new Rectangle(96, 0, 32, 32),
+        //    }, new int[] { 0, 0, 0, 0 }, new int[] { 0, 0, 0, 0 });
+
         public Player(Texture2D texture) : base(texture)
         {
+            // Stand
             CharacterSprite.CreateFrameList("stand", 150);
             CharacterSprite.AddCollider("stand", new Rectangle(9, 2, 17, 30));
             CharacterSprite.AddFrames("stand", new List<Rectangle>()
@@ -32,8 +41,9 @@ namespace Super_Pete_The_Pirate
                 new Rectangle(32, 0, 32, 32),
                 new Rectangle(64, 0, 32, 32),
                 new Rectangle(96, 0, 32, 32),
-            });
-
+            }, new int[] { 0, 0, 0, 0 }, new int[] { 0, 0, 0, 0 });
+            
+            // Walking
             CharacterSprite.CreateFrameList("walking", 120);
             CharacterSprite.AddCollider("walking", new Rectangle(9, 2, 17, 30));
             CharacterSprite.AddFrames("walking", new List<Rectangle>()
@@ -42,28 +52,73 @@ namespace Super_Pete_The_Pirate
                 new Rectangle(160, 0, 32, 32),
                 new Rectangle(192, 0, 32, 32),
                 new Rectangle(224, 0, 32, 32),
-            });
+            }, new int[] { 0, 0, 0, 0 }, new int[] { 0, 0, 0, 0 });
 
+            // Jumping
             CharacterSprite.CreateFrameList("jumping", 0);
             CharacterSprite.AddCollider("jumping", new Rectangle(9, 2, 17, 30));
             CharacterSprite.AddFrames("jumping", new List<Rectangle>()
             {
                 new Rectangle(0, 32, 32, 32)
-            });
+            }, new int[] { 0, 0, 0, 0 }, new int[] { 0, 0, 0, 0 });
 
+
+            // Sword Attack
             CharacterSprite.CreateFrameList("attack_sword", 50);
             CharacterSprite.AddCollider("attack_sword", new Rectangle(9, 2, 17, 30));
-            CharacterSprite.AddAttackCollider("attack_sword", new Rectangle(31, 14, 32, 6), 64); // new Rectangle(41, 14, 22, 5)
             CharacterSprite.AddFramesToAttack("attack_sword", 1, 2);
             CharacterSprite.AddFrames("attack_sword", new List<Rectangle>()
             {
                 new Rectangle(32, 32, 32, 32),
                 new Rectangle(64, 32, 64, 32),
                 new Rectangle(128, 32, 64, 32)
-            });
+            }, new int[] { 0, 0, 0, 0 }, new int[] { 0, 0, 0, 0 });
 
+            CharacterSprite.AddAttackCollider("attack_sword", new List<List<Rectangle>>()
+            {
+                new List<Rectangle>() { },
+                new List<Rectangle>() { new Rectangle(31, 14, 32, 6) },
+                new List<Rectangle>() { new Rectangle(31, 14, 32, 6) }
+            }, 64);
+
+            // Aerial Attack
             CharacterSprite.CreateFrameList("attack_aerial", 50);
-            //CharacterSprite.AddCollider("attack_aerial", new Rectangle()
+            CharacterSprite.AddCollider("attack_aerial", new Rectangle(9, 2, 17, 30));
+            CharacterSprite.AddFrames("attack_aerial", new List<Rectangle>()
+            {
+                new Rectangle(0, 64, 64, 64),
+                new Rectangle(64, 64, 64, 64),
+                new Rectangle(128, 64, 64, 64),
+                new Rectangle(192, 64, 64, 64)
+            }, new int[] { 0, 0, -32, -32 }, new int[] { -32, 0, 0, -32 });
+
+            CharacterSprite.AddAttackCollider("attack_aerial", new List<List<Rectangle>>()
+            {
+                new List<Rectangle>()
+                {
+                    new Rectangle(25, -21, 27, 21),
+                    new Rectangle(31, 0, 25, 27)
+                },
+
+                new List<Rectangle>()
+                {
+                    new Rectangle(32, 25, 21, 27),
+                    new Rectangle(5, 31, 27, 25)
+                },
+
+                new List<Rectangle>()
+                {
+                    new Rectangle(-20, 32, 27, 21),
+                    new Rectangle(-24, 5, 25, 27)
+                },
+
+                new List<Rectangle>()
+                {
+                    new Rectangle(-21, -20, 21, 27),
+                    new Rectangle(0, -24, 27, 25)
+                }
+            }, 64);
+            CharacterSprite.AddFramesToAttack("attack_aerial", 0, 1, 2, 3);
 
             Position = new Vector2(32, 160);
 
@@ -117,7 +172,26 @@ namespace Super_Pete_The_Pirate
             // Attack
             if (InputManager.Instace.KeyPressed(Keys.A) && !_isAttacking)
             {
+                StartAttack();
+            }
+        }
+
+        private void StartAttack()
+        {
+            if (_isOnGround)
                 RequestAttack(NormalAttack);
+            else
+                RequestAttack(AerialAttack);
+        }
+
+        public override void UpdateAttack(GameTime gameTime)
+        {
+            base.UpdateAttack(gameTime);
+            if (_isOnGround && _attackType == AerialAttack)
+            {
+                _isAttacking = false;
+                _attackType = -1;
+                _attackCooldownTick = 0;
             }
         }
 
@@ -125,14 +199,13 @@ namespace Super_Pete_The_Pirate
         {
             var damage = _attackType == ShotAttack ? 2 : 1;
             var enemies = ((SceneMap)SceneManager.Instance.GetCurrentScene()).Enemies;
-            foreach (var attackCollider in CharacterSprite.GetCurrentFramesList().Colliders)
+            foreach (var attackCollider in CharacterSprite.GetCurrentFramesList().Frames[CharacterSprite.CurrentFrame].AttackColliders)
             {
-                if (attackCollider.Type != SpriteCollider.ColliderType.Attack) continue;
                 foreach (var enemy in enemies)
                 {
                     if (attackCollider.BoundingBox.Intersects(enemy.BoundingRectangle))
                     {
-                        enemy.ReceiveAttack(damage);
+                        enemy.ReceiveAttack(damage, this.Position);
                     }
                 }
             }

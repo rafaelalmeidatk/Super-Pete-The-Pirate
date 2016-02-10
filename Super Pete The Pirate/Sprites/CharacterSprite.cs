@@ -59,6 +59,9 @@ namespace Super_Pete_The_Pirate
         //--------------------------------------------------
         // Collider
 
+        private Texture2D _colliderRedTexture;
+        private Texture2D _colliderYellowTexture;
+
         public SpriteCollider Collider
         {
             get { return GetCurrentFramesList().Collider; }
@@ -92,33 +95,46 @@ namespace Super_Pete_The_Pirate
             _dyingAnimationEnded = false;
 
             Origin = Vector2.Zero;
+
+            _colliderRedTexture = new Texture2D(SceneManager.Instance.GraphicsDevice, 1, 1, false, SurfaceFormat.Color);
+            _colliderRedTexture.SetData<Color>(new Color[] { Color.Red });
+
+            _colliderYellowTexture = new Texture2D(SceneManager.Instance.GraphicsDevice, 1, 1, false, SurfaceFormat.Color);
+            _colliderYellowTexture.SetData<Color>(new Color[] { Color.Yellow });
         }
 
         public void CreateFrameList(string name, int delay)
         {
             _framesList[name] = new FramesList(delay);
-            _framesList[name].Colliders = new List<SpriteCollider>();
-            _framesList[name].FramesToAttack = new List<int>();
         }
 
-        public void AddFrames(string name, List<Rectangle> frames)
+        public void AddFrames(string name, List<Rectangle> frames, int[] offsetX, int[] offsetY)
         {
-            _framesList[name].Frames = frames;
+            for (var i = 0; i < frames.Count; i++)
+            {
+                _framesList[name].Frames.Add(new FrameInfo(frames[i], offsetX[i], offsetY[i]));
+            }
         }
 
         public void AddCollider(string name, Rectangle rectangle)
         {
             var collider = new SpriteCollider(rectangle.X, rectangle.Y, rectangle.Width, rectangle.Height);
             collider.Type = SpriteCollider.ColliderType.Block;
-            _framesList[name].Colliders.Add(collider);
+            _framesList[name].Collider = collider;
         }
 
-        public void AddAttackCollider(string name, Rectangle rectangle, int attackWidth)
+        public void AddAttackCollider(string name, List<List<Rectangle>> rectangleFrames, int attackWidth)
         {
-            var collider = new SpriteCollider(rectangle.X, rectangle.Y, rectangle.Width, rectangle.Height);
-            collider.Type = SpriteCollider.ColliderType.Attack;
-            collider.AttackWidth = attackWidth;
-            _framesList[name].Colliders.Add(collider);
+            for (var i = 0; i < rectangleFrames.Count; i++)
+            {
+                for (var j = 0; j < rectangleFrames[i].Count; j++)
+                {
+                    var collider = new SpriteCollider(rectangleFrames[i][j].X, rectangleFrames[i][j].Y, rectangleFrames[i][j].Width, rectangleFrames[i][j].Height);
+                    collider.Type = SpriteCollider.ColliderType.Attack;
+                    collider.AttackWidth = attackWidth;
+                    _framesList[name].Frames[i].AttackColliders.Add(collider);
+                }
+            }
         }
 
         public void AddFramesToAttack(string name, params int[] frames)
@@ -147,14 +163,20 @@ namespace Super_Pete_The_Pirate
         public void SetPosition(Vector2 position)
         {
             Position = new Vector2((int)position.X, (int)position.Y);
-            foreach (var collider in GetCurrentFramesList().Colliders)
-            {
-                var offsetX = 0f;
-                if (Effect == SpriteEffects.FlipHorizontally && collider.Type == SpriteCollider.ColliderType.Attack)
-                    offsetX = (collider.OffsetX - GetBlockCollider().OffsetX) + (collider.AttackWidth - (GetBlockCollider().Width + GetBlockCollider().OffsetX)) - (collider.AttackWidth - (collider.OffsetX + collider.Width));
 
-                collider.Position = new Vector2(Position.X - offsetX, position.Y);
+            for (var i = 0; i < GetCurrentFramesList().Frames.Count; i++)
+            {
+                for (var j = 0; j < GetCurrentFramesList().Frames[i].AttackColliders.Count; j++)
+                {
+                    var collider = GetCurrentFramesList().Frames[i].AttackColliders[j];
+                    var offsetX = 0;
+                    if (Effect == SpriteEffects.FlipHorizontally)
+                        offsetX = 2 * (collider.OffsetX - GetBlockCollider().OffsetX) - GetBlockCollider().Width + collider.Width;
+                    collider.Position = new Vector2(position.X - offsetX, position.Y);
+                }
             }
+
+            GetCurrentFramesList().Collider.Position = position;
         }
 
         public void SetDirection(SpriteDirection direction)
@@ -181,7 +203,7 @@ namespace Super_Pete_The_Pirate
 
         public Rectangle GetCurrentFrameRectangle()
         {
-            return GetCurrentFramesList().Frames[_currentFrame];
+            return GetCurrentFramesList().Frames[_currentFrame].SpriteSheetInfo;
         }
 
         public FramesList GetCurrentFramesList()
@@ -196,12 +218,12 @@ namespace Super_Pete_The_Pirate
 
         public int GetFrameWidth()
         {
-            return _framesList[_currentFrameList].Frames[_currentFrame].Width;
+            return GetCurrentFrameRectangle().Width;
         }
 
         public int GetFrameHeight()
         {
-            return _framesList[_currentFrameList].Frames[_currentFrame].Height;
+            return GetCurrentFrameRectangle().Height;
         }
 
         public int GetColliderWidth()
@@ -273,14 +295,29 @@ namespace Super_Pete_The_Pirate
             }
         }
 
+        private Texture2D GetColliderTexture(SpriteCollider collider)
+        {
+            return collider.Type == SpriteCollider.ColliderType.Block ? _colliderRedTexture : _colliderYellowTexture;
+        }
+
+        public void DrawColliders(SpriteBatch spriteBatch)
+        {
+            var blockColider = GetCurrentFramesList().Collider;
+            spriteBatch.Draw(GetColliderTexture(blockColider), blockColider.BoundingBox, Color.White * 0.5f);
+
+            foreach (var collider in GetCurrentFramesList().Frames[CurrentFrame].AttackColliders)
+                spriteBatch.Draw(GetColliderTexture(collider), collider.BoundingBox, Color.White * 0.5f);
+        }
+
         public void Draw(SpriteBatch spriteBatch, Vector2 position)
         {
             if (Effect == SpriteEffects.FlipHorizontally)
-                position.X -= GetCurrentFrameRectangle().Width - (GetBlockCollider().OffsetX + GetBlockCollider().Width);
+                position.X -= GetCurrentFrameRectangle().Width - (GetBlockCollider().OffsetX + GetBlockCollider().Width) + GetCurrentFramesList().Frames[_currentFrame].OffsetX;
             else
-                position.X -= GetBlockCollider().OffsetX;
-            position.Y -= GetBlockCollider().OffsetY;
-            spriteBatch.Draw(TextureRegion.Texture, position, _framesList[_currentFrameList].Frames[_currentFrame],
+                position.X -= GetBlockCollider().OffsetX - GetCurrentFramesList().Frames[_currentFrame].OffsetX;
+
+            position.Y -= GetBlockCollider().OffsetY - GetCurrentFramesList().Frames[_currentFrame].OffsetY;
+            spriteBatch.Draw(TextureRegion.Texture, position, GetCurrentFrameRectangle(),
                 Color * Alpha, Rotation, Origin, Scale, Effect, 0);
         }
     }

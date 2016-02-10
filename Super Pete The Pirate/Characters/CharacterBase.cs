@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Super_Pete_The_Pirate.Sprites;
+using System.Collections.Generic;
 
 namespace Super_Pete_The_Pirate
 {
@@ -99,23 +100,11 @@ namespace Super_Pete_The_Pirate
             }
         }
 
-        //--------------------------------------------------
-        // Colliders
-
-        private Texture2D _colliderRedTexture;
-        private Texture2D _colliderYellowTexture;
-
         //----------------------//------------------------//
 
         public CharacterBase(Texture2D texture)
         {
             CharacterSprite = new CharacterSprite(texture);
-
-            _colliderRedTexture = new Texture2D(SceneManager.Instance.GraphicsDevice, 1, 1, false, SurfaceFormat.Color);
-            _colliderRedTexture.SetData<Color>(new Color[] { Color.Red });
-
-            _colliderYellowTexture = new Texture2D(SceneManager.Instance.GraphicsDevice, 1, 1, false, SurfaceFormat.Color);
-            _colliderYellowTexture.SetData<Color>(new Color[] { Color.Yellow });
 
             // Battle system init
             _requestAttack = false;
@@ -127,11 +116,6 @@ namespace Super_Pete_The_Pirate
             _hp = 1;
         }
 
-        private Texture2D GetColliderTexture(SpriteCollider collider)
-        {
-            return collider.Type == SpriteCollider.ColliderType.Block ? _colliderRedTexture : _colliderYellowTexture;
-        }
-
         public void RequestAttack(int type)
         {
             if (_attackCooldownTick <= 0f)
@@ -141,10 +125,15 @@ namespace Super_Pete_The_Pirate
             }
         }
 
-        public void ReceiveAttack(int damage)
+        public void ReceiveAttack(int damage, Vector2 subjectPosition)
         {
             if (_dying || IsImunity) return;
+
             CharacterSprite.RequestImmunityAnimation();
+
+            _movement += Math.Sign(Position.X - subjectPosition.X) * 3f;
+            _velocity.Y = -300f;
+
             _hp = _hp - damage < 0 ? 0 : _hp - damage;
             if (_hp == 0)
             {
@@ -174,7 +163,7 @@ namespace Super_Pete_The_Pirate
                 
         }
 
-        private void UpdateAttack(GameTime gameTime)
+        public virtual void UpdateAttack(GameTime gameTime)
         {
             if (_isAttacking)
             {
@@ -390,8 +379,7 @@ namespace Super_Pete_The_Pirate
 
         public void DrawColliderBox(SpriteBatch spriteBatch)
         {
-            foreach(var collider in CharacterSprite.GetCurrentFramesList().Colliders)
-                spriteBatch.Draw(GetColliderTexture(collider), collider.BoundingBox, Color.White * 0.5f);
+            CharacterSprite.DrawColliders(spriteBatch);
         }
 
         #endregion

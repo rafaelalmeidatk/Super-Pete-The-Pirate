@@ -20,7 +20,7 @@ namespace Super_Pete_The_Pirate.Characters
                 new Rectangle(32, 0, 32, 32),
                 new Rectangle(64, 0, 32, 32),
                 new Rectangle(96, 0, 32, 32),
-            });
+            }, new int[] { 0, 0, 0, 0 }, new int[] { 0, 0, 0, 0 });
 
             CharacterSprite.CreateFrameList("walking", 120);
             CharacterSprite.AddCollider("walking", new Rectangle(0, 0, 32, 32));
@@ -30,17 +30,27 @@ namespace Super_Pete_The_Pirate.Characters
                 new Rectangle(160, 0, 32, 32),
                 new Rectangle(192, 0, 32, 32),
                 new Rectangle(224, 0, 32, 32),
-            });
+            }, new int[] { 0, 0, 0, 0 }, new int[] { 0, 0, 0, 0 });
 
-            CharacterSprite.CreateFrameList("dying", 120);
-            CharacterSprite.AddCollider("dying", new Rectangle(0, 0, 32, 32));
-            CharacterSprite.AddFrames("dying", new List<Rectangle>()
+            // Jumping
+            CharacterSprite.CreateFrameList("jumping", 0);
+            CharacterSprite.AddCollider("jumping", new Rectangle(9, 2, 17, 30));
+            CharacterSprite.AddFrames("jumping", new List<Rectangle>()
             {
-                new Rectangle(128, 0, 32, 32),
-                new Rectangle(160, 0, 32, 32),
-                new Rectangle(192, 0, 32, 32),
-                new Rectangle(224, 0, 32, 32),
-            });
+                new Rectangle(0, 32, 32, 32)
+            }, new int[] { 0, 0, 0, 0 }, new int[] { 0, 0, 0, 0 });
+
+            //CharacterSprite.CreateFrameList("dying", 120);
+            //CharacterSprite.AddCollider("dying", new Rectangle(0, 0, 32, 32));
+            //CharacterSprite.AddFrames("dying", new List<Rectangle>()
+            //{
+            //    new Rectangle(128, 0, 32, 32),
+            //    new Rectangle(160, 0, 32, 32),
+            //    new Rectangle(192, 0, 32, 32),
+            //    new Rectangle(224, 0, 32, 32),
+            //}, new int[] { 0, 0, 0, 0 }, new int[] { 0, 0, 0, 0 });
+
+            _hp = 2;
         }
     }
 }
