@@ -12,6 +12,7 @@ using MonoGame.Extended.Maps.Tiled;
 using MonoGame.Extended.ViewportAdapters;
 using Microsoft.Xna.Framework.Input;
 using Super_Pete_The_Pirate.Characters;
+using Super_Pete_The_Pirate.Objects;
 
 namespace Super_Pete_The_Pirate.Scenes
 {
@@ -28,6 +29,14 @@ namespace Super_Pete_The_Pirate.Scenes
         private List<Enemy> _enemies;
         private List<Enemy> _enemiesToErase;
         public List<Enemy> Enemies { get { return _enemies; } }
+
+        //--------------------------------------------------
+        // Projectiles
+
+        private Dictionary<string, Texture2D> _projectilesTextures;
+
+        private List<GameProjectile> _projectiles;
+        private List<GameProjectile> _projectilesToErase;
 
         //--------------------------------------------------
         // Camera stuff
@@ -53,17 +62,23 @@ namespace Super_Pete_The_Pirate.Scenes
 
             // Player init
             _player = new Player(ImageManager.loadCharacter("Player"));
-            _player.Position = new Vector2(32, GameMap.Instance.MapHeight - _player.CharacterSprite.GetFrameHeight() * 2);
+            _player.Position = new Vector2(32, GameMap.Instance.MapHeight - _player.CharacterSprite.GetFrameHeight() * 4);
 
             // Enemies init
             _enemies = new List<Enemy>();
             _enemiesToErase = new List<Enemy>();
 
-            CreateEnemy(128, 96);
-            CreateEnemy(224, 96);
+            CreateEnemy(224, 160);
+            CreateEnemy(288, 64);
+            CreateEnemy(32, 32);
 
-            CreateEnemy(128, 192);
-            CreateEnemy(224, 192);
+            // Projectiles init
+            _projectilesTextures = new Dictionary<string, Texture2D>()
+            {
+                {"common", ImageManager.loadProjectile("common")}
+            };
+            _projectiles = new List<GameProjectile>();
+            _projectilesToErase = new List<GameProjectile>();
         }
 
         public void CreateEnemy(int x, int y)
@@ -73,9 +88,40 @@ namespace Super_Pete_The_Pirate.Scenes
             _enemies.Add(newEnemy);
         }
 
+        public void CreateProjectile(string name, Vector2 position, int dx, int dy, int damage, ProjectileSubject subject)
+        {
+            _projectiles.Add(new GameProjectile(_projectilesTextures[name], position, dx, dy, damage, subject));
+        }
+
         public override void Update(GameTime gameTime)
         {
             _player.Update(gameTime);
+
+            foreach (var projectile in _projectiles)
+            {
+                projectile.Update(gameTime);
+                if (projectile.Subject == ProjectileSubject.FromPlayer)
+                {
+                    foreach (var enemy in _enemies)
+                    {
+                        if (!enemy.Dying && !enemy.IsImunity && projectile.BoundingBox.Intersects(enemy.BoundingRectangle))
+                        {
+                            enemy.ReceiveAttack(projectile.Damage, projectile.Position);
+                            projectile.Destroy();
+                        }
+                    }
+                } else if (projectile.BoundingBox.Intersects(_player.BoundingRectangle))
+                {
+                    _player.ReceiveAttack(projectile.Damage, projectile.Position);
+                    projectile.Destroy();
+                }
+
+                if (projectile.RequestErase)
+                    _projectilesToErase.Add(projectile);
+            }
+
+            foreach (var projectile in _projectilesToErase)
+                _projectiles.Remove(projectile);
 
             foreach (var enemy in _enemies)
             {
@@ -126,6 +172,10 @@ namespace Super_Pete_The_Pirate.Scenes
                 if (SceneManager.Instance.DebugMode)
                     enemy.DrawColliderBox(spriteBatch);
             }
+
+            // Draw the projectiles
+            foreach (var projectile in _projectiles)
+                spriteBatch.Draw(projectile.Sprite);
 
             spriteBatch.End();
         }

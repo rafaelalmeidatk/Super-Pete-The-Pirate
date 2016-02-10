@@ -33,6 +33,8 @@ namespace Super_Pete_The_Pirate
 
         public bool IsImunity { get { return CharacterSprite.ImmunityAnimationActive; } }
 
+        protected bool _shot;
+
         //--------------------------------------------------
         // Physics variables
 
@@ -112,6 +114,7 @@ namespace Super_Pete_The_Pirate
             _attackType = -1;
             _attackCooldownTick = 0f;
             AttackCooldown = 0f;
+            _shot = false;
 
             _hp = 1;
         }
@@ -171,6 +174,7 @@ namespace Super_Pete_The_Pirate
                 {
                     _isAttacking = false;
                     _attackType = -1;
+                    _shot = false;
                 } else
                 {
                     var sprite = CharacterSprite;

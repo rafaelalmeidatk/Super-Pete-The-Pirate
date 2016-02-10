@@ -101,15 +101,18 @@ namespace Super_Pete_The_Pirate
 
         public bool IsTileBlocked(int x, int y)
         {
+            if (y < 0 || y > MapHeight || x < 0 || x > MapWidth) return false;
             var blockLayer = GetBlockLayer();
+            if (blockLayer.GetTile(x, y) == null) return false;
             return blockLayer.GetTile(x, y).Id != 0;
         }
 
         public bool IsTilePlatform(int x, int y)
         {
+            if (y < 0 || y > MapHeight || x < 0 || x > MapWidth) return false;
             var platformLayer = GetPlatformLayer();
-            if (platformLayer == null)
-                return false;
+            if (platformLayer == null) return false;
+            if (platformLayer.GetTile(x, y) == null) return false;
             return platformLayer.GetTile(x, y).Id != 0;
         }
 
@@ -137,9 +140,10 @@ namespace Super_Pete_The_Pirate
 
         public void Draw(Camera2D camera, SpriteBatch spriteBatch)
         {
-            _tiledMap.Draw(camera);
-            spriteBatch.Begin(transformMatrix: camera.GetViewMatrix());
-            DrawTileColliders(spriteBatch);
+            spriteBatch.Begin(transformMatrix: camera.GetViewMatrix(), samplerState: SamplerState.PointClamp);
+            _tiledMap.Draw(spriteBatch, camera);
+            if (SceneManager.Instance.DebugMode)
+                DrawTileColliders(spriteBatch);
             spriteBatch.End();
         }
     }

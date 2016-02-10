@@ -45,7 +45,7 @@ namespace Super_Pete_The_Pirate.Scenes
             spriteBatch.Begin();
             var i = 0;
             foreach (KeyValuePair<string, string> value in DebugValues)
-                spriteBatch.DrawString(_debugFont, value.Value, new Vector2(0, 20 * i++), Color.White);
+                spriteBatch.DrawString(_debugFont, value.Key + ": " + value.Value, new Vector2(0, 20 * i++), Color.White);
             spriteBatch.End();
         }
 

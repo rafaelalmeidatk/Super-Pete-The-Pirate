@@ -18,17 +18,7 @@ namespace Super_Pete_The_Pirate
         private const int AerialAttack = 1;
         private const int ShotAttack = 2;
 
-        public bool tes = false;
-
         //----------------------//------------------------//
-
-        //CharacterSprite.AddFrames("stand", new List<Rectangle>()
-        //    {
-        //        new Rectangle(0, 0, 32, 32),
-        //        new Rectangle(32, 0, 32, 32),
-        //        new Rectangle(64, 0, 32, 32),
-        //        new Rectangle(96, 0, 32, 32),
-        //    }, new int[] { 0, 0, 0, 0 }, new int[] { 0, 0, 0, 0 });
 
         public Player(Texture2D texture) : base(texture)
         {
@@ -91,7 +81,6 @@ namespace Super_Pete_The_Pirate
                 new Rectangle(128, 64, 64, 64),
                 new Rectangle(192, 64, 64, 64)
             }, new int[] { 0, 0, -32, -32 }, new int[] { -32, 0, 0, -32 });
-
             CharacterSprite.AddAttackCollider("attack_aerial", new List<List<Rectangle>>()
             {
                 new List<Rectangle>()
@@ -120,6 +109,30 @@ namespace Super_Pete_The_Pirate
             }, 64);
             CharacterSprite.AddFramesToAttack("attack_aerial", 0, 1, 2, 3);
 
+            // Shot Attack
+
+            CharacterSprite.CreateFrameList("attack_shot", 50);
+            CharacterSprite.AddCollider("attack_shot", new Rectangle(9, 2, 17, 30));
+            CharacterSprite.AddFramesToAttack("attack_shot", 3);
+            CharacterSprite.AddFrames("attack_shot", new List<Rectangle>()
+            {
+                new Rectangle(0, 128, 32, 32),
+                new Rectangle(32, 128, 32, 32),
+                new Rectangle(64, 128, 64, 32),
+                new Rectangle(128, 128, 64, 32)
+            }, new int[] { 0, 0, 0, 0 }, new int[] { 0, 0, 0, 0 });
+
+            CharacterSprite.CreateFrameList("attack_shot_jumping", 50);
+            CharacterSprite.AddCollider("attack_shot_jumping", new Rectangle(9, 2, 17, 30));
+            CharacterSprite.AddFramesToAttack("attack_shot_jumping", 3);
+            CharacterSprite.AddFrames("attack_shot_jumping", new List<Rectangle>()
+            {
+                new Rectangle(0, 160, 32, 32),
+                new Rectangle(32, 160, 32, 32),
+                new Rectangle(64, 160, 64, 32),
+                new Rectangle(128, 160, 64, 32)
+            }, new int[] { 0, 0, 0, 0 }, new int[] { 0, 0, 0, 0 });
+
             Position = new Vector2(32, 160);
 
             // Attacks setup
@@ -144,8 +157,12 @@ namespace Super_Pete_The_Pirate
             if (_dying)
                 CharacterSprite.SetIfFrameListExists("dying");
             else if (_isAttacking)
-                CharacterSprite.SetFrameList(_attackFrameList[_attackType]);
-            else if (Velocity.Y != 0)
+            {
+                if (_attackType == ShotAttack && Velocity.Y != 0)
+                    CharacterSprite.SetFrameList("attack_shot_jumping");
+                else
+                    CharacterSprite.SetFrameList(_attackFrameList[_attackType]);
+            } else if (Velocity.Y != 0)
                 CharacterSprite.SetFrameList("jumping");
             else if (InputManager.Instace.KeyDown(Keys.Left) || InputManager.Instace.KeyDown(Keys.Right))
                 CharacterSprite.SetFrameList("walking");
@@ -170,13 +187,15 @@ namespace Super_Pete_The_Pirate
             _isJumping = InputManager.Instace.KeyDown(Keys.Up);
 
             // Attack
+            if (InputManager.Instace.KeyPressed(Keys.S) && !_isAttacking)
+                StartNormalAttack();
+
             if (InputManager.Instace.KeyPressed(Keys.A) && !_isAttacking)
-            {
-                StartAttack();
-            }
+                RequestAttack(ShotAttack);
+
         }
 
-        private void StartAttack()
+        private void StartNormalAttack()
         {
             if (_isOnGround)
                 RequestAttack(NormalAttack);
@@ -198,6 +217,13 @@ namespace Super_Pete_The_Pirate
         public override void DoAttack()
         {
             var damage = _attackType == ShotAttack ? 2 : 1;
+
+            if (_attackType == ShotAttack)
+            {
+                Shot(damage);
+                return;
+            }
+
             var enemies = ((SceneMap)SceneManager.Instance.GetCurrentScene()).Enemies;
             foreach (var attackCollider in CharacterSprite.GetCurrentFramesList().Frames[CharacterSprite.CurrentFrame].AttackColliders)
             {
@@ -209,6 +235,24 @@ namespace Super_Pete_The_Pirate
                     }
                 }
             }
+        }
+
+        private void Shot(int damage)
+        {
+            if (_shot) return;
+
+            var position = Position;
+            var dx = 5;
+
+            // Initial position of the projectile
+            if (CharacterSprite.Effect == SpriteEffects.FlipHorizontally)
+            {
+                position += new Vector2(13, 14);
+                dx *= -1;
+            }
+            else position += new Vector2(45, 16);
+            ((SceneMap)SceneManager.Instance.GetCurrentScene()).CreateProjectile("common", position, dx, 0, damage, Objects.ProjectileSubject.FromPlayer);
+            _shot = true;
         }
     }
 }
