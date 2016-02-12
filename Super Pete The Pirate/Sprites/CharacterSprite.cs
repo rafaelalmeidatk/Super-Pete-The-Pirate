@@ -154,6 +154,15 @@ namespace Super_Pete_The_Pirate
             }
         }
 
+        public void SetFrameListOnly(string name)
+        {
+            if (_currentFrameList != name)
+            {
+                _currentFrameList = name;
+                _looped = false;
+            }
+        }
+
         public void SetIfFrameListExists(string name)
         {
             if (_framesList.ContainsKey(name))

@@ -8,39 +8,90 @@ using System.Diagnostics;
 
 namespace Super_Pete_The_Pirate.Characters
 {
+    //--------------------------------------------------
+    // Enemy Type
+    public enum EnemyType
+    {
+        None,
+        SniperPig
+    }
+
     class Enemy : CharacterBase
     {
-        public Enemy(Texture2D texture) : base(texture)
+        //--------------------------------------------------
+        // Combat system
+
+        protected EnemyType _enemyType;
+        public EnemyType EnemyType { get { return _enemyType; } }
+
+        protected Rectangle _viewRange;
+        public Rectangle ViewRange { get { return _viewRange; } }
+        protected Vector2 _viewRangeSize;
+        private Vector2 _lastPosition;
+
+        public float _viewRangeCooldown;
+        public float ViewRangeCooldown { get { return _viewRangeCooldown; } }
+
+        protected int _damage;
+
+        //--------------------------------------------------
+        // Textures
+
+        private Texture2D _viewRangeTexture;
+
+        //----------------------//------------------------//
+
+        public Enemy(Texture2D texture) : base(texture) {
+            _viewRangeTexture = new Texture2D(SceneManager.Instance.GraphicsDevice, 1, 1, false, SurfaceFormat.Color);
+            _viewRangeTexture.SetData<Color>(new Color[] { Color.Green });
+            _lastPosition = Position;
+            _enemyType = EnemyType.None;
+            _viewRangeCooldown = 0f;
+            _damage = 0;
+        }
+
+        public void CreateViewRange()
         {
-            CharacterSprite.CreateFrameList("stand", 150);
-            CharacterSprite.AddCollider("stand", new Rectangle(3, 0, 25, 32));
-            CharacterSprite.AddFrames("stand", new List<Rectangle>()
-            {
-                new Rectangle(0, 0, 32, 32),
-                new Rectangle(32, 0, 32, 32),
-                new Rectangle(64, 0, 32, 32),
-                new Rectangle(96, 0, 32, 32),
-            }, new int[] { 0, 0, 0, 0 }, new int[] { 0, 0, 0, 0 });
+            var width = ((int)_viewRangeSize.X + CharacterSprite.Collider.BoundingBox.Width / 2) * 2;
+            var height = (int)_viewRangeSize.Y;
+            _viewRange = new Rectangle(0, 0, width, height);
+        }
 
-            CharacterSprite.CreateFrameList("walking", 120);
-            CharacterSprite.AddCollider("walking", new Rectangle(3, 0, 25, 32));
-            CharacterSprite.AddFrames("walking", new List<Rectangle>()
-            {
-                new Rectangle(128, 0, 32, 32),
-                new Rectangle(160, 0, 32, 32),
-                new Rectangle(192, 0, 32, 32),
-                new Rectangle(224, 0, 32, 32),
-            }, new int[] { 0, 0, 0, 0 }, new int[] { 0, 0, 0, 0 });
+        public virtual void PlayerOnSight(Vector2 playerPosition) { }
 
-            // Jumping
-            CharacterSprite.CreateFrameList("jumping", 0);
-            CharacterSprite.AddCollider("jumping", new Rectangle(3, 0, 25, 32));
-            CharacterSprite.AddFrames("jumping", new List<Rectangle>()
-            {
-                new Rectangle(0, 32, 32, 32)
-            }, new int[] { 0, 0, 0, 0 }, new int[] { 0, 0, 0, 0 });
+        public override void Update(GameTime gameTime)
+        {
+            base.Update(gameTime);
+            if (_lastPosition.X != CharacterSprite.Collider.BoundingBox.X ||
+                _lastPosition.Y != CharacterSprite.Collider.BoundingBox.Y)
+                UpdateViewRange();
 
-            _hp = 4;
+            UpdateViewRangeCooldown(gameTime);
+        }
+
+        private void UpdateViewRangeCooldown(GameTime gameTime)
+        {
+            if (_viewRangeCooldown > 0f)
+                _viewRangeCooldown -= (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+        }
+
+        public void UpdateViewRange()
+        {
+            _viewRange.X = CharacterSprite.Collider.BoundingBox.Center.X - _viewRange.Width / 2;
+            _viewRange.Y = CharacterSprite.Collider.BoundingBox.Y;
+            _lastPosition.X = CharacterSprite.Collider.BoundingBox.X;
+            _lastPosition.Y = CharacterSprite.Collider.BoundingBox.Y;
+        }
+
+        public override void DrawColliderBox(SpriteBatch spriteBatch)
+        {
+            base.DrawColliderBox(spriteBatch);
+            DrawViewRange(spriteBatch);
+        }
+
+        private void DrawViewRange(SpriteBatch spriteBatch)
+        {
+            spriteBatch.Draw(_viewRangeTexture, _viewRange, Color.White * 0.2f);
         }
     }
 }

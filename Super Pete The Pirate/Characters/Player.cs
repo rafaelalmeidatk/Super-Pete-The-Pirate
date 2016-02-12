@@ -17,6 +17,7 @@ namespace Super_Pete_The_Pirate
         private const int NormalAttack = 0;
         private const int AerialAttack = 1;
         private const int ShotAttack = 2;
+        private const int ShotAttackJump = 3;
 
         //----------------------//------------------------//
 
@@ -140,10 +141,13 @@ namespace Super_Pete_The_Pirate
             {
                 "attack_sword",
                 "attack_aerial",
-                "attack_shot"
+                "attack_shot",
+                "attack_shot_jumping"
             };
 
             AttackCooldown = 300f;
+
+            _hp = 100;
         }
 
         public override void Update(GameTime gameTime)
@@ -158,11 +162,16 @@ namespace Super_Pete_The_Pirate
                 CharacterSprite.SetIfFrameListExists("dying");
             else if (_isAttacking)
             {
-                if (_attackType == ShotAttack && Velocity.Y != 0)
-                    CharacterSprite.SetFrameList("attack_shot_jumping");
+                if (_attackType == ShotAttack)
+                {
+                    if (!_isOnGround)
+                        CharacterSprite.SetFrameList("attack_shot_jumping");
+                    else
+                        CharacterSprite.SetFrameList("attack_shot");
+                }
                 else
                     CharacterSprite.SetFrameList(_attackFrameList[_attackType]);
-            } else if (Velocity.Y != 0)
+            } else if (!_isOnGround)
                 CharacterSprite.SetFrameList("jumping");
             else if (InputManager.Instace.KeyDown(Keys.Left) || InputManager.Instace.KeyDown(Keys.Right))
                 CharacterSprite.SetFrameList("walking");
@@ -183,6 +192,9 @@ namespace Super_Pete_The_Pirate
                 CharacterSprite.SetDirection(SpriteDirection.Right);
                 _movement = 1.0f;
             }
+
+            if (InputManager.Instace.KeyPressed(Keys.G))
+                _knockbackAcceleration = 5000f;
 
             _isJumping = InputManager.Instace.KeyDown(Keys.Up);
 
@@ -206,11 +218,20 @@ namespace Super_Pete_The_Pirate
         public override void UpdateAttack(GameTime gameTime)
         {
             base.UpdateAttack(gameTime);
-            if (_isOnGround && _attackType == AerialAttack)
+            if (_isOnGround)
             {
-                _isAttacking = false;
-                _attackType = -1;
-                _attackCooldownTick = 0;
+                if (_attackType == AerialAttack)
+                {
+                    _isAttacking = false;
+                    _attackType = -1;
+                    _attackCooldownTick = 0;
+                }
+
+                if (_attackType == ShotAttack && CharacterSprite.CurrentFrameList == _attackFrameList[ShotAttackJump])
+                    CharacterSprite.SetFrameListOnly(_attackFrameList[ShotAttack]);
+            } else if (_attackType == ShotAttack && CharacterSprite.CurrentFrameList == _attackFrameList[ShotAttack])
+            {
+                CharacterSprite.SetFrameListOnly(_attackFrameList[ShotAttackJump]);
             }
         }
 

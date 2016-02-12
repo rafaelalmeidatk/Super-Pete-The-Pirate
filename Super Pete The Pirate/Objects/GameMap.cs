@@ -34,7 +34,7 @@ namespace Super_Pete_The_Pirate
         //--------------------------------------------------
         // Tiles stuff
 
-        private TiledMap _tiledMap;
+        public TiledMap _tiledMap;
         public Vector2 TileSize = new Vector2(32, 32);
 
         public enum TileCollision
@@ -68,7 +68,7 @@ namespace Super_Pete_The_Pirate
 
         public void LoadMap(ContentManager contentManager, int id)
         {
-            _tiledMap = contentManager.Load<TiledMap>("maps/map1");
+            _tiledMap = contentManager.Load<TiledMap>(String.Format("maps/map{0}", id));
             var blockedLayer = (TiledTileLayer)_tiledMap.GetLayer("Block");
             foreach (var tile in blockedLayer.Tiles)
             {
@@ -96,7 +96,17 @@ namespace Super_Pete_The_Pirate
 
         public TiledTileLayer GetPlatformLayer()
         {
-            return _tiledMap.GetLayer<TiledTileLayer>("Batata");
+            return _tiledMap.GetLayer<TiledTileLayer>("Platform");
+        }
+
+        public TiledObjectGroup GetObjectGroup(string name)
+        {
+            return _tiledMap.GetObjectGroup(name);
+        }
+
+        public TiledObject GetPlayerSpawn()
+        {
+            return GetObjectGroup("Player Spawn").Objects[0];
         }
 
         public bool IsTileBlocked(int x, int y)

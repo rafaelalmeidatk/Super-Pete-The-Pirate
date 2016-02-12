@@ -27,7 +27,6 @@ namespace Super_Pete_The_Pirate.Scenes
         // Enemies
 
         private List<Enemy> _enemies;
-        private List<Enemy> _enemiesToErase;
         public List<Enemy> Enemies { get { return _enemies; } }
 
         //--------------------------------------------------
@@ -36,7 +35,6 @@ namespace Super_Pete_The_Pirate.Scenes
         private Dictionary<string, Texture2D> _projectilesTextures;
 
         private List<GameProjectile> _projectiles;
-        private List<GameProjectile> _projectilesToErase;
 
         //--------------------------------------------------
         // Camera stuff
@@ -44,6 +42,8 @@ namespace Super_Pete_The_Pirate.Scenes
         private Camera2D _camera;
         private float _cameraSmooth = 0.1f;
         private int _playerCameraOffsetX = 40;
+
+        private string mapInfo = "";
 
         //----------------------//------------------------//
 
@@ -58,19 +58,12 @@ namespace Super_Pete_The_Pirate.Scenes
 
             var viewportSize = SceneManager.Instance.VirtualSize;
             _camera = new Camera2D(SceneManager.Instance.ViewportAdapter);
-            GameMap.Instance.LoadMap(Content, 1);
 
             // Player init
             _player = new Player(ImageManager.loadCharacter("Player"));
-            _player.Position = new Vector2(32, GameMap.Instance.MapHeight - _player.CharacterSprite.GetFrameHeight() * 4);
 
             // Enemies init
             _enemies = new List<Enemy>();
-            _enemiesToErase = new List<Enemy>();
-
-            CreateEnemy(224, 160);
-            CreateEnemy(288, 64);
-            CreateEnemy(32, 32);
 
             // Projectiles init
             _projectilesTextures = new Dictionary<string, Texture2D>()
@@ -78,13 +71,41 @@ namespace Super_Pete_The_Pirate.Scenes
                 {"common", ImageManager.loadProjectile("common")}
             };
             _projectiles = new List<GameProjectile>();
-            _projectilesToErase = new List<GameProjectile>();
+
+            LoadMap(4);
+            mapInfo = GameMap.Instance._tiledMap.Layers.ToString();
         }
 
-        public void CreateEnemy(int x, int y)
+        private void LoadMap(int mapId)
         {
-            var newEnemy = new Enemy(ImageManager.loadCharacter("Player"));
-            newEnemy.Position = new Vector2(x, y);
+            GameMap.Instance.LoadMap(Content, mapId);
+            SpawnEnemies();
+            SpawnPlayer();
+        }
+
+        private void SpawnPlayer()
+        {
+            var spawnPoint = new Vector2(GameMap.Instance.GetPlayerSpawn().X, GameMap.Instance.GetPlayerSpawn().Y);
+            _player.Position = new Vector2(spawnPoint.X, spawnPoint.Y - _player.CharacterSprite.GetColliderHeight());
+        }
+
+        private void SpawnEnemies()
+        {
+            var enemiesGroup = GameMap.Instance.GetObjectGroup("Enemies");
+            var tileSize = GameMap.Instance.TileSize;
+            foreach (var enemieObj in enemiesGroup.Objects)
+            {
+                CreateEnemy(enemieObj, enemieObj.X, enemieObj.Y);
+            }
+        }
+
+        public void CreateEnemy(TiledObject enemyObj, int x, int y)
+        {
+            var enemyName = enemyObj.Properties.FirstOrDefault(i => i.Key == "type").Value;
+            var texture = ImageManager.loadCharacter(enemyName);
+            var newEnemy = (Enemy)Activator.CreateInstance(Type.GetType("Super_Pete_The_Pirate.Characters." + enemyName), texture);
+            newEnemy.Position = new Vector2(x, y - newEnemy.CharacterSprite.GetColliderHeight());
+            newEnemy.CharacterSprite.Effect = enemyObj.Properties["FlipHorizontally"] == "true" ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
             _enemies.Add(newEnemy);
         }
 
@@ -96,42 +117,57 @@ namespace Super_Pete_The_Pirate.Scenes
         public override void Update(GameTime gameTime)
         {
             _player.Update(gameTime);
+            
+            DebugValues["Player HP"] = String.Format("{0}/10", _player._hp);
 
-            foreach (var projectile in _projectiles)
+            for (var i = 0; i < _projectiles.Count; i++)
             {
-                projectile.Update(gameTime);
-                if (projectile.Subject == ProjectileSubject.FromPlayer)
+                _projectiles[i].Update(gameTime);
+                if (_projectiles[i].Subject == ProjectileSubject.FromEnemy && _projectiles[i].BoundingBox.Intersects(_player.BoundingRectangle))
+                    _player.ReceiveAttack(_projectiles[i].Damage, _projectiles[i].Position);
+
+                if (_projectiles[i].RequestErase)
+                    _projectiles.Remove(_projectiles[i]);
+            }
+
+            for (var i = 0; i < _enemies.Count; i++)
+            {
+                _enemies[i].Update(gameTime);
+
+                if (_enemies[i].EnemyType == EnemyType.SniperPig)
                 {
-                    foreach (var enemy in _enemies)
-                    {
-                        if (!enemy.Dying && !enemy.IsImunity && projectile.BoundingBox.Intersects(enemy.BoundingRectangle))
-                        {
-                            enemy.ReceiveAttack(projectile.Damage, projectile.Position);
-                            projectile.Destroy();
-                        }
-                    }
-                } else if (projectile.BoundingBox.Intersects(_player.BoundingRectangle))
-                {
-                    _player.ReceiveAttack(projectile.Damage, projectile.Position);
-                    projectile.Destroy();
+                    if (_enemies[i].ViewRangeCooldown <= 0f && _enemies[i].ViewRange.Intersects(_player.BoundingRectangle))
+                        _enemies[i].PlayerOnSight(_player.Position);
                 }
 
-                if (projectile.RequestErase)
-                    _projectilesToErase.Add(projectile);
+                if (_enemies[i].BoundingRectangle.Intersects(_player.BoundingRectangle))
+                {
+                    _player.ReceiveAttack(1, _enemies[i].Position);
+                }
+
+                for (var j = 0; j < _projectiles.Count; j++)
+                {
+                    if (_projectiles[j].Subject == ProjectileSubject.FromPlayer)
+                    {
+                        if (!_enemies[i].Dying && !_enemies[i].IsImunity && _projectiles[j].BoundingBox.Intersects(_enemies[i].BoundingRectangle))
+                        {
+                            _enemies[i].ReceiveAttack(_projectiles[j].Damage, _projectiles[j].Position);
+                            _projectiles[j].Destroy();
+                        }
+                    }
+                    else if (_projectiles[j].BoundingBox.Intersects(_player.BoundingRectangle))
+                    {
+                        _player.ReceiveAttack(_projectiles[j].Damage, _projectiles[j].Position);
+                        _projectiles[j].Destroy();
+                    }
+
+                    if (_projectiles[j].RequestErase)
+                        _projectiles.Remove(_projectiles[j]);
+                }
+
+                if (_enemies[i].RequestErase)
+                    _enemies.Remove(_enemies[i]);
             }
-
-            foreach (var projectile in _projectilesToErase)
-                _projectiles.Remove(projectile);
-
-            foreach (var enemy in _enemies)
-            {
-                enemy.Update(gameTime);
-                if (enemy.RequestErase)
-                    _enemiesToErase.Add(enemy);
-            }
-
-            foreach (var enemy in _enemiesToErase)
-                _enemies.Remove(enemy);
 
             UpdateCamera();
             base.Update(gameTime);

@@ -27,7 +27,7 @@ namespace Super_Pete_The_Pirate
         public bool RequestErase { get { return _requestErase; } }
         public float AttackCooldown { get; set; }
 
-        protected int _hp;
+        public int _hp;
         protected bool _dying;
         public bool Dying { get { return _dying; } }
 
@@ -54,6 +54,9 @@ namespace Super_Pete_The_Pirate
         }
         protected Vector2 _velocity;
 
+        protected float _knockbackAcceleration;
+        private float _dyingAcceleration;
+
         //--------------------------------------------------
         // Constants for controling horizontal movement
 
@@ -68,6 +71,7 @@ namespace Super_Pete_The_Pirate
         protected const float MaxJumpTime = 0.35f;
         protected const float JumpLaunchVelocity = -2500.0f;
         protected const float GravityAcceleration = 3000.0f;
+        protected const float DyingGravityAcceleration = 2500.0f;
         protected const float MaxFallSpeed = 550.0f;
         protected const float JumpControlPower = 0.14f;
         protected const float PlayerSpeed = 0.3f;
@@ -108,6 +112,10 @@ namespace Super_Pete_The_Pirate
         {
             CharacterSprite = new CharacterSprite(texture);
 
+            // Physics variables init
+            _knockbackAcceleration = 0f;
+            _dyingAcceleration = 0f;
+
             // Battle system init
             _requestAttack = false;
             _isAttacking = false;
@@ -115,6 +123,7 @@ namespace Super_Pete_The_Pirate
             _attackCooldownTick = 0f;
             AttackCooldown = 0f;
             _shot = false;
+            _dying = false;
 
             _hp = 1;
         }
@@ -134,13 +143,15 @@ namespace Super_Pete_The_Pirate
 
             CharacterSprite.RequestImmunityAnimation();
 
-            _movement += Math.Sign(Position.X - subjectPosition.X) * 3f;
+            _knockbackAcceleration = Math.Sign(Position.X - subjectPosition.X) * 5000f;
             _velocity.Y = -300f;
 
             _hp = _hp - damage < 0 ? 0 : _hp - damage;
             if (_hp == 0)
             {
                 CharacterSprite.RequestDyingAnimation();
+                _velocity.Y -= 100f;
+                _dyingAcceleration = Math.Sign(Position.X - subjectPosition.X) * 0.7f;
                 _dying = true;
             }
         }
@@ -148,6 +159,7 @@ namespace Super_Pete_The_Pirate
         public virtual void Update(GameTime gameTime)
         {
             ApplyPhysics(gameTime);
+
             _movement = 0.0f;
             _isJumping = false;
 
@@ -163,7 +175,6 @@ namespace Super_Pete_The_Pirate
             {
                 _attackCooldownTick -= (float)gameTime.ElapsedGameTime.TotalMilliseconds;
             }
-                
         }
 
         public virtual void UpdateAttack(GameTime gameTime)
@@ -175,7 +186,8 @@ namespace Super_Pete_The_Pirate
                     _isAttacking = false;
                     _attackType = -1;
                     _shot = false;
-                } else
+                }
+                else
                 {
                     var sprite = CharacterSprite;
                     if (sprite.GetCurrentFramesList().FramesToAttack.Contains(sprite.CurrentFrame))
@@ -201,7 +213,7 @@ namespace Super_Pete_The_Pirate
                 CharacterSprite.SetIfFrameListExists("dying");
             else if (_isAttacking)
                 CharacterSprite.SetFrameList(_attackFrameList[_attackType]);
-            else if (Velocity.Y != 0)
+            else if (!_isOnGround)
                 CharacterSprite.SetFrameList("jumping");
             else
                 CharacterSprite.SetFrameList("stand");
@@ -227,13 +239,19 @@ namespace Super_Pete_The_Pirate
 
             // Base velocity is a combination of horizontal movement control and
             // acceleration downward due to gravity.
-            _velocity.X += _movement * MoveAcceleration * elapsed;
-            _velocity.Y = MathHelper.Clamp(_velocity.Y + GravityAcceleration * elapsed, -MaxFallSpeed, MaxFallSpeed);
+            if (_dying) _velocity.X = _dyingAcceleration * MoveAcceleration * elapsed;
+            else _velocity.X += (_movement * MoveAcceleration * elapsed);
 
+            UpdateKnockback(elapsed);
+
+            var gravity = _dying ? DyingGravityAcceleration : GravityAcceleration;
+            _velocity.Y = MathHelper.Clamp(_velocity.Y + gravity * elapsed, -MaxFallSpeed, MaxFallSpeed);
             _velocity.Y = DoJump(_velocity.Y, gameTime);
 
             // Apply pseudo-drag horizontally.
-            if (IsOnGround)
+            if (_dying)
+                _velocity.X *= 0.8f;
+            else if (IsOnGround)
                 _velocity.X *= GroundDragFactor;
             else
                 _velocity.X *= AirDragFactor;
@@ -246,7 +264,8 @@ namespace Super_Pete_The_Pirate
             Position = new Vector2((float)Math.Round(Position.X), (float)Math.Round(Position.Y));
 
             // If the player is now colliding with the level, separate them.
-            HandleCollisions();
+            if (!_dying)
+                HandleCollisions();
 
             // If the collision stopped us from moving, reset the velocity to zero.
             if (Position.X == previousPosition.X)
@@ -256,6 +275,16 @@ namespace Super_Pete_The_Pirate
             {
                 _velocity.Y = 0;
                 _jumpTime = 0.0f;
+            }
+        }
+
+        private void UpdateKnockback(float elapsed)
+        {
+            if (_knockbackAcceleration != 0.0f)
+            {
+                _velocity.X += (_knockbackAcceleration * elapsed);
+                _knockbackAcceleration *= 0.9f;
+                if (Math.Abs(_knockbackAcceleration) < 100f) _knockbackAcceleration = 0;
             }
         }
 
@@ -381,7 +410,7 @@ namespace Super_Pete_The_Pirate
             CharacterSprite.Draw(spriteBatch, new Vector2(BoundingRectangle.X, BoundingRectangle.Y));
         }
 
-        public void DrawColliderBox(SpriteBatch spriteBatch)
+        public virtual void DrawColliderBox(SpriteBatch spriteBatch)
         {
             CharacterSprite.DrawColliders(spriteBatch);
         }

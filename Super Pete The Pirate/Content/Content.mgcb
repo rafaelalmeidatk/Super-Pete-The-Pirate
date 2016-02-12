@@ -161,3 +161,19 @@
 /processorParam:TextureFormat=Color
 /build:imgs/projectiles/common.png
 
+#begin imgs/characters/sniperPig.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:TextureFormat=Color
+/build:imgs/characters/sniperPig.png
+
+#begin maps/map4.tmx
+/importer:TiledMapImporter
+/processor:TiledMapProcessor
+/build:maps/map4.tmx
+

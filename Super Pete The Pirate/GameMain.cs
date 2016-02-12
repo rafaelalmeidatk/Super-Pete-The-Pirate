@@ -19,6 +19,8 @@ namespace Super_Pete_The_Pirate
         public static BoxingViewportAdapter ViewportAdapter;
         public static GameWindow GameWindow;
 
+        //----------------------//------------------------//
+
         public GameMain()
         {
             var windowSize = SceneManager.Instance.WindowSize;
@@ -92,6 +94,7 @@ namespace Super_Pete_The_Pirate
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
+            SceneManager.Instance.GetCurrentScene().UpdateFpsCounter(gameTime);
             GraphicsDevice.Clear(Color.Black);
             SceneManager.Instance.Draw(spriteBatch);
             base.Draw(gameTime);
