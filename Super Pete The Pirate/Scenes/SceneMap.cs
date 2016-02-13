@@ -43,6 +43,11 @@ namespace Super_Pete_The_Pirate.Scenes
         private float _cameraSmooth = 0.1f;
         private int _playerCameraOffsetX = 40;
 
+        //--------------------------------------------------
+        // Random stuff
+
+        private Random _rand;
+
         private string mapInfo = "";
 
         //----------------------//------------------------//
@@ -72,7 +77,8 @@ namespace Super_Pete_The_Pirate.Scenes
             };
             _projectiles = new List<GameProjectile>();
 
-            LoadMap(4);
+            _rand = new Random();
+            LoadMap(2);
             mapInfo = GameMap.Instance._tiledMap.Layers.ToString();
         }
 
@@ -92,6 +98,7 @@ namespace Super_Pete_The_Pirate.Scenes
         private void SpawnEnemies()
         {
             var enemiesGroup = GameMap.Instance.GetObjectGroup("Enemies");
+            if (enemiesGroup == null) return;
             var tileSize = GameMap.Instance.TileSize;
             foreach (var enemieObj in enemiesGroup.Objects)
             {
@@ -102,10 +109,14 @@ namespace Super_Pete_The_Pirate.Scenes
         public void CreateEnemy(TiledObject enemyObj, int x, int y)
         {
             var enemyName = enemyObj.Properties.FirstOrDefault(i => i.Key == "type").Value;
+            if (enemyName == null) return;
             var texture = ImageManager.loadCharacter(enemyName);
             var newEnemy = (Enemy)Activator.CreateInstance(Type.GetType("Super_Pete_The_Pirate.Characters." + enemyName), texture);
             newEnemy.Position = new Vector2(x, y - newEnemy.CharacterSprite.GetColliderHeight());
-            newEnemy.CharacterSprite.Effect = enemyObj.Properties["FlipHorizontally"] == "true" ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
+            if (enemyObj.Properties.ContainsKey("FlipHorizontally"))
+                newEnemy.CharacterSprite.Effect = enemyObj.Properties["FlipHorizontally"] == "true" ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
+            if (enemyName == "TurtleWheel")
+                ((TurtleWheel)newEnemy).SetTarget(_player);
             _enemies.Add(newEnemy);
         }
 
@@ -117,14 +128,14 @@ namespace Super_Pete_The_Pirate.Scenes
         public override void Update(GameTime gameTime)
         {
             _player.Update(gameTime);
-            
-            DebugValues["Player HP"] = String.Format("{0}/10", _player._hp);
+
+            if (InputManager.Instace.KeyPressed(Keys.F)) _projectiles[0].Acceleration = new Vector2(_projectiles[0].Acceleration.X * -1, 0);
 
             for (var i = 0; i < _projectiles.Count; i++)
             {
                 _projectiles[i].Update(gameTime);
                 if (_projectiles[i].Subject == ProjectileSubject.FromEnemy && _projectiles[i].BoundingBox.Intersects(_player.BoundingRectangle))
-                    _player.ReceiveAttack(_projectiles[i].Damage, _projectiles[i].Position);
+                    _player.ReceiveAttack(_projectiles[i].Damage, _projectiles[i].LastPosition);
 
                 if (_projectiles[i].RequestErase)
                     _projectiles.Remove(_projectiles[i]);
@@ -134,15 +145,14 @@ namespace Super_Pete_The_Pirate.Scenes
             {
                 _enemies[i].Update(gameTime);
 
-                if (_enemies[i].EnemyType == EnemyType.SniperPig)
+                if (_enemies[i].HasViewRange && _enemies[i].ViewRangeCooldown <= 0f && _enemies[i].ViewRange.Intersects(_player.BoundingRectangle))
                 {
-                    if (_enemies[i].ViewRangeCooldown <= 0f && _enemies[i].ViewRange.Intersects(_player.BoundingRectangle))
                         _enemies[i].PlayerOnSight(_player.Position);
                 }
 
-                if (_enemies[i].BoundingRectangle.Intersects(_player.BoundingRectangle))
+                if (!_enemies[i].Dying && _enemies[i].BoundingRectangle.Intersects(_player.BoundingRectangle))
                 {
-                    _player.ReceiveAttack(1, _enemies[i].Position);
+                    _player.ReceiveAttackWithPoint(1, _enemies[i].BoundingRectangle);
                 }
 
                 for (var j = 0; j < _projectiles.Count; j++)
@@ -151,13 +161,25 @@ namespace Super_Pete_The_Pirate.Scenes
                     {
                         if (!_enemies[i].Dying && !_enemies[i].IsImunity && _projectiles[j].BoundingBox.Intersects(_enemies[i].BoundingRectangle))
                         {
-                            _enemies[i].ReceiveAttack(_projectiles[j].Damage, _projectiles[j].Position);
-                            _projectiles[j].Destroy();
+                            if (_enemies[i].EnemyType == EnemyType.TurtleWheel && _enemies[i].InWheelMode)
+                            {
+                                if (!_projectiles[i].IsTimerRunning())
+                                {
+                                    _projectiles[i].Acceleration = new Vector2(_projectiles[i].Acceleration.X * -1.3f, _rand.Next(-4, 5));
+                                    _projectiles[i].Subject = ProjectileSubject.FromEnemy;
+                                    _projectiles[i].SetTimer(1000f);
+                                }
+                            }
+                            else
+                            {
+                                _enemies[i].ReceiveAttack(_projectiles[j].Damage, _projectiles[j].LastPosition);
+                                _projectiles[j].Destroy();
+                            }
                         }
                     }
                     else if (_projectiles[j].BoundingBox.Intersects(_player.BoundingRectangle))
                     {
-                        _player.ReceiveAttack(_projectiles[j].Damage, _projectiles[j].Position);
+                        _player.ReceiveAttack(_projectiles[j].Damage, _projectiles[j].LastPosition);
                         _projectiles[j].Destroy();
                     }
 

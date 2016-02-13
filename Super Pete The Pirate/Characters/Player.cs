@@ -252,7 +252,7 @@ namespace Super_Pete_The_Pirate
                 {
                     if (attackCollider.BoundingBox.Intersects(enemy.BoundingRectangle))
                     {
-                        enemy.ReceiveAttack(damage, this.Position);
+                        enemy.ReceiveAttackWithPoint(damage, this.BoundingRectangle);
                     }
                 }
             }

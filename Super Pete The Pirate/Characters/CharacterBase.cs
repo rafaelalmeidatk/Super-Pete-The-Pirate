@@ -27,7 +27,7 @@ namespace Super_Pete_The_Pirate
         public bool RequestErase { get { return _requestErase; } }
         public float AttackCooldown { get; set; }
 
-        public int _hp;
+        protected int _hp;
         protected bool _dying;
         public bool Dying { get { return _dying; } }
 
@@ -88,7 +88,7 @@ namespace Super_Pete_The_Pirate
         /// <summary>
         /// Current user movement input.
         /// </summary>
-        protected float _movement;
+        public float _movement;
 
         // Jumping state
         protected bool _isJumping;
@@ -143,7 +143,7 @@ namespace Super_Pete_The_Pirate
 
             CharacterSprite.RequestImmunityAnimation();
 
-            _knockbackAcceleration = Math.Sign(Position.X - subjectPosition.X) * 5000f;
+            _knockbackAcceleration = Math.Sign(BoundingRectangle.Center.X - subjectPosition.X) * 5000f;
             _velocity.Y = -300f;
 
             _hp = _hp - damage < 0 ? 0 : _hp - damage;
@@ -154,6 +154,12 @@ namespace Super_Pete_The_Pirate
                 _dyingAcceleration = Math.Sign(Position.X - subjectPosition.X) * 0.7f;
                 _dying = true;
             }
+        }
+
+        public void ReceiveAttackWithPoint(int damage, Rectangle subjectRect)
+        {
+            var position = new Vector2(subjectRect.Center.X, subjectRect.Center.Y);
+            ReceiveAttack(damage, position);
         }
 
         public virtual void Update(GameTime gameTime)

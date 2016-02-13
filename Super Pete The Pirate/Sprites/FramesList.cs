@@ -11,6 +11,7 @@ namespace Super_Pete_The_Pirate.Sprites
         public int Delay { get; set; }
         public List<FrameInfo> Frames { get; set; }
         public bool Loop { get; set; }
+        public bool Reset { get; set; }
         public SpriteCollider Collider { get; set; }
         public List<int> FramesToAttack { get; set; }
         public FramesList(int delay)
@@ -20,6 +21,7 @@ namespace Super_Pete_The_Pirate.Sprites
 
             Delay = delay;
             Loop = Delay > 0;
+            Reset = Loop;
         }
     }
 }

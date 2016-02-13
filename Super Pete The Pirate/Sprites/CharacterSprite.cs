@@ -108,6 +108,12 @@ namespace Super_Pete_The_Pirate
             _framesList[name] = new FramesList(delay);
         }
 
+        public void CreateFrameList(string name, int delay, bool reset)
+        {
+            _framesList[name] = new FramesList(delay);
+            _framesList[name].Reset = reset;
+        }
+
         public void AddFrames(string name, List<Rectangle> frames, int[] offsetX, int[] offsetY)
         {
             for (var i = 0; i < frames.Count; i++)
@@ -151,6 +157,10 @@ namespace Super_Pete_The_Pirate
                 _delayTick = 0;
                 _currentFrameList = name;
                 _looped = false;
+                if (!_framesList[_currentFrameList].Reset)
+                {
+                    _framesList[_currentFrameList].Loop = true;
+                }
             }
         }
 
@@ -267,7 +277,12 @@ namespace Super_Pete_The_Pirate
                     _currentFrame++;
                     if (_currentFrame == GetCurrentFramesList().Frames.Count)
                     {
-                        _currentFrame = 0;
+                        if (!_framesList[_currentFrameList].Reset)
+                        {
+                            _currentFrame--;
+                            _framesList[_currentFrameList].Loop = false;
+                        }
+                        else _currentFrame = 0;
                         if (!_looped) _looped = true;
                     }
                 }

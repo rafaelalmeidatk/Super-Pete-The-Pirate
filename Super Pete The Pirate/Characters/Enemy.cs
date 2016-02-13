@@ -13,7 +13,8 @@ namespace Super_Pete_The_Pirate.Characters
     public enum EnemyType
     {
         None,
-        SniperPig
+        SniperPig,
+        TurtleWheel
     }
 
     class Enemy : CharacterBase
@@ -26,11 +27,19 @@ namespace Super_Pete_The_Pirate.Characters
 
         protected Rectangle _viewRange;
         public Rectangle ViewRange { get { return _viewRange; } }
+        protected Vector2 _viewRangeOffset;
         protected Vector2 _viewRangeSize;
         private Vector2 _lastPosition;
 
-        public float _viewRangeCooldown;
+        private bool _hasViewRange;
+        public bool HasViewRange { get { return _hasViewRange; } }
+        protected float _viewRangeCooldown;
         public float ViewRangeCooldown { get { return _viewRangeCooldown; } }
+
+        // TurtleWheel use
+        
+        protected bool _wheelMode;
+        public bool InWheelMode { get { return _wheelMode; } }
 
         protected int _damage;
 
@@ -46,7 +55,9 @@ namespace Super_Pete_The_Pirate.Characters
             _viewRangeTexture.SetData<Color>(new Color[] { Color.Green });
             _lastPosition = Position;
             _enemyType = EnemyType.None;
+            _hasViewRange = false;
             _viewRangeCooldown = 0f;
+            _viewRangeOffset = Vector2.Zero;
             _damage = 0;
         }
 
@@ -55,6 +66,7 @@ namespace Super_Pete_The_Pirate.Characters
             var width = ((int)_viewRangeSize.X + CharacterSprite.Collider.BoundingBox.Width / 2) * 2;
             var height = (int)_viewRangeSize.Y;
             _viewRange = new Rectangle(0, 0, width, height);
+            _hasViewRange = true;
         }
 
         public virtual void PlayerOnSight(Vector2 playerPosition) { }
@@ -77,8 +89,8 @@ namespace Super_Pete_The_Pirate.Characters
 
         public void UpdateViewRange()
         {
-            _viewRange.X = CharacterSprite.Collider.BoundingBox.Center.X - _viewRange.Width / 2;
-            _viewRange.Y = CharacterSprite.Collider.BoundingBox.Y;
+            _viewRange.X = (CharacterSprite.Collider.BoundingBox.Center.X - _viewRange.Width / 2) + (int)_viewRangeOffset.X;
+            _viewRange.Y = (CharacterSprite.Collider.BoundingBox.Y) + (int)_viewRangeOffset.Y;
             _lastPosition.X = CharacterSprite.Collider.BoundingBox.X;
             _lastPosition.Y = CharacterSprite.Collider.BoundingBox.Y;
         }
