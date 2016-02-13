@@ -188,17 +188,6 @@
 /processorParam:TextureFormat=Color
 /build:imgs/characters/TurtleWheel.png
 
-#begin imgs/particles/Laser.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:TextureFormat=Color
-/build:imgs/particles/Laser.png
-
 #begin imgs/particles/Smoke.png
 /importer:TextureImporter
 /processor:TextureProcessor

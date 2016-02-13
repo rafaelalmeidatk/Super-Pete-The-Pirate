@@ -38,7 +38,7 @@ namespace Super_Pete_The_Pirate
         //--------------------------------------------------
         // Random
 
-        private Random _rand;
+        protected Random _rand;
 
         //--------------------------------------------------
         // Physics variables
@@ -249,7 +249,7 @@ namespace Super_Pete_The_Pirate
 
         #region Particles
 
-        private void CreateGroundImpactParticles()
+        public virtual void CreateGroundImpactParticles()
         {
             var left = 0;
             for (var i = 0; i < 6; i++)
@@ -265,6 +265,34 @@ namespace Super_Pete_The_Pirate
                 position.X += _rand.Next(5, 8) * side;
                 var velocity = new Vector2(_rand.NextFloat(2f, 5f) * side, _rand.NextFloat(-1f, -3f)) * 3f;
                 var size = new Vector2(_rand.NextFloat(5f, 7f), _rand.NextFloat(4f, 6f));
+
+                var state = new ParticleState()
+                {
+                    Velocity = velocity,
+                    AlphaBase = _rand.NextFloat(0.2f, 0.6f),
+                    Type = ParticleType.Smoke
+                };
+
+                SceneManager.Instance.ParticleManager.CreateParticle(ImageManager.loadParticle("Smoke"), position, Color.White, 1000f, size, state);
+            }
+        }
+
+        public virtual void CreateJumpParticles()
+        {
+            var left = 0;
+            for (var i = 0; i < 8; i++)
+            {
+                int side = 1;
+                if (left < 3)
+                {
+                    side = -1;
+                    left++;
+                }
+
+                var position = new Vector2(80, 210);
+                position.X += _rand.Next(5, 11) * side;
+                var velocity = new Vector2(_rand.NextFloat(6f, 9f) * side, _rand.NextFloat(-4f, -9f)) * 3f;
+                var size = new Vector2(_rand.NextFloat(4f, 7f), _rand.NextFloat(3f, 6f));
 
                 var state = new ParticleState()
                 {

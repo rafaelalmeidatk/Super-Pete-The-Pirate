@@ -209,5 +209,31 @@ namespace Super_Pete_The_Pirate.Characters
             else
                 base.UpdateFrameList();
         }
+
+        public override void CreateGroundImpactParticles()
+        {
+            if (!_wheelMode)
+            {
+                base.CreateGroundImpactParticles();
+                return;
+            }
+
+            for (var i = 0; i < 6; i++)
+            {
+                var position = new Vector2(BoundingRectangle.Center.X, BoundingRectangle.Bottom);
+                position.X += _rand.Next(-5, 5);
+                var velocity = new Vector2(_rand.NextFloat(-5f, 5f), _rand.NextFloat(-1f, -3f)) * 3f;
+                var size = new Vector2(_rand.NextFloat(5f, 7f), _rand.NextFloat(4f, 6f));
+
+                var state = new ParticleState()
+                {
+                    Velocity = velocity,
+                    AlphaBase = _rand.NextFloat(0.2f, 0.6f),
+                    Type = ParticleType.Smoke
+                };
+
+                SceneManager.Instance.ParticleManager.CreateParticle(ImageManager.loadParticle("Smoke"), position, Color.White, 1000f, size, state);
+            }
+        }
     }
 }

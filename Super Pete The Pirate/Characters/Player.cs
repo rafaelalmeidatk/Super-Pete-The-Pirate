@@ -150,6 +150,11 @@ namespace Super_Pete_The_Pirate
             _hp = 100;
         }
 
+        public override bool IsPlayer()
+        {
+            return true;
+        }
+
         public override void Update(GameTime gameTime)
         {
             CheckKeys(gameTime);
@@ -197,6 +202,9 @@ namespace Super_Pete_The_Pirate
                 _knockbackAcceleration = 5000f;
 
             _isJumping = InputManager.Instace.KeyDown(Keys.Up);
+
+            if (InputManager.Instace.KeyPressed(Keys.Up) && _isOnGround)
+                CreateJumpParticles();
 
             // Attack
             if (InputManager.Instace.KeyPressed(Keys.S) && !_isAttacking)
