@@ -43,6 +43,11 @@ namespace Super_Pete_The_Pirate
         private bool _beginTransitionFade = false;
 
         //--------------------------------------------------
+        // Particle Manager
+
+        public ParticleManager<ParticleState> ParticleManager { get; private set; }
+
+        //--------------------------------------------------
         // Debug mode
 
         public bool DebugMode = true;
@@ -86,6 +91,7 @@ namespace Super_Pete_The_Pirate
             _transitionImage.Scale = new Vector2(WindowSize.X, WindowSize.Y);
             _transitionImage.Alpha = 0.0f;
             _transitionImage.IsVisible = false;
+            ParticleManager = new ParticleManager<ParticleState>(1024 * 20, ParticleState.UpdateParticle);
             _currentScene.LoadContent();
         }
 
@@ -98,11 +104,11 @@ namespace Super_Pete_The_Pirate
         {
             if (_isTransitioning)
                 UpdateTransition(gameTime);
-            else
-            {
-                if (InputManager.Instace.KeyPressed(Keys.F5))
+            else if (InputManager.Instace.KeyPressed(Keys.F5))
                     DebugMode = !DebugMode;
-            }
+
+            ParticleManager.Update(gameTime);
+
             _currentScene.Update(gameTime);
         }
 

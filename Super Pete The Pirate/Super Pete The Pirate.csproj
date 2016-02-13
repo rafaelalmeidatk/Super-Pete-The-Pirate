@@ -43,10 +43,14 @@
     <Compile Include="Characters\Player.cs" />
     <Compile Include="Characters\SniperPig.cs" />
     <Compile Include="Characters\TurtleWheel.cs" />
+    <Compile Include="Extensions\RandomExtensions.cs" />
     <Compile Include="Extensions\RectangleExtensions.cs" />
+    <Compile Include="Extensions\Vector2Extensions.cs" />
     <Compile Include="GameMain.cs" />
     <Compile Include="Managers\ImageManager.cs" />
     <Compile Include="Managers\InputManager.cs" />
+    <Compile Include="Managers\ParticleManager.cs" />
+    <Compile Include="Managers\ParticleState.cs" />
     <Compile Include="Managers\SceneManager.cs" />
     <Compile Include="Objects\GameMap.cs" />
     <Compile Include="Objects\GameProjectile.cs" />
@@ -83,6 +87,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <!-- Specify the search path explicitly so the ResolveAssemblyReferences task picks the right ones -->
   <Target Name="BeforeResolveReferences">
     <CreateProperty Value="$(MSBuildProgramFiles32)\MonoGame\v3.0\Assemblies\Windows;$(AssemblySearchPaths)">

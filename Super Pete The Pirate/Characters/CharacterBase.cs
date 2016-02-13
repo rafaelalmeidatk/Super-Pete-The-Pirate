@@ -36,6 +36,11 @@ namespace Super_Pete_The_Pirate
         protected bool _shot;
 
         //--------------------------------------------------
+        // Random
+
+        private Random _rand;
+
+        //--------------------------------------------------
         // Physics variables
 
         protected float previousBottom;
@@ -125,6 +130,8 @@ namespace Super_Pete_The_Pirate
             _shot = false;
             _dying = false;
 
+            _rand = new Random();
+
             _hp = 1;
         }
 
@@ -164,6 +171,8 @@ namespace Super_Pete_The_Pirate
 
         public virtual void Update(GameTime gameTime)
         {
+            var lastOnGround = _isOnGround;
+
             ApplyPhysics(gameTime);
 
             _movement = 0.0f;
@@ -173,6 +182,12 @@ namespace Super_Pete_The_Pirate
             UpdateAttack(gameTime);
             UpdateSprite(gameTime);
             if (CharacterSprite.DyingAnimationEnded) _requestErase = true;
+
+            if (!lastOnGround && _isOnGround)
+            {
+                CreateGroundImpactParticles();
+            }
+                
         }
 
         private void UpdateAttackCooldown(GameTime gameTime)
@@ -231,6 +246,38 @@ namespace Super_Pete_The_Pirate
             CharacterSprite.SetPosition(Position);
             CharacterSprite.Update(gameTime);
         }
+
+        #region Particles
+
+        private void CreateGroundImpactParticles()
+        {
+            var left = 0;
+            for (var i = 0; i < 6; i++)
+            {
+                int side = 1;
+                if (left < 3)
+                {
+                    side = -1;
+                    left++;
+                }
+
+                var position = new Vector2(BoundingRectangle.Center.X, BoundingRectangle.Bottom);
+                position.X += _rand.Next(5, 8) * side;
+                var velocity = new Vector2(_rand.NextFloat(2f, 5f) * side, _rand.NextFloat(-1f, -3f)) * 3f;
+                var size = new Vector2(_rand.NextFloat(5f, 7f), _rand.NextFloat(4f, 6f));
+
+                var state = new ParticleState()
+                {
+                    Velocity = velocity,
+                    AlphaBase = _rand.NextFloat(0.2f, 0.6f),
+                    Type = ParticleType.Smoke
+                };
+
+                SceneManager.Instance.ParticleManager.CreateParticle(ImageManager.loadParticle("Smoke"), position, Color.White, 1000f, size, state);
+            }
+        }
+
+        #endregion
 
         #region Collision
 
