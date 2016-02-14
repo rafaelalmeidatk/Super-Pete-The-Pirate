@@ -8,11 +8,13 @@ namespace Super_Pete_The_Pirate
 {
     public enum ParticleType
     {
-        Smoke
+        Smoke,
+        GroundPieces
     }
 
     public struct ParticleState
     {
+        public float Gravity;
         public Vector2 Velocity;
         public float AlphaBase;
         public ParticleType Type;
@@ -24,16 +26,11 @@ namespace Super_Pete_The_Pirate
             var vel = particle.State.Velocity;
 
             particle.Sprite.Position += vel * elapsed;
-
-            if (particle.State.Type == ParticleType.Smoke)
-            {
-                float alpha = Math.Max(0, particle.PercentLife - particle.State.AlphaBase);
-                alpha *= alpha;
-                particle.Sprite.Alpha = alpha;
-            }
-
-            if (particle.State.Type != ParticleType.Smoke)
-                particle.Sprite.Rotation = vel.ToAngle();
+            particle.Sprite.Position += particle.State.Gravity * Vector2.UnitY;
+            
+            float alpha = Math.Max(0, particle.PercentLife * 2 - particle.State.AlphaBase);
+            alpha *= alpha;
+            particle.Sprite.Alpha = alpha;
 
             if (Math.Abs(vel.X) + Math.Abs(vel.Y) < 0.00000000001f)
                 vel = Vector2.Zero;

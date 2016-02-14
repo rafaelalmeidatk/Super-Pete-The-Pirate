@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="30" height="20" tilewidth="32" tileheight="32" nextobjectid="22">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="30" height="20" tilewidth="32" tileheight="32" nextobjectid="32">
  <tileset firstgid="1" name="tile" tilewidth="32" tileheight="32" tilecount="121" columns="11">
   <image source="../imgs/tilesets/tile.png" width="352" height="352"/>
  </tileset>
@@ -102,7 +102,62 @@
 4,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <objectgroup name="Enemies"/>
+ <objectgroup name="Enemies">
+  <object id="22" gid="57" x="192" y="512" width="32" height="32">
+   <properties>
+    <property name="FlipHorizontally" value="true"/>
+    <property name="type" value="SniperPig"/>
+   </properties>
+  </object>
+  <object id="24" gid="57" x="192" y="416" width="32" height="32">
+   <properties>
+    <property name="FlipHorizontally" value="true"/>
+    <property name="type" value="SniperPig"/>
+   </properties>
+  </object>
+  <object id="25" gid="57" x="320" y="320" width="32" height="32">
+   <properties>
+    <property name="FlipHorizontally" value="true"/>
+    <property name="type" value="SniperPig"/>
+   </properties>
+  </object>
+  <object id="26" gid="57" x="608" y="288" width="32" height="32">
+   <properties>
+    <property name="FlipHorizontally" value="true"/>
+    <property name="type" value="SniperPig"/>
+   </properties>
+  </object>
+  <object id="27" gid="57" x="896" y="224" width="32" height="32">
+   <properties>
+    <property name="FlipHorizontally" value="true"/>
+    <property name="type" value="SniperPig"/>
+   </properties>
+  </object>
+  <object id="28" gid="57" x="608" y="480" width="32" height="32">
+   <properties>
+    <property name="FlipHorizontally" value="true"/>
+    <property name="type" value="SniperPig"/>
+   </properties>
+  </object>
+  <object id="29" gid="57" x="640" y="608" width="32" height="32">
+   <properties>
+    <property name="FlipHorizontally" value="true"/>
+    <property name="type" value="SniperPig"/>
+   </properties>
+  </object>
+  <object id="30" gid="57" x="928" y="512" width="32" height="32">
+   <properties>
+    <property name="FlipHorizontally" value="true"/>
+    <property name="type" value="SniperPig"/>
+   </properties>
+  </object>
+  <object id="31" gid="58" x="544" y="608" width="32" height="32">
+   <properties>
+    <property name="FlipHorizontally" value="true"/>
+    <property name="type" value="TurtleWheel"/>
+   </properties>
+  </object>
+ </objectgroup>
  <objectgroup name="Player Spawn">
   <object id="21" gid="56" x="32" y="608" width="32" height="32"/>
  </objectgroup>

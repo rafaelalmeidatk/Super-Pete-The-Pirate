@@ -150,11 +150,6 @@ namespace Super_Pete_The_Pirate
             _hp = 100;
         }
 
-        public override bool IsPlayer()
-        {
-            return true;
-        }
-
         public override void Update(GameTime gameTime)
         {
             CheckKeys(gameTime);

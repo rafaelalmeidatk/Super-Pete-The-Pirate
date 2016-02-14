@@ -16,6 +16,15 @@ namespace Super_Pete_The_Pirate
             public float Duration;
             public float PercentLife = 1f;
             public T State;
+            public SpriteEffects SpriteEffects;
+
+            public Rectangle BoundingRectangle
+            {
+                get
+                {
+                    return new Rectangle((int)Sprite.Position.X, (int)Sprite.Position.Y, Sprite.TextureRegion.Width, Sprite.TextureRegion.Height);
+                }
+            }
         }
 
         private class CircularParticleArray
@@ -55,7 +64,7 @@ namespace Super_Pete_The_Pirate
                 particleList[i] = new Particle();
         }
 
-        public void CreateParticle(Texture2D texture, Vector2 position, Color color, float duration, Vector2 scale, T state, float theta = 0)
+        public void CreateParticle(Texture2D texture, Vector2 position, Color color, float duration, Vector2 scale, T state, SpriteEffects effects = SpriteEffects.None)
         {
             Particle particle;
             if (particleList.Count == particleList.Capacity)
@@ -73,7 +82,7 @@ namespace Super_Pete_The_Pirate
             particle.Sprite.Position = position;
             particle.Sprite.Color = color;
             particle.Sprite.Scale = scale;
-            particle.Sprite.Rotation = theta;
+            particle.Sprite.Effect = effects;
 
             particle.Duration = duration;
             particle.PercentLife = 1f;

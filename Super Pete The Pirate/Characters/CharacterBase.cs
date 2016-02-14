@@ -289,7 +289,7 @@ namespace Super_Pete_The_Pirate
                     left++;
                 }
 
-                var position = new Vector2(80, 210);
+                var position = new Vector2(BoundingRectangle.Center.X, BoundingRectangle.Bottom);
                 position.X += _rand.Next(5, 11) * side;
                 var velocity = new Vector2(_rand.NextFloat(6f, 9f) * side, _rand.NextFloat(-4f, -9f)) * 3f;
                 var size = new Vector2(_rand.NextFloat(4f, 7f), _rand.NextFloat(3f, 6f));

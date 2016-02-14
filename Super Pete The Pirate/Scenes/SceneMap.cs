@@ -163,11 +163,11 @@ namespace Super_Pete_The_Pirate.Scenes
                         {
                             if (_enemies[i].EnemyType == EnemyType.TurtleWheel && _enemies[i].InWheelMode)
                             {
-                                if (!_projectiles[i].IsTimerRunning())
+                                if (!_projectiles[j].IsTimerRunning())
                                 {
-                                    _projectiles[i].Acceleration = new Vector2(-Math.Abs(_projectiles[i].Acceleration.X) * 1.7f, _rand.Next(-4, 5));
-                                    _projectiles[i].Subject = ProjectileSubject.FromEnemy;
-                                    _projectiles[i].SetTimer(5000f);
+                                    _projectiles[j].Acceleration = new Vector2(-Math.Abs(_projectiles[j].Acceleration.X) * 1.7f, _rand.Next(-4, 5));
+                                    _projectiles[j].Subject = ProjectileSubject.FromEnemy;
+                                    _projectiles[j].SetTimer(5000f);
                                 }
                             }
                             else
@@ -203,6 +203,25 @@ namespace Super_Pete_The_Pirate.Scenes
 
         private void CreateParticle()
         {
+            var texture = ImageManager.loadParticle("BulletPiece");
+            for (var i = 0; i < 4; i++)
+            {
+                var position = new Vector2(100, 100);
+                position.Y += _rand.NextFloat(-5f, 5f);
+                var velocity = new Vector2(_rand.NextFloat(50f, 100f), _rand.NextFloat(-300f, -50f));
+                var scale = Vector2.One;
+                var hor = _rand.Next(0, 2) == 0 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
+                var ver = _rand.Next(0, 2) == 0 ? SpriteEffects.FlipVertically : SpriteEffects.None;
+
+                var state = new ParticleState()
+                {
+                    Velocity = velocity,
+                    Type = ParticleType.GroundPieces,
+                    Gravity = 3f
+                };
+
+                SceneManager.Instance.ParticleManager.CreateParticle(texture, position, Color.White, 200f, scale, state, hor|ver);
+            }
         }
 
         private void UpdateCamera()
