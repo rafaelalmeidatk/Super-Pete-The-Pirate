@@ -75,7 +75,7 @@ namespace Super_Pete_The_Pirate
 
         protected const float MaxJumpTime = 0.35f;
         protected const float JumpLaunchVelocity = -2500.0f;
-        protected const float GravityAcceleration = 3000.0f;
+        protected const float GravityAcceleration = 3400.0f;
         protected const float DyingGravityAcceleration = 2500.0f;
         protected const float MaxFallSpeed = 550.0f;
         protected const float JumpControlPower = 0.14f;
@@ -144,7 +144,7 @@ namespace Super_Pete_The_Pirate
             }
         }
 
-        public void ReceiveAttack(int damage, Vector2 subjectPosition)
+        public virtual void ReceiveAttack(int damage, Vector2 subjectPosition)
         {
             if (_dying || IsImunity) return;
 
@@ -167,6 +167,11 @@ namespace Super_Pete_The_Pirate
         {
             var position = new Vector2(subjectRect.Center.X, subjectRect.Center.Y);
             ReceiveAttack(damage, position);
+        }
+
+        public virtual void ReceiveAttackWithCollider(int damage, Rectangle subjectRect, SpriteCollider colider)
+        {
+            ReceiveAttackWithPoint(damage, subjectRect);
         }
 
         public virtual void Update(GameTime gameTime)

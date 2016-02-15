@@ -4,6 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Super_Pete_The_Pirate.Sprites;
+using Super_Pete_The_Pirate.Scenes;
 
 namespace Super_Pete_The_Pirate.Characters
 {
@@ -13,7 +15,7 @@ namespace Super_Pete_The_Pirate.Characters
         // Physics constants
 
         private new const float MaxMoveSpeed = 1850.0f;
-        private const float InitialWheelTime = 3000f;
+        private const float InitialWheelTime = 4000f;
         private const float InitialConfusionTime = 3000f;
 
         //--------------------------------------------------
@@ -28,7 +30,9 @@ namespace Super_Pete_The_Pirate.Characters
         private float _acceleration;
         private int _hitGroundFromImpact;
 
-        private float _counfusionTick;
+        private float _emitSparkTime;
+
+        private float _confusionTick;
 
         //----------------------//------------------------//
 
@@ -80,6 +84,17 @@ namespace Super_Pete_The_Pirate.Characters
                 new Rectangle(96, 64, 32, 32)
             }, new int[] { 0, 0, 0, 0 }, new int[] { 0, 0, 0, 0 });
 
+            // Confusion
+            CharacterSprite.CreateFrameList("confusion", 150);
+            CharacterSprite.AddCollider("confusion", new Rectangle(2, 0, 28, 32));
+            CharacterSprite.AddFrames("confusion", new List<Rectangle>()
+            {
+                new Rectangle(0, 160, 32, 64),
+                new Rectangle(32, 160, 32, 64),
+                new Rectangle(64, 160, 32, 64),
+                new Rectangle(96, 160, 32, 64)
+            }, new int[] { 0, 0, 0, 0 }, new int[] { -32, -32, -32, -32 });
+
             // Attacks setup
             _attackFrameList = new string[]
             {
@@ -99,7 +114,7 @@ namespace Super_Pete_The_Pirate.Characters
             _wheelTick = 0f;
             _wheelMode = false;
             _hitGroundFromImpact = 0;
-            _counfusionTick = 0f;
+            _confusionTick = 0f;
 
             CreateViewRange();
         }
@@ -116,7 +131,24 @@ namespace Super_Pete_The_Pirate.Characters
             else
                 CharacterSprite.Effect = SpriteEffects.None;
 
-            if (!_wheelMode && !_enterWheelMode && _counfusionTick < 1f) InitWheelMode(playerPosition.X);
+            if (!_wheelMode && !_enterWheelMode && _confusionTick < 1f) InitWheelMode(playerPosition.X);
+        }
+
+        public override void ReceiveAttack(int damage, Vector2 subjectPosition)
+        {
+            if (!_wheelMode)
+                base.ReceiveAttack(damage, subjectPosition);
+        }
+
+        public override void ReceiveAttackWithCollider(int damage, Rectangle subjectRect, SpriteCollider colider)
+        {
+            if (_wheelMode)
+            {
+                var x = Math.Sign(subjectRect.Center.X - BoundingRectangle.Center.X) < 0 ? BoundingRectangle.Left : BoundingRectangle.Right;
+                var y = colider.BoundingBox.Center.Y;
+                ((SceneMap)SceneManager.Instance.GetCurrentScene()).CreateSparkParticle(new Vector2(x, y));
+            }
+            base.ReceiveAttackWithCollider(damage, subjectRect, colider);
         }
 
         private void InitWheelMode(float targetX)
@@ -137,7 +169,7 @@ namespace Super_Pete_The_Pirate.Characters
             base.Update(gameTime);
             CheckCollided(previousPosition);
             if (_wheelTick > 0f) UpdateWheelTick(gameTime);
-            if (_counfusionTick > 0f) _counfusionTick -= (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+            if (_confusionTick > 0f) _confusionTick -= (float)gameTime.ElapsedGameTime.TotalMilliseconds;
         }
 
         private void UpdateEnterWheel()
@@ -148,6 +180,7 @@ namespace Super_Pete_The_Pirate.Characters
                 _wheelMode = true;
                 _wheelTick = InitialWheelTime;
                 CharacterSprite.SetFrameList("wheel_mode");
+                _emitSparkTime = 800f;
             }
         }
 
@@ -158,7 +191,18 @@ namespace Super_Pete_The_Pirate.Characters
             {
                 _wheelMode = false;
                 _wheelTick = 0f;
-                _counfusionTick = InitialConfusionTime;
+                _confusionTick = InitialConfusionTime;
+                _emitSparkTime = 1000f;
+            }
+            else
+            {
+                _emitSparkTime -= (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+                if (_emitSparkTime < 0f && _isOnGround)
+                {
+                    var point = new Vector2(BoundingRectangle.Center.X, BoundingRectangle.Bottom);
+                    ((SceneMap)SceneManager.Instance.GetCurrentScene()).CreateSparkParticle(point, 30);
+                    _emitSparkTime = _rand.Next(200, 1000);
+                }
             }
         }
 
@@ -202,7 +246,9 @@ namespace Super_Pete_The_Pirate.Characters
 
         public override void UpdateFrameList()
         {
-            if (_enterWheelMode)
+            if (_confusionTick > 0f)
+                CharacterSprite.SetFrameList("confusion");
+            else if (_enterWheelMode)
                 CharacterSprite.SetFrameList("enter_wheel_mode");
             else if (_wheelMode)
                 CharacterSprite.SetFrameList("wheel_mode");

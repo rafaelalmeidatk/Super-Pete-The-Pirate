@@ -70,6 +70,7 @@ namespace Super_Pete_The_Pirate
         {
             _tiledMap = contentManager.Load<TiledMap>(String.Format("maps/map{0}", id));
             var blockedLayer = (TiledTileLayer)_tiledMap.GetLayer("Block");
+            if (blockedLayer == null) return;
             foreach (var tile in blockedLayer.Tiles)
             {
                 if (tile.Id != 0)
@@ -113,6 +114,7 @@ namespace Super_Pete_The_Pirate
         {
             if (y < 0 || y > MapHeight || x < 0 || x > MapWidth) return false;
             var blockLayer = GetBlockLayer();
+            if (blockLayer == null) return false;
             if (blockLayer.GetTile(x, y) == null) return false;
             return blockLayer.GetTile(x, y).Id != 0;
         }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 
@@ -9,7 +10,8 @@ namespace Super_Pete_The_Pirate
     public enum ParticleType
     {
         Smoke,
-        GroundPieces
+        GroundPieces,
+        Spark
     }
 
     public struct ParticleState
@@ -18,6 +20,10 @@ namespace Super_Pete_The_Pirate
         public Vector2 Velocity;
         public float AlphaBase;
         public ParticleType Type;
+        public float VelocityMultiplier;
+        public bool UseCustomVelocity;
+        public int Width;
+        public float H;
 
         public static void UpdateParticle(ParticleManager<ParticleState>.Particle particle, GameTime gameTime)
         {
@@ -27,13 +33,27 @@ namespace Super_Pete_The_Pirate
 
             particle.Sprite.Position += vel * elapsed;
             particle.Sprite.Position += particle.State.Gravity * Vector2.UnitY;
-            
+
             float alpha = Math.Max(0, particle.PercentLife * 2 - particle.State.AlphaBase);
             alpha *= alpha;
-            particle.Sprite.Alpha = alpha;
+
+            if (particle.State.Type == ParticleType.Spark)
+            {
+                particle.State.H -= 1.4f;
+                particle.Sprite.Color = ColorUtil.HSVToColor(MathHelper.ToRadians(particle.State.H), 0.5f, 0.91f);
+                particle.Sprite.Rotation = vel.ToAngle();
+                var x = Math.Min(Math.Min(particle.State.Width, 0.2f * vel.Length() + 0.1f), alpha);
+                particle.Sprite.Scale = new Vector2(x, particle.Sprite.Scale.Y);
+            }
+            else
+            {
+                particle.Sprite.Alpha = alpha;
+            }
 
             if (Math.Abs(vel.X) + Math.Abs(vel.Y) < 0.00000000001f)
                 vel = Vector2.Zero;
+            if (particle.State.UseCustomVelocity)
+                vel *= particle.State.VelocityMultiplier;
             else
                 vel *= 0.97f;
 

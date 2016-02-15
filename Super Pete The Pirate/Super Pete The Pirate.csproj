@@ -43,6 +43,7 @@
     <Compile Include="Characters\Player.cs" />
     <Compile Include="Characters\SniperPig.cs" />
     <Compile Include="Characters\TurtleWheel.cs" />
+    <Compile Include="Extensions\ColorUtil.cs" />
     <Compile Include="Extensions\RandomExtensions.cs" />
     <Compile Include="Extensions\RectangleExtensions.cs" />
     <Compile Include="Extensions\Vector2Extensions.cs" />

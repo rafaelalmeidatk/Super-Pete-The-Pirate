@@ -13,6 +13,7 @@ using MonoGame.Extended.ViewportAdapters;
 using Microsoft.Xna.Framework.Input;
 using Super_Pete_The_Pirate.Characters;
 using Super_Pete_The_Pirate.Objects;
+using System.Diagnostics;
 
 namespace Super_Pete_The_Pirate.Scenes
 {
@@ -78,7 +79,7 @@ namespace Super_Pete_The_Pirate.Scenes
             _projectiles = new List<GameProjectile>();
 
             _rand = new Random();
-            LoadMap(2);
+            LoadMap(3);
             mapInfo = GameMap.Instance._tiledMap.Layers.ToString();
         }
 
@@ -145,7 +146,8 @@ namespace Super_Pete_The_Pirate.Scenes
             {
                 _enemies[i].Update(gameTime);
 
-                if (_enemies[i].HasViewRange && _enemies[i].ViewRangeCooldown <= 0f && _enemies[i].ViewRange.Intersects(_player.BoundingRectangle))
+                if (_enemies[i].HasViewRange && _enemies[i].ViewRangeCooldown <= 0f && _camera.Contains(_enemies[i].BoundingRectangle) != ContainmentType.Disjoint
+                    && _enemies[i].ViewRange.Intersects(_player.BoundingRectangle))
                 {
                         _enemies[i].PlayerOnSight(_player.Position);
                 }
@@ -163,12 +165,9 @@ namespace Super_Pete_The_Pirate.Scenes
                         {
                             if (_enemies[i].EnemyType == EnemyType.TurtleWheel && _enemies[i].InWheelMode)
                             {
-                                if (!_projectiles[j].IsTimerRunning())
-                                {
-                                    _projectiles[j].Acceleration = new Vector2(-Math.Abs(_projectiles[j].Acceleration.X) * 1.7f, _rand.Next(-4, 5));
-                                    _projectiles[j].Subject = ProjectileSubject.FromEnemy;
-                                    _projectiles[j].SetTimer(5000f);
-                                }
+                                _projectiles[j].Acceleration = new Vector2(_projectiles[j].Acceleration.X * -1.7f, _rand.Next(-4, 5));
+                                CreateSparkParticle(_projectiles[j].Position);
+                                _projectiles[j].Subject = ProjectileSubject.FromEnemy;
                             }
                             else
                             {
@@ -191,7 +190,6 @@ namespace Super_Pete_The_Pirate.Scenes
                     _enemies.Remove(_enemies[i]);
             }
 
-
             UpdateCamera();
             base.Update(gameTime);
 
@@ -203,24 +201,48 @@ namespace Super_Pete_The_Pirate.Scenes
 
         private void CreateParticle()
         {
-            var texture = ImageManager.loadParticle("BulletPiece");
+            var texture = ImageManager.loadParticle("Spark");
             for (var i = 0; i < 4; i++)
             {
                 var position = new Vector2(100, 100);
-                position.Y += _rand.NextFloat(-5f, 5f);
-                var velocity = new Vector2(_rand.NextFloat(50f, 100f), _rand.NextFloat(-300f, -50f));
-                var scale = Vector2.One;
-                var hor = _rand.Next(0, 2) == 0 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
-                var ver = _rand.Next(0, 2) == 0 ? SpriteEffects.FlipVertically : SpriteEffects.None;
+                var velocity = new Vector2(_rand.NextFloat(-100f, 100f), _rand.NextFloat(-100f, 100f));
+                var scale = new Vector2(_rand.Next(7, 12), _rand.Next(1, 2));
+                var color = ColorUtil.HSVToColor(MathHelper.ToRadians(51f), 0.91f, 0.91f);
 
                 var state = new ParticleState()
                 {
                     Velocity = velocity,
-                    Type = ParticleType.GroundPieces,
-                    Gravity = 3f
+                    Type = ParticleType.Spark,
+                    UseCustomVelocity = true,
+                    VelocityMultiplier = 1f,
+                    Width = (int)scale.X,
+                    H = 57f
                 };
 
-                SceneManager.Instance.ParticleManager.CreateParticle(texture, position, Color.White, 200f, scale, state, hor|ver);
+                SceneManager.Instance.ParticleManager.CreateParticle(texture, position, color, 200f, scale, state);
+            }
+        }
+
+        public void CreateSparkParticle(Vector2 position, int number = 4)
+        {
+            var texture = ImageManager.loadParticle("Spark");
+            for (var i = 0; i < number; i++)
+            {
+                var velocity = new Vector2(_rand.NextFloat(-100f, 100f), _rand.NextFloat(-100f, 100f));
+                var scale = new Vector2(_rand.Next(7, 12), _rand.Next(1, 2));
+                var color = ColorUtil.HSVToColor(MathHelper.ToRadians(51f), 0.5f, 0.91f);
+
+                var state = new ParticleState()
+                {
+                    Velocity = velocity,
+                    Type = ParticleType.Spark,
+                    UseCustomVelocity = true,
+                    VelocityMultiplier = 1f,
+                    Width = (int)scale.X,
+                    H = 57f
+                };
+
+                SceneManager.Instance.ParticleManager.CreateParticle(texture, position, color, 200f, scale, state);
             }
         }
 

@@ -70,11 +70,6 @@ namespace Super_Pete_The_Pirate.Objects
         public bool RequestErase { get; set; }
 
         //--------------------------------------------------
-        // Timer
-
-        private float _timer;
-
-        //--------------------------------------------------
         // Random
 
         protected Random _rand;
@@ -102,12 +97,10 @@ namespace Super_Pete_The_Pirate.Objects
             _damage = damage;
             _subject = subject;
             _rand = new Random();
-            _timer = 0f;
         }
 
         public void Update(GameTime gameTime)
         {
-            if (_timer > 0f) _timer -= (float)gameTime.ElapsedGameTime.TotalMilliseconds;
             LastPosition = _position;
             _position += _acceleration;
             _sprite.Position = _position;
@@ -115,10 +108,7 @@ namespace Super_Pete_The_Pirate.Objects
             var tileY = (int)(_position.Y / GameMap.Instance.TileSize.Y);
             if (_position.X >= GameMap.Instance.MapWidth || _position.Y >= GameMap.Instance.MapHeight ||
                 Position.X + Sprite.TextureRegion.Width <= 0 || Position.Y + Sprite.TextureRegion.Height <= 0)
-            {
-                Destroy();
-                CreateProjectileCrashparticles();
-            }
+                Destroy(false);
 
             if (GameMap.Instance.IsTileBlocked(tileX, tileY))
             {
@@ -153,7 +143,7 @@ namespace Super_Pete_The_Pirate.Objects
         private void CreateTileCrashParticles()
         {
             var texture = ImageManager.loadParticle("GroundPiece");
-            for (var i = 0; i < 10; i++)
+            for (var i = 0; i < _rand.Next(4, 7); i++)
             {
                 var position = new Vector2(_position.X, _position.Y);
                 position.Y += _rand.NextFloat(0f, 3f);
@@ -171,19 +161,10 @@ namespace Super_Pete_The_Pirate.Objects
             }
         }
 
-        public void SetTimer(float time)
+        public void Destroy(bool showParticles = true)
         {
-            _timer = time;
-        }
-
-        public bool IsTimerRunning()
-        {
-            return _timer > 0f;
-        }
-
-        public void Destroy()
-        {
-            CreateProjectileCrashparticles();
+            if (showParticles)
+                CreateProjectileCrashparticles();
             Sprite.Alpha = 0.0f;
             RequestErase = true;
         }
