@@ -31,6 +31,11 @@ namespace Super_Pete_The_Pirate
             return loadBitmap("imgs/characters/" + filename);
         }
 
+        public static Texture2D loadMisc(string filename)
+        {
+            return loadBitmap("imgs/misc/" + filename);
+        }
+
         public static Texture2D loadProjectile(string filename)
         {
             return loadBitmap("imgs/projectiles/" + filename);

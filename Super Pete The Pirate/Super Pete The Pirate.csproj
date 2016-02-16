@@ -60,6 +60,7 @@
     <Compile Include="Scenes\SceneBase.cs" />
     <Compile Include="Scenes\SceneMap.cs" />
     <Compile Include="Scenes\SceneTitle.cs" />
+    <Compile Include="Sprites\AnimatedSprite.cs" />
     <Compile Include="Sprites\CharacterSprite.cs" />
     <Compile Include="Sprites\FrameInfo.cs" />
     <Compile Include="Sprites\FramesList.cs" />

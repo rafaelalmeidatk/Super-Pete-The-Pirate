@@ -19,6 +19,11 @@ namespace Super_Pete_The_Pirate
         private const int ShotAttack = 2;
         private const int ShotAttackJump = 3;
 
+        //--------------------------------------------------
+        // Coins management
+
+        private int _coins;
+
         //----------------------//------------------------//
 
         public Player(Texture2D texture) : base(texture)
@@ -147,7 +152,17 @@ namespace Super_Pete_The_Pirate
 
             AttackCooldown = 300f;
 
+            // Battle system init
+
             _hp = 100;
+
+            // Coins init
+            _coins = 0;
+        }
+
+        public void AddCoins(int ammount)
+        {
+            _coins += ammount;
         }
 
         public override void Update(GameTime gameTime)

@@ -67,6 +67,9 @@ namespace Super_Pete_The_Pirate
             get { return GetCurrentFramesList().Collider; }
         }
 
+        //--------------------------------------------------
+        // Bouding Box
+
         public Rectangle BoundingBox
         {
             get

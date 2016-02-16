@@ -14,6 +14,7 @@ using Microsoft.Xna.Framework.Input;
 using Super_Pete_The_Pirate.Characters;
 using Super_Pete_The_Pirate.Objects;
 using System.Diagnostics;
+using Super_Pete_The_Pirate.Sprites;
 
 namespace Super_Pete_The_Pirate.Scenes
 {
@@ -36,6 +37,11 @@ namespace Super_Pete_The_Pirate.Scenes
         private Dictionary<string, Texture2D> _projectilesTextures;
 
         private List<GameProjectile> _projectiles;
+
+        //--------------------------------------------------
+        // Coins
+
+        private List<AnimatedSprite> _coins;
 
         //--------------------------------------------------
         // Camera stuff
@@ -78,6 +84,9 @@ namespace Super_Pete_The_Pirate.Scenes
             };
             _projectiles = new List<GameProjectile>();
 
+            // Coins init
+            _coins = new List<AnimatedSprite>();
+
             _rand = new Random();
             LoadMap(3);
             mapInfo = GameMap.Instance._tiledMap.Layers.ToString();
@@ -88,6 +97,29 @@ namespace Super_Pete_The_Pirate.Scenes
             GameMap.Instance.LoadMap(Content, mapId);
             SpawnEnemies();
             SpawnPlayer();
+            SpawnCoins();
+        }
+
+        private void SpawnCoins()
+        {
+            var coinsGroup = GameMap.Instance.GetObjectGroup("Coins");
+            if (coinsGroup == null) return;
+            var coinTexture = ImageManager.loadMisc("Coin");
+            var coinFrames = new Rectangle[]
+            {
+                new Rectangle(0, 0, 32, 32),
+                new Rectangle(32, 0, 32, 32),
+                new Rectangle(64, 0, 32, 32),
+                new Rectangle(96, 0, 32, 32)
+            };
+            var coinBoudingBox = new Rectangle(8, 8, 16, 16);
+
+            foreach (var coinObj in coinsGroup.Objects)
+            {
+                var coin = new AnimatedSprite(coinTexture, coinFrames, 120, coinObj.X, coinObj.Y - 32);
+                coin.SetBoundingBox(coinBoudingBox);
+                _coins.Add(coin);
+            }
         }
 
         private void SpawnPlayer()
@@ -190,6 +222,16 @@ namespace Super_Pete_The_Pirate.Scenes
                     _enemies.Remove(_enemies[i]);
             }
 
+            for (var i = 0; i < _coins.Count; i++)
+            {
+                _coins[i].Update(gameTime);
+                if (_player.BoundingRectangle.Intersects(_coins[i].BoundingBox))
+                {
+                    _player.AddCoins(1);
+                    _coins.Remove(_coins[i]);
+                }
+            }
+
             UpdateCamera();
             base.Update(gameTime);
 
@@ -263,23 +305,29 @@ namespace Super_Pete_The_Pirate.Scenes
         public override void Draw(SpriteBatch spriteBatch, ViewportAdapter viewportAdapter)
         {
             base.Draw(spriteBatch, viewportAdapter);
+            var debugMode = SceneManager.Instance.DebugMode;
 
             // Draw the camera (with the map)
             GameMap.Instance.Draw(_camera, spriteBatch);
 
             spriteBatch.Begin(transformMatrix: _camera.GetViewMatrix(), samplerState: SamplerState.PointClamp);
 
-            // Begin the player draw
+            // Draw the coins
+            for (var i = 0; i < _coins.Count; i++)
+            {
+                _coins[i].Draw(spriteBatch);
+                if (debugMode) _coins[i].DrawCollider(spriteBatch);
+            }
+
+            // Draw the player
             _player.DrawCharacter(spriteBatch);
-            if (SceneManager.Instance.DebugMode)
-                _player.DrawColliderBox(spriteBatch);
+            if (debugMode) _player.DrawColliderBox(spriteBatch);
 
             // Draw the enemies
             foreach (var enemy in _enemies)
             {
                 enemy.DrawCharacter(spriteBatch);
-                if (SceneManager.Instance.DebugMode)
-                    enemy.DrawColliderBox(spriteBatch);
+                if (debugMode) enemy.DrawColliderBox(spriteBatch);
             }
 
             // Draw the projectiles
@@ -287,7 +335,6 @@ namespace Super_Pete_The_Pirate.Scenes
                 spriteBatch.Draw(projectile.Sprite);
 
             // Draw the particles
-
             SceneManager.Instance.ParticleManager.Draw(spriteBatch);
 
             spriteBatch.End();
