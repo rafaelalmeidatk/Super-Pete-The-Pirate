@@ -225,10 +225,15 @@ namespace Super_Pete_The_Pirate.Scenes
             for (var i = 0; i < _coins.Count; i++)
             {
                 _coins[i].Update(gameTime);
-                if (_player.BoundingRectangle.Intersects(_coins[i].BoundingBox))
+                if (_coins[i].TextureRegion.Name.IndexOf("CoinSparkle") > 0 && _coins[i].Looped)
+                {
+                    _coins.Remove(_coins[i]);
+                }
+                else if (_coins[i].TextureRegion.Name.IndexOf("CoinSparkle") < 0 && _player.BoundingRectangle.Intersects(_coins[i].BoundingBox))
                 {
                     _player.AddCoins(1);
-                    _coins.Remove(_coins[i]);
+                    _coins[i].SetTexture(ImageManager.loadMisc("CoinSparkle"), false);
+                    _coins[i].SetDelay(80);
                 }
             }
 

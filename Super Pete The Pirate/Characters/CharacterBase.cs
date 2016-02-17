@@ -275,7 +275,9 @@ namespace Super_Pete_The_Pirate
                 {
                     Velocity = velocity,
                     AlphaBase = _rand.NextFloat(0.2f, 0.6f),
-                    Type = ParticleType.Smoke
+                    Type = ParticleType.Smoke,
+                    UseCustomVelocity = true,
+                    VelocityMultiplier = 1.05f
                 };
 
                 SceneManager.Instance.ParticleManager.CreateParticle(ImageManager.loadParticle("Smoke"), position, Color.White, 1000f, size, state);
@@ -303,7 +305,8 @@ namespace Super_Pete_The_Pirate
                 {
                     Velocity = velocity,
                     AlphaBase = _rand.NextFloat(0.2f, 0.6f),
-                    Type = ParticleType.Smoke
+                    Type = ParticleType.Smoke,
+                    UseCustomVelocity = true
                 };
 
                 SceneManager.Instance.ParticleManager.CreateParticle(ImageManager.loadParticle("Smoke"), position, Color.White, 1000f, size, state);
