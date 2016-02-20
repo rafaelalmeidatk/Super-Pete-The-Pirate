@@ -81,7 +81,7 @@ namespace Super_Pete_The_Pirate
         //--------------------------------------------------
         // Bounding rectangle
 
-        public Rectangle BoundingRectangle
+        public virtual Rectangle BoundingRectangle
         {
             get
             {
@@ -109,7 +109,7 @@ namespace Super_Pete_The_Pirate
 
             // Base velocity is a combination of horizontal movement control and
             // acceleration downward due to gravity.
-            if (_dying) _velocity.X = _dyingAcceleration * MoveAcceleration * elapsed;
+            if (_dying) _velocity.X += _dyingAcceleration * MoveAcceleration * elapsed;
             else _velocity.X += (_movement * MoveAcceleration * elapsed);
 
             UpdateKnockback(elapsed);
@@ -154,6 +154,7 @@ namespace Super_Pete_The_Pirate
             if (Position.Y == previousPosition.Y)
             {
                 _velocity.Y = 0;
+                _isJumping = false;
                 _jumpTime = 0.0f;
             }
         }

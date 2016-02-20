@@ -142,6 +142,12 @@ namespace Super_Pete_The_Pirate
             return new Rectangle(x * (int)TileSize.X, y * (int)TileSize.Y, (int)TileSize.X, (int)TileSize.Y);
         }
 
+        public bool TileIntersectsPlayer(Rectangle player, Rectangle block, CharacterBase.Direction direction, out Vector2 depth)
+        {
+            depth = direction == CharacterBase.Direction.Vertical ? new Vector2(0, player.GetVerticalIntersectionDepth(block)) : new Vector2(player.GetHorizontalIntersectionDepth(block), 0);
+            return depth.Y != 0 || depth.X != 0;
+        }
+
         private void DrawTileColliders(SpriteBatch spriteBatch)
         {
             foreach (var collider in _tileColliderBoxes)

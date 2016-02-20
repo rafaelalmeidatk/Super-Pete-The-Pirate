@@ -41,7 +41,7 @@ namespace Super_Pete_The_Pirate.Scenes
         //--------------------------------------------------
         // Coins
 
-        private List<AnimatedSprite> _coins;
+        private List<GameCoin> _coins;
 
         //--------------------------------------------------
         // Camera stuff
@@ -85,7 +85,7 @@ namespace Super_Pete_The_Pirate.Scenes
             _projectiles = new List<GameProjectile>();
 
             // Coins init
-            _coins = new List<AnimatedSprite>();
+            _coins = new List<GameCoin>();
 
             _rand = new Random();
             LoadMap(3);
@@ -104,6 +104,15 @@ namespace Super_Pete_The_Pirate.Scenes
         {
             var coinsGroup = GameMap.Instance.GetObjectGroup("Coins");
             if (coinsGroup == null) return;
+
+            foreach (var coinObj in coinsGroup.Objects)
+            {
+                CreateCoin(coinObj.X, coinObj.Y - 32, Vector2.Zero, false);
+            }
+        }
+
+        public GameCoin CreateCoin(int x, int y, Vector2 velocity, bool applyPhyics)
+        {
             var coinTexture = ImageManager.loadMisc("Coin");
             var coinFrames = new Rectangle[]
             {
@@ -113,19 +122,16 @@ namespace Super_Pete_The_Pirate.Scenes
                 new Rectangle(96, 0, 32, 32)
             };
             var coinBoudingBox = new Rectangle(8, 8, 16, 16);
-
-            foreach (var coinObj in coinsGroup.Objects)
-            {
-                var coin = new AnimatedSprite(coinTexture, coinFrames, 120, coinObj.X, coinObj.Y - 32);
-                coin.SetBoundingBox(coinBoudingBox);
-                _coins.Add(coin);
-            }
+            var coin = new GameCoin(coinTexture, coinFrames, 120, x, y, velocity, applyPhyics);
+            coin.CoinSprite.SetBoundingBox(coinBoudingBox);
+            _coins.Add(coin);
+            return coin;
         }
 
         private void SpawnPlayer()
         {
             var spawnPoint = new Vector2(GameMap.Instance.GetPlayerSpawn().X, GameMap.Instance.GetPlayerSpawn().Y);
-            _player.Position = new Vector2(spawnPoint.X, spawnPoint.Y - _player.CharacterSprite.GetColliderHeight() - 500);
+            _player.Position = new Vector2(spawnPoint.X, spawnPoint.Y - _player.CharacterSprite.GetColliderHeight());
         }
 
         private void SpawnEnemies()
@@ -161,8 +167,6 @@ namespace Super_Pete_The_Pirate.Scenes
         public override void Update(GameTime gameTime)
         {
             _player.Update(gameTime);
-
-            DebugValues["player bounding"] = _player.previousBottom.ToString();
 
             if (InputManager.Instace.KeyPressed(Keys.F)) _projectiles[0].Acceleration = new Vector2(_projectiles[0].Acceleration.X * -1, 0);
 
@@ -227,15 +231,16 @@ namespace Super_Pete_The_Pirate.Scenes
             for (var i = 0; i < _coins.Count; i++)
             {
                 _coins[i].Update(gameTime);
-                if (_coins[i].TextureRegion.Name.IndexOf("CoinSparkle") > 0 && _coins[i].Looped)
+                var sprite = _coins[i].CoinSprite;
+                if (sprite.TextureRegion.Name.IndexOf("CoinSparkle") > 0 && sprite.Looped)
                 {
                     _coins.Remove(_coins[i]);
                 }
-                else if (_coins[i].TextureRegion.Name.IndexOf("CoinSparkle") < 0 && _player.BoundingRectangle.Intersects(_coins[i].BoundingBox))
+                else if (sprite.TextureRegion.Name.IndexOf("CoinSparkle") < 0 && _player.BoundingRectangle.Intersects(sprite.BoundingBox))
                 {
                     _player.AddCoins(1);
-                    _coins[i].SetTexture(ImageManager.loadMisc("CoinSparkle"), false);
-                    _coins[i].SetDelay(80);
+                    sprite.SetTexture(ImageManager.loadMisc("CoinSparkle"), false);
+                    sprite.SetDelay(80);
                 }
             }
 
@@ -322,8 +327,8 @@ namespace Super_Pete_The_Pirate.Scenes
             // Draw the coins
             for (var i = 0; i < _coins.Count; i++)
             {
-                _coins[i].Draw(spriteBatch);
-                if (debugMode) _coins[i].DrawCollider(spriteBatch);
+                _coins[i].CoinSprite.Draw(spriteBatch);
+                if (debugMode) _coins[i].CoinSprite.DrawCollider(spriteBatch);
             }
 
             // Draw the player

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System;
 using Super_Pete_The_Pirate.Sprites;
 using System.Diagnostics;
+using Super_Pete_The_Pirate.Scenes;
 
 namespace Super_Pete_The_Pirate.Characters
 {
@@ -36,12 +37,18 @@ namespace Super_Pete_The_Pirate.Characters
         protected float _viewRangeCooldown;
         public float ViewRangeCooldown { get { return _viewRangeCooldown; } }
 
+        //--------------------------------------------------
         // TurtleWheel use
-        
+
         protected bool _wheelMode;
         public bool InWheelMode { get { return _wheelMode; } }
 
         protected int _damage;
+
+        //--------------------------------------------------
+        // Coin value
+
+        protected int _coins;
 
         //--------------------------------------------------
         // Textures
@@ -59,6 +66,7 @@ namespace Super_Pete_The_Pirate.Characters
             _viewRangeCooldown = 0f;
             _viewRangeOffset = Vector2.Zero;
             _damage = 0;
+            _coins = 3;
         }
 
         public void CreateViewRange()
@@ -70,6 +78,20 @@ namespace Super_Pete_The_Pirate.Characters
         }
 
         public virtual void PlayerOnSight(Vector2 playerPosition) { }
+
+        public override void OnDie()
+        {
+            base.OnDie();
+            var boundingBox = CharacterSprite.BoundingBox;
+            var sceneMap = (SceneMap)SceneManager.Instance.GetCurrentScene();
+            for (var i = 0; i < _coins; i++)
+            {
+                var ax = _rand.Next(0, 2) == 0 ? _rand.Next(-90 + (i % 5) * -40, -10) : _rand.Next(10, 90 + (i % 5) * 40);
+                var vy = _rand.Next(-4500, -500);
+                var coin = sceneMap.CreateCoin(boundingBox.Left, boundingBox.Bottom - boundingBox.Height, new Vector2(0, vy), true);
+                coin.SetXAcceleration(ax);
+            }
+        }
 
         public override void Update(GameTime gameTime)
         {
