@@ -125,7 +125,7 @@ namespace Super_Pete_The_Pirate.Scenes
         private void SpawnPlayer()
         {
             var spawnPoint = new Vector2(GameMap.Instance.GetPlayerSpawn().X, GameMap.Instance.GetPlayerSpawn().Y);
-            _player.Position = new Vector2(spawnPoint.X, spawnPoint.Y - _player.CharacterSprite.GetColliderHeight());
+            _player.Position = new Vector2(spawnPoint.X, spawnPoint.Y - _player.CharacterSprite.GetColliderHeight() - 500);
         }
 
         private void SpawnEnemies()
@@ -161,6 +161,8 @@ namespace Super_Pete_The_Pirate.Scenes
         public override void Update(GameTime gameTime)
         {
             _player.Update(gameTime);
+
+            DebugValues["player bounding"] = _player.previousBottom.ToString();
 
             if (InputManager.Instace.KeyPressed(Keys.F)) _projectiles[0].Acceleration = new Vector2(_projectiles[0].Acceleration.X * -1, 0);
 

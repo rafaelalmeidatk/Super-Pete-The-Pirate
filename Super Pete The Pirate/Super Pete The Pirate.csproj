@@ -53,8 +53,10 @@
     <Compile Include="Managers\ParticleManager.cs" />
     <Compile Include="Managers\ParticleState.cs" />
     <Compile Include="Managers\SceneManager.cs" />
+    <Compile Include="Objects\GameCoin.cs" />
     <Compile Include="Objects\GameMap.cs" />
     <Compile Include="Objects\GameProjectile.cs" />
+    <Compile Include="Objects\PhysicalObject.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Scenes\SceneBase.cs" />
