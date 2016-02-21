@@ -34,7 +34,7 @@ namespace Super_Pete_The_Pirate
         protected bool _isOnGround;
 
         protected float _movement;
-        protected float _knockbackAcceleration;
+        public float _knockbackAcceleration;
         protected float _dyingAcceleration;
 
         //--------------------------------------------------
@@ -73,6 +73,11 @@ namespace Super_Pete_The_Pirate
         }
 
         //--------------------------------------------------
+        // Ignore gravity?
+
+        public bool IgnoreGravity { get; set; }
+
+        //--------------------------------------------------
         // Combat system usage
 
         protected bool _dying;
@@ -107,15 +112,16 @@ namespace Super_Pete_The_Pirate
 
             Vector2 previousPosition = Position;
 
-            // Base velocity is a combination of horizontal movement control and
-            // acceleration downward due to gravity.
-            if (_dying) _velocity.X += _dyingAcceleration * MoveAcceleration * elapsed;
-            else _velocity.X += (_movement * MoveAcceleration * elapsed);
+            if (_dying) _velocity.X = _dyingAcceleration * MoveAcceleration * elapsed;
+            else _velocity.X += _movement * MoveAcceleration * elapsed;
 
             UpdateKnockback(elapsed);
 
-            var gravity = _dying ? DyingGravityAcceleration : GravityAcceleration;
-            _velocity.Y = MathHelper.Clamp(_velocity.Y + gravity * elapsed, -MaxFallSpeed, MaxFallSpeed);
+            if (!IgnoreGravity)
+            {
+                var gravity = _dying ? DyingGravityAcceleration : GravityAcceleration;
+                _velocity.Y = MathHelper.Clamp(_velocity.Y + gravity * elapsed, -MaxFallSpeed, MaxFallSpeed);
+            }
             _velocity.Y = DoJump(_velocity.Y, gameTime);
 
             // Apply pseudo-drag horizontally.
@@ -130,21 +136,20 @@ namespace Super_Pete_The_Pirate
             _velocity.X = MathHelper.Clamp(_velocity.X, -MaxMoveSpeed, MaxMoveSpeed);
 
             // If the player is now colliding with the level, separate them.
-            if (!_dying)
+            if (_velocity.X != 0f)
             {
-                if (_velocity.X != 0f)
-                {
-                    Position += _velocity.X * Vector2.UnitX * elapsed;
-                    Position = new Vector2((float)Math.Round(Position.X), Position.Y);
+                Position += _velocity.X * Vector2.UnitX * elapsed;
+                Position = new Vector2((float)Math.Round(Position.X), Position.Y);
+                if (!_dying)
                     HandleCollisions(Direction.Horizontal);
-                }
+            }
 
-                if (_velocity.Y != 0f)
-                {
-                    Position += _velocity.Y * Vector2.UnitY * elapsed;
-                    Position = new Vector2(Position.X, (float)Math.Round(Position.Y));
+            if (_velocity.Y != 0f)
+            {
+                Position += _velocity.Y * Vector2.UnitY * elapsed;
+                Position = new Vector2(Position.X, (float)Math.Round(Position.Y));
+                if (!_dying)
                     HandleCollisions(Direction.Vertical);
-                }
             }
 
             // If the collision stopped us from moving, reset the velocity to zero.
@@ -165,7 +170,7 @@ namespace Super_Pete_The_Pirate
             {
                 _velocity.X += (_knockbackAcceleration * elapsed);
                 _knockbackAcceleration *= 0.9f;
-                if (Math.Abs(_knockbackAcceleration) < 100f) _knockbackAcceleration = 0;
+                if (Math.Abs(_knockbackAcceleration) < 10f) _knockbackAcceleration = 0;
             }
         }
 

@@ -20,8 +20,7 @@ namespace Super_Pete_The_Pirate.Characters
 
         //--------------------------------------------------
         // Mechanics
-
-        private CharacterBase _target;
+        
         private float _movementSide;
 
         private bool _enterWheelMode;
@@ -117,11 +116,6 @@ namespace Super_Pete_The_Pirate.Characters
             _confusionTick = 0f;
 
             CreateViewRange();
-        }
-
-        public void SetTarget(CharacterBase target)
-        {
-            _target = target;
         }
 
         public override void PlayerOnSight(Vector2 playerPosition)

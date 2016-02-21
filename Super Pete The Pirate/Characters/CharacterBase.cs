@@ -61,8 +61,10 @@ namespace Super_Pete_The_Pirate
             // Physics variables init
             _knockbackAcceleration = 0f;
             _dyingAcceleration = 0f;
+            IgnoreGravity = false;
 
             // Battle system init
+            _hp = 1;
             _requestAttack = false;
             _isAttacking = false;
             _attackType = -1;
@@ -71,9 +73,8 @@ namespace Super_Pete_The_Pirate
             _shot = false;
             _dying = false;
 
+            // Rand init
             _rand = new Random();
-
-            _hp = 1;
         }
 
         public void RequestAttack(int type)

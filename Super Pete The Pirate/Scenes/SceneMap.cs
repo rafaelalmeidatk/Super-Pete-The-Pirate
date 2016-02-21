@@ -88,7 +88,7 @@ namespace Super_Pete_The_Pirate.Scenes
             _coins = new List<GameCoin>();
 
             _rand = new Random();
-            LoadMap(3);
+            LoadMap(2);
             mapInfo = GameMap.Instance._tiledMap.Layers.ToString();
         }
 
@@ -154,8 +154,11 @@ namespace Super_Pete_The_Pirate.Scenes
             newEnemy.Position = new Vector2(x, y - newEnemy.CharacterSprite.GetColliderHeight());
             if (enemyObj.Properties.ContainsKey("FlipHorizontally"))
                 newEnemy.CharacterSprite.Effect = enemyObj.Properties["FlipHorizontally"] == "true" ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
-            if (enemyName == "TurtleWheel")
-                ((TurtleWheel)newEnemy).SetTarget(_player);
+            if (enemyName == "Parrot")
+            {
+                ((Parrot)newEnemy).SetFlyWidth(enemyObj.Properties.ContainsKey("FlyWidth") ? int.Parse(enemyObj.Properties["FlyWidth"]) : 224);
+                ((Parrot)newEnemy).SetFlyRange((int)newEnemy.Position.X, (int)newEnemy.Position.Y);
+            }
             _enemies.Add(newEnemy);
         }
 
@@ -180,6 +183,8 @@ namespace Super_Pete_The_Pirate.Scenes
                     _projectiles.Remove(_projectiles[i]);
             }
 
+
+            DebugValues["knockback"] = _player._knockbackAcceleration.ToString();
             for (var i = 0; i < _enemies.Count; i++)
             {
                 _enemies[i].Update(gameTime);

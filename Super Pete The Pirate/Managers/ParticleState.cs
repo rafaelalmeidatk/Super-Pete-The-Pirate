@@ -16,14 +16,25 @@ namespace Super_Pete_The_Pirate
 
     public struct ParticleState
     {
+        //--------------------------------------------------
+        // Physics variables
+
         public float Gravity;
         public Vector2 Velocity;
-        public float AlphaBase;
-        public ParticleType Type;
         public float VelocityMultiplier;
         public bool UseCustomVelocity;
+
+        //--------------------------------------------------
+        // Particle variables
+
+        public float AlphaBase;
+        public ParticleType Type;
         public int Width;
+
+        // H ammount of HSV
         public float H;
+
+        //----------------------//------------------------//
 
         public static void UpdateParticle(ParticleManager<ParticleState>.Particle particle, GameTime gameTime)
         {

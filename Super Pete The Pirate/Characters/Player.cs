@@ -197,12 +197,12 @@ namespace Super_Pete_The_Pirate
         private void CheckKeys(GameTime gameTime)
         {
             // Movement
-            if (InputManager.Instace.KeyDown(Keys.Left))
+            if (InputManager.Instace.KeyDown(Keys.Left) && Math.Abs(_knockbackAcceleration) < 1200f)
             {
                 CharacterSprite.SetDirection(SpriteDirection.Left);
                 _movement = -1.0f; 
             }
-            else if (InputManager.Instace.KeyDown(Keys.Right))
+            else if (InputManager.Instace.KeyDown(Keys.Right) && Math.Abs(_knockbackAcceleration) < 1200f)
             {
                 CharacterSprite.SetDirection(SpriteDirection.Right);
                 _movement = 1.0f;
