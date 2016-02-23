@@ -182,9 +182,7 @@ namespace Super_Pete_The_Pirate.Scenes
                 if (_projectiles[i].RequestErase)
                     _projectiles.Remove(_projectiles[i]);
             }
-
-
-            DebugValues["knockback"] = _player._knockbackAcceleration.ToString();
+            
             for (var i = 0; i < _enemies.Count; i++)
             {
                 _enemies[i].Update(gameTime);

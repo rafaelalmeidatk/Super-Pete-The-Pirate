@@ -34,7 +34,7 @@ namespace Super_Pete_The_Pirate
         protected bool _isOnGround;
 
         protected float _movement;
-        public float _knockbackAcceleration;
+        protected float _knockbackAcceleration;
         protected float _dyingAcceleration;
 
         //--------------------------------------------------
@@ -170,7 +170,7 @@ namespace Super_Pete_The_Pirate
             {
                 _velocity.X += (_knockbackAcceleration * elapsed);
                 _knockbackAcceleration *= 0.9f;
-                if (Math.Abs(_knockbackAcceleration) < 10f) _knockbackAcceleration = 0;
+                if (Math.Abs(_knockbackAcceleration) < 500f) _knockbackAcceleration = 0;
             }
         }
 
