@@ -181,6 +181,8 @@ namespace Super_Pete_The_Pirate
         {
             if (_dying)
                 CharacterSprite.SetIfFrameListExists("dying");
+            else if (CharacterSprite.ImmunityAnimationActive)
+                CharacterSprite.SetIfFrameListExists("damage");
             else if (_isAttacking)
                 CharacterSprite.SetFrameList(_attackFrameList[_attackType]);
             else if (!_isOnGround)

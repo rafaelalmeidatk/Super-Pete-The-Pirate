@@ -43,6 +43,14 @@ namespace Super_Pete_The_Pirate.Characters
                 new Rectangle(96, 0, 32, 32)
             }, new int[] { 0, 0, 0, 0 }, new int[] { 0, 0, 0, 0 });
 
+            // Damage
+            CharacterSprite.CreateFrameList("damage", 150);
+            CharacterSprite.AddCollider("damage", new Rectangle(2, 8, 29, 17));
+            CharacterSprite.AddFrames("damage", new List<Rectangle>()
+            {
+                new Rectangle(0, 32, 32, 32)
+            }, new int[] { 0, 0, 0, 0 }, new int[] { 0, 0, 0, 0 });
+
             // Dying
             CharacterSprite.CreateFrameList("dying", 150);
             CharacterSprite.AddCollider("dying", new Rectangle(2, 8, 29, 17));
@@ -104,6 +112,8 @@ namespace Super_Pete_The_Pirate.Characters
         {
             if (_dying)
                 CharacterSprite.SetIfFrameListExists("dying");
+            else if (CharacterSprite.ImmunityAnimationActive)
+                CharacterSprite.SetIfFrameListExists("damage");
             else
                 CharacterSprite.SetFrameList("stand");
         }
