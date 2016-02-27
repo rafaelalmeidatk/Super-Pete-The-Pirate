@@ -16,7 +16,8 @@ namespace Super_Pete_The_Pirate.Characters
         None,
         SniperPig,
         TurtleWheel,
-        Parrot
+        Parrot,
+        Mole
     }
 
     class Enemy : CharacterBase

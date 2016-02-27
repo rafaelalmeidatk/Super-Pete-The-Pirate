@@ -40,6 +40,7 @@
   <ItemGroup>
     <Compile Include="Characters\CharacterBase.cs" />
     <Compile Include="Characters\Enemy.cs" />
+    <Compile Include="Characters\Mole.cs" />
     <Compile Include="Characters\Parrot.cs" />
     <Compile Include="Characters\Player.cs" />
     <Compile Include="Characters\SniperPig.cs" />
