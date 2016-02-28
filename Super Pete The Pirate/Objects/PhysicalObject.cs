@@ -106,7 +106,7 @@ namespace Super_Pete_The_Pirate
         /// <summary>
         /// Updates the player's velocity and position based on input, gravity, etc.
         /// </summary>
-        public virtual void ApplyPhysics(GameTime gameTime)
+        protected virtual void ApplyPhysics(GameTime gameTime)
         {
             float elapsed = (float)gameTime.ElapsedGameTime.TotalSeconds;
 

@@ -18,9 +18,8 @@ namespace Super_Pete_The_Pirate.Characters
 
         private float _stuckCounter;
         private const float StuckTime = 3000f;
-
-
-        new const float GravityAcceleration = 1850.0f;
+        
+        new const float GravityAcceleration = 1801f;
 
         //--------------------------------------------------
         // Hole Point Texture
@@ -44,10 +43,10 @@ namespace Super_Pete_The_Pirate.Characters
                 new Rectangle(96, 64, 32, 64)
             }, new int[] { 0, 0, 0, 0 }, new int[] { -32, -32, -32, -32 });
 
-            // Digging
-            CharacterSprite.CreateFrameList("digging", 150);
-            CharacterSprite.AddCollider("digging", new Rectangle(5, -7, 22, 39));
-            CharacterSprite.AddFrames("digging", new List<Rectangle>()
+            // Stuck
+            CharacterSprite.CreateFrameList("stuck", 150);
+            CharacterSprite.AddCollider("stuck", new Rectangle(5, -7, 22, 39));
+            CharacterSprite.AddFrames("stuck", new List<Rectangle>()
             {
                 new Rectangle(0, 64, 32, 64),
                 new Rectangle(32, 64, 32, 64),
@@ -119,29 +118,107 @@ namespace Super_Pete_The_Pirate.Characters
             }
         }
 
+        public override void ReceiveAttack(int damage, Vector2 subjectPosition)
+        {
+            base.ReceiveAttack(damage, subjectPosition);
+            _knockbackAcceleration = 0;
+            if (_hp != 0) _velocity.Y = 0;
+        }
+
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
+            if (_stuckCounter > 0)
+            {
+                _stuckCounter -= (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+                if (_stuckCounter <= 0)
+                {
+                    _stuckCounter = 0;
+                    _stuckOnGroud = false;
+                    _onHole = true;
+                }
+            }
         }
 
         protected override void OnGroundLand()
         {
             base.OnGroundLand();
-            _stuckOnGroud = true;
-            _stuckCounter = StuckTime;
+            if (!_stuckOnGroud)
+            {
+                _stuckOnGroud = true;
+                _stuckCounter = StuckTime;
+            }
         }
 
         public override void UpdateFrameList()
         {
             CharacterSprite.IsVisible = !_onHole;
-            if (_onHole)
-            {
-                CharacterSprite.SetFrameList("digging");
-            }
-            else
+            if (!_isOnGround)
             {
                 var frameList = _velocity.Y == 0 ? "jump_zero" : _velocity.Y > 0 ? "jump_down" : "jump_up";
                 CharacterSprite.SetFrameList(frameList);
+            }
+            else if (_stuckOnGroud)
+            {
+                CharacterSprite.SetFrameList("stuck");
+            }
+        }
+
+        protected override void ApplyPhysics(GameTime gameTime)
+        {
+            float elapsed = (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+            Vector2 previousPosition = Position;
+
+            if (_dying) _velocity.X = _dyingAcceleration * MoveAcceleration * elapsed;
+            else _velocity.X += _movement * MoveAcceleration * elapsed;
+
+            UpdateKnockback(elapsed);
+
+            if (_dying || !IgnoreGravity)
+            {
+                var gravity = _dying ? DyingGravityAcceleration : GravityAcceleration;
+                _velocity.Y = MathHelper.Clamp(_velocity.Y + gravity * elapsed, -MaxFallSpeed, MaxFallSpeed);
+            }
+            _velocity.Y = DoJump(_velocity.Y, gameTime);
+
+            // Apply pseudo-drag horizontally.
+            if (_dying)
+                _velocity.X *= 0.8f;
+            else if (IsOnGround)
+                _velocity.X *= GroundDragFactor;
+            else
+                _velocity.X *= AirDragFactor;
+
+            // Prevent the player from running faster than his top speed.            
+            _velocity.X = MathHelper.Clamp(_velocity.X, -MaxMoveSpeed, MaxMoveSpeed);
+
+            // If the player is now colliding with the level, separate them.
+            if (_velocity.X != 0f)
+            {
+                Position += _velocity.X * Vector2.UnitX * elapsed;
+                Position = new Vector2((float)Math.Round(Position.X), Position.Y);
+                if (!_dying)
+                    HandleCollisions(Direction.Horizontal);
+            }
+
+            if (_velocity.Y != 0f && (!_stuckOnGroud || _dying))
+            {
+                Position += _velocity.Y * Vector2.UnitY * elapsed;
+                Position = new Vector2(Position.X, (float)Math.Round(Position.Y));
+                if (!_dying)
+                    HandleCollisions(Direction.Vertical);
+            }
+
+            // If the collision stopped us from moving, reset the velocity to zero.
+            if (Position.X == previousPosition.X)
+                _velocity.X = 0;
+
+            if (Position.Y == previousPosition.Y)
+            {
+                _velocity.Y = 0;
+                _isJumping = false;
+                _jumpTime = 0.0f;
             }
         }
 

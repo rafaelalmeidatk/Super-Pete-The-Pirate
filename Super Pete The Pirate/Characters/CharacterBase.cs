@@ -39,6 +39,11 @@ namespace Super_Pete_The_Pirate
         protected Random _rand;
 
         //--------------------------------------------------
+        // Prevent first OnGroundLand
+
+        private bool _firstGroudLand;
+
+        //--------------------------------------------------
         // Bounding Rectangle
 
         public override Rectangle BoundingRectangle
@@ -75,6 +80,8 @@ namespace Super_Pete_The_Pirate
 
             // Rand init
             _rand = new Random();
+
+            _firstGroudLand = false;
         }
 
         public void RequestAttack(int type)
@@ -134,6 +141,11 @@ namespace Super_Pete_The_Pirate
 
             if (!lastOnGround && _isOnGround)
             {
+                if (!_firstGroudLand)
+                {
+                    _firstGroudLand = true;
+                    return;
+                }
                 OnGroundLand();
             }
         }
@@ -195,7 +207,7 @@ namespace Super_Pete_The_Pirate
                 CharacterSprite.SetFrameList("stand");
         }
 
-        private void UpdateSprite(GameTime gameTime)
+        protected virtual void UpdateSprite(GameTime gameTime)
         {
             UpdateFrameList();
             CharacterSprite.SetPosition(Position);
