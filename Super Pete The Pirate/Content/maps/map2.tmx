@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="11" height="7" tilewidth="32" tileheight="32" nextobjectid="6">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="11" height="7" tilewidth="32" tileheight="32" nextobjectid="7">
  <tileset firstgid="1" name="tile" tilewidth="32" tileheight="32" tilecount="121" columns="11">
   <image source="../imgs/tilesets/tile.png" width="352" height="352"/>
   <tile id="57">
@@ -31,14 +31,14 @@
     <property name="type" value="TurtleWheel"/>
    </properties>
   </object>
-  <object id="4" gid="59" x="64" y="96" width="32" height="32">
+  <object id="4" gid="59" x="64" y="32" width="32" height="32">
    <properties>
     <property name="type" value="Parrot"/>
    </properties>
   </object>
-  <object id="5" gid="57" x="160" y="192" width="32" height="32">
+  <object id="6" gid="60" x="224" y="192" width="32" height="32">
    <properties>
-    <property name="type" value="SniperPig"/>
+    <property name="type" value="Mole"/>
    </properties>
   </object>
  </objectgroup>

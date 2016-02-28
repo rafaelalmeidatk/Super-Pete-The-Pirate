@@ -44,7 +44,7 @@ namespace Super_Pete_The_Pirate.Characters
             }, new int[] { 0, 0, 0, 0 }, new int[] { 0, 0, 0, 0 });
 
             // Damage
-            CharacterSprite.CreateFrameList("damage", 150);
+            CharacterSprite.CreateFrameList("damage", 0);
             CharacterSprite.AddCollider("damage", new Rectangle(2, 8, 29, 17));
             CharacterSprite.AddFrames("damage", new List<Rectangle>()
             {
@@ -52,7 +52,7 @@ namespace Super_Pete_The_Pirate.Characters
             }, new int[] { 0, 0, 0, 0 }, new int[] { 0, 0, 0, 0 });
 
             // Dying
-            CharacterSprite.CreateFrameList("dying", 150);
+            CharacterSprite.CreateFrameList("dying", 0);
             CharacterSprite.AddCollider("dying", new Rectangle(2, 8, 29, 17));
             CharacterSprite.AddFrames("dying", new List<Rectangle>()
             {

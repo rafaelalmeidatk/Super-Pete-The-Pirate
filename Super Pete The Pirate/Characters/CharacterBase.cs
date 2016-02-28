@@ -134,9 +134,13 @@ namespace Super_Pete_The_Pirate
 
             if (!lastOnGround && _isOnGround)
             {
-                CreateGroundImpactParticles();
+                OnGroundLand();
             }
-                
+        }
+
+        protected virtual void OnGroundLand()
+        {
+            CreateGroundImpactParticles();
         }
 
         private void UpdateAttackCooldown(GameTime gameTime)

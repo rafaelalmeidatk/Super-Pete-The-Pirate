@@ -159,6 +159,12 @@ namespace Super_Pete_The_Pirate.Scenes
                 ((Parrot)newEnemy).SetFlyWidth(enemyObj.Properties.ContainsKey("FlyWidth") ? int.Parse(enemyObj.Properties["FlyWidth"]) : 224);
                 ((Parrot)newEnemy).SetFlyRange((int)newEnemy.Position.X, (int)newEnemy.Position.Y);
             }
+            if (enemyName == "Mole")
+            {
+                ((Mole)newEnemy).SetHolePoint((int)newEnemy.Position.X, y);
+                Console.WriteLine("Y: " + y.ToString());
+            }
+                
             _enemies.Add(newEnemy);
         }
 

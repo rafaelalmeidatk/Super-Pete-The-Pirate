@@ -338,6 +338,8 @@ namespace Super_Pete_The_Pirate
 
         public void Draw(SpriteBatch spriteBatch, Vector2 position)
         {
+            if (!IsVisible) return;
+
             if (Effect == SpriteEffects.FlipHorizontally)
                 position.X -= GetCurrentFrameRectangle().Width - (GetBlockCollider().OffsetX + GetBlockCollider().Width) + GetCurrentFramesList().Frames[_currentFrame].OffsetX;
             else

@@ -106,7 +106,7 @@ namespace Super_Pete_The_Pirate
         /// <summary>
         /// Updates the player's velocity and position based on input, gravity, etc.
         /// </summary>
-        public void ApplyPhysics(GameTime gameTime)
+        public virtual void ApplyPhysics(GameTime gameTime)
         {
             float elapsed = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
@@ -164,7 +164,7 @@ namespace Super_Pete_The_Pirate
             }
         }
 
-        private void UpdateKnockback(float elapsed)
+        protected void UpdateKnockback(float elapsed)
         {
             if (_knockbackAcceleration != 0.0f)
             {
@@ -191,7 +191,7 @@ namespace Super_Pete_The_Pirate
         /// A new Y velocity if beginning or continuing a jump.
         /// Otherwise, the existing Y velocity.
         /// </returns>
-        private float DoJump(float velocityY, GameTime gameTime)
+        protected float DoJump(float velocityY, GameTime gameTime)
         {
             // If the player wants to jump
             if (_isJumping)
@@ -224,7 +224,7 @@ namespace Super_Pete_The_Pirate
             return velocityY;
         }
 
-        private void HandleCollisions(Direction direction)
+        protected void HandleCollisions(Direction direction)
         {
             Rectangle bounds = BoundingRectangle;
             var tileSize = GameMap.Instance.TileSize.X;
