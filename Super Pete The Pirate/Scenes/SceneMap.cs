@@ -147,23 +147,22 @@ namespace Super_Pete_The_Pirate.Scenes
 
         public void CreateEnemy(TiledObject enemyObj, int x, int y)
         {
-            var enemyName = enemyObj.Properties.FirstOrDefault(i => i.Key == "type").Value;
+            var enemyName = enemyObj.Properties["type"];
             if (enemyName == null) return;
             var texture = ImageManager.loadCharacter(enemyName);
             var newEnemy = (Enemy)Activator.CreateInstance(Type.GetType("Super_Pete_The_Pirate.Characters." + enemyName), texture);
-            newEnemy.Position = new Vector2(x, y - newEnemy.CharacterSprite.GetColliderHeight());
+            newEnemy.Position = new Vector2(x, y - 32);
             if (enemyObj.Properties.ContainsKey("FlipHorizontally"))
                 newEnemy.CharacterSprite.Effect = enemyObj.Properties["FlipHorizontally"] == "true" ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
             if (enemyName == "Parrot")
             {
-                ((Parrot)newEnemy).SetFlyWidth(enemyObj.Properties.ContainsKey("FlyWidth") ? int.Parse(enemyObj.Properties["FlyWidth"]) : 224);
-                ((Parrot)newEnemy).SetFlyRange((int)newEnemy.Position.X, (int)newEnemy.Position.Y);
+                var width = enemyObj.Properties.ContainsKey("FlyWidth") ? int.Parse(enemyObj.Properties["FlyWidth"]) : 224;
+                ((Parrot)newEnemy).SetFlyWidth(width);
+                var rangeDec = newEnemy.CharacterSprite.Effect.HasFlag(SpriteEffects.FlipHorizontally) ? width : 0;
+                ((Parrot)newEnemy).SetFlyRange((int)newEnemy.Position.X - rangeDec, (int)newEnemy.Position.Y);
             }
-            if (enemyName == "Mole")
-            {
-                ((Mole)newEnemy).SetHolePoint((int)newEnemy.Position.X, y);
-                Console.WriteLine("Y: " + y.ToString());
-            }
+
+            if (enemyName == "Mole") ((Mole)newEnemy).SetHolePoint((int)newEnemy.Position.X, y);
                 
             _enemies.Add(newEnemy);
         }
@@ -199,7 +198,7 @@ namespace Super_Pete_The_Pirate.Scenes
                         _enemies[i].PlayerOnSight(_player.Position);
                 }
 
-                if (!_enemies[i].Dying && _enemies[i].BoundingRectangle.Intersects(_player.BoundingRectangle))
+                if (!_enemies[i].Dying && _enemies[i].ContactDamageEnabled && _enemies[i].BoundingRectangle.Intersects(_player.BoundingRectangle))
                 {
                     _player.ReceiveAttackWithPoint(1, _enemies[i].BoundingRectangle);
                 }
@@ -208,7 +207,7 @@ namespace Super_Pete_The_Pirate.Scenes
                 {
                     if (_projectiles[j].Subject == ProjectileSubject.FromPlayer)
                     {
-                        if (!_enemies[i].Dying && !_enemies[i].IsImunity && _projectiles[j].BoundingBox.Intersects(_enemies[i].BoundingRectangle))
+                        if (!_enemies[i].Dying && !_enemies[i].IsImunity && _enemies[i].CanReceiveAttacks && _projectiles[j].BoundingBox.Intersects(_enemies[i].BoundingRectangle))
                         {
                             if (_enemies[i].EnemyType == EnemyType.TurtleWheel && _enemies[i].InWheelMode)
                             {
@@ -264,25 +263,22 @@ namespace Super_Pete_The_Pirate.Scenes
 
         private void CreateParticle()
         {
-            var texture = ImageManager.loadParticle("Spark");
-            for (var i = 0; i < 4; i++)
+            var texture = ImageManager.loadParticle("GroundPiece");
+            for (var i = 0; i < 30; i++)
             {
-                var position = new Vector2(100, 100);
-                var velocity = new Vector2(_rand.NextFloat(-100f, 100f), _rand.NextFloat(-100f, 100f));
-                var scale = new Vector2(_rand.Next(7, 12), _rand.Next(1, 2));
-                var color = ColorUtil.HSVToColor(MathHelper.ToRadians(51f), 0.91f, 0.91f);
+                var position = new Vector2(_rand.NextFloat(100, 110), 100);
+                var velocity = new Vector2(_rand.NextFloat(-100f, 100f), _rand.NextFloat(-300f, -200f));
+
+                var scale = _rand.Next(0, 2) == 0 ? new Vector2(2, 2) : new Vector2(3, 3);
 
                 var state = new ParticleState()
                 {
                     Velocity = velocity,
-                    Type = ParticleType.Spark,
-                    UseCustomVelocity = true,
-                    VelocityMultiplier = 1f,
-                    Width = (int)scale.X,
-                    H = 57f
+                    Type = ParticleType.GroundPieces,
+                    Gravity = 3.3f
                 };
 
-                SceneManager.Instance.ParticleManager.CreateParticle(texture, position, color, 200f, scale, state);
+                SceneManager.Instance.ParticleManager.CreateParticle(texture, position, Color.White, 1000f, scale, state);
             }
         }
 

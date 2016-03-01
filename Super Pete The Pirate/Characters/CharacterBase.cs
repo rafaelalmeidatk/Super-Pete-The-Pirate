@@ -34,6 +34,15 @@ namespace Super_Pete_The_Pirate
         protected bool _shot;
 
         //--------------------------------------------------
+        // Damage stuff
+
+        protected bool _canReceiveAttacks;
+        public virtual bool CanReceiveAttacks { get { return _canReceiveAttacks; } }
+
+        protected bool _contactDamageEnabled;
+        public virtual bool ContactDamageEnabled { get { return _contactDamageEnabled; } }
+
+        //--------------------------------------------------
         // Random
 
         protected Random _rand;
@@ -77,6 +86,8 @@ namespace Super_Pete_The_Pirate
             AttackCooldown = 0f;
             _shot = false;
             _dying = false;
+            _canReceiveAttacks = true;
+            _contactDamageEnabled = true;
 
             // Rand init
             _rand = new Random();

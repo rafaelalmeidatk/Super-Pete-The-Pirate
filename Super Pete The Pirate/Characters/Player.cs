@@ -262,13 +262,14 @@ namespace Super_Pete_The_Pirate
                 Shot(damage);
                 return;
             }
+
             var sceneMap = (SceneMap)SceneManager.Instance.GetCurrentScene();
             var enemies = sceneMap.Enemies;
             foreach (var attackCollider in CharacterSprite.GetCurrentFramesList().Frames[CharacterSprite.CurrentFrame].AttackColliders)
             {
                 for (var i = 0; i < enemies.Count; i++)
                 {
-                    if (attackCollider.BoundingBox.Intersects(enemies[i].BoundingRectangle))
+                    if (enemies[i].CanReceiveAttacks && attackCollider.BoundingBox.Intersects(enemies[i].BoundingRectangle))
                     {
                         enemies[i].ReceiveAttackWithCollider(damage, this.BoundingRectangle, attackCollider);
                     }

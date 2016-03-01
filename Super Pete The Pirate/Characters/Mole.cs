@@ -12,6 +12,10 @@ namespace Super_Pete_The_Pirate.Characters
         //--------------------------------------------------
         // Mechanics
 
+        private bool _requestJump;
+        private float _jumpCounter;
+        private const float JumpWaitTime = 400f;
+
         private bool _onHole;
         private bool _stuckOnGroud;
         private Vector2 _holePoint;
@@ -20,6 +24,22 @@ namespace Super_Pete_The_Pirate.Characters
         private const float StuckTime = 3000f;
         
         new const float GravityAcceleration = 1801f;
+
+        public override bool CanReceiveAttacks
+        {
+            get
+            {
+                return !_onHole;
+            }
+        }
+
+        public override bool ContactDamageEnabled
+        {
+            get
+            {
+                return !_onHole;
+            }
+        }
 
         //--------------------------------------------------
         // Hole Point Texture
@@ -89,7 +109,7 @@ namespace Super_Pete_The_Pirate.Characters
             // Combat system init
             _hp = 2;
             _damage = 1;
-            _viewRangeSize = new Vector2(5, 100);
+            _viewRangeSize = new Vector2(35, 100);
             _viewRangeOffset = new Vector2(0, -60);
 
             // Mechanics init
@@ -111,11 +131,19 @@ namespace Super_Pete_The_Pirate.Characters
 
         public override void PlayerOnSight(Vector2 playerPosition)
         {
-            if (_onHole)
+            if (_onHole && !_requestJump)
             {
-                _velocity.Y = -150000f;
-                _onHole = false;
+                _requestJump = true;
+                _jumpCounter = JumpWaitTime;
+                CreateGroundParticles();
             }
+        }
+
+        private void JumpOut()
+        {
+            _velocity.Y = -150000f;
+            _onHole = false;
+            CreateGroundParticles(10);
         }
 
         public override void ReceiveAttack(int damage, Vector2 subjectPosition)
@@ -128,6 +156,16 @@ namespace Super_Pete_The_Pirate.Characters
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
+            if (_jumpCounter > 0)
+            {
+                _jumpCounter -= (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+                if (_jumpCounter <= 0)
+                {
+                    _jumpCounter = 0;
+                    _requestJump = false;
+                    JumpOut();
+                }
+            }
             if (_stuckCounter > 0)
             {
                 _stuckCounter -= (float)gameTime.ElapsedGameTime.TotalMilliseconds;
@@ -153,7 +191,11 @@ namespace Super_Pete_The_Pirate.Characters
         public override void UpdateFrameList()
         {
             CharacterSprite.IsVisible = !_onHole;
-            if (!_isOnGround)
+            if (_dying)
+            {
+                CharacterSprite.SetFrameList("dying");
+            }
+            else if (!_isOnGround)
             {
                 var frameList = _velocity.Y == 0 ? "jump_zero" : _velocity.Y > 0 ? "jump_down" : "jump_up";
                 CharacterSprite.SetFrameList(frameList);
@@ -219,6 +261,28 @@ namespace Super_Pete_The_Pirate.Characters
                 _velocity.Y = 0;
                 _isJumping = false;
                 _jumpTime = 0.0f;
+            }
+        }
+
+        private void CreateGroundParticles(int num = 30)
+        {
+            var texture = ImageManager.loadParticle("GroundPiece");
+            for (var i = 0; i < num; i++)
+            {
+                var holeX = _holePoint.X + 16;
+                var position = new Vector2(_rand.NextFloat(holeX - 5, holeX + 5), _holePoint.Y);
+                var velocity = new Vector2(_rand.NextFloat(-100f, 100f), _rand.NextFloat(-300f, -200f));
+
+                var scale = _rand.Next(0, 2) == 0 ? new Vector2(2, 2) : new Vector2(3, 3);
+
+                var state = new ParticleState()
+                {
+                    Velocity = velocity,
+                    Type = ParticleType.GroundPieces,
+                    Gravity = 3.3f
+                };
+
+                SceneManager.Instance.ParticleManager.CreateParticle(texture, position, Color.White, 700f, scale, state);
             }
         }
 

@@ -10,11 +10,6 @@ namespace Super_Pete_The_Pirate.Characters
     class Parrot : Enemy
     {
         //--------------------------------------------------
-        // Fly width
-
-        private int _flyWidth = 224;
-
-        //--------------------------------------------------
         // Mechanics
 
         private enum FlyDirection
@@ -22,7 +17,8 @@ namespace Super_Pete_The_Pirate.Characters
             Left,
             Right
         }
-
+        
+        private int _flyWidth = 224;
         private Rectangle _flyRange;
         private FlyDirection _flyDirection;
 
@@ -95,13 +91,15 @@ namespace Super_Pete_The_Pirate.Characters
         public override void Update(GameTime gameTime)
         {
             _velocity.X = _flyDirection == FlyDirection.Right ? 200f : -200f;
+
             base.Update(gameTime);
-            if (_flyDirection == FlyDirection.Right && Position.X >= _flyRange.Right)
+
+            if (_flyDirection == FlyDirection.Right && (Position.X >= _flyRange.Right || Velocity.X == 0))
             {
                 CharacterSprite.Effect = SpriteEffects.FlipHorizontally;
                 _flyDirection = FlyDirection.Left;
             }
-            else if (_flyDirection == FlyDirection.Left && Position.X <= _flyRange.Left)
+            else if (_flyDirection == FlyDirection.Left && (Position.X <= _flyRange.Left || Velocity.X == 0))
             {
                 CharacterSprite.Effect = SpriteEffects.None;
                 _flyDirection = FlyDirection.Right;
