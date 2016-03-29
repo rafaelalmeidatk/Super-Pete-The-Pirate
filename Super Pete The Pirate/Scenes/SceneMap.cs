@@ -51,6 +51,11 @@ namespace Super_Pete_The_Pirate.Scenes
         private int _playerCameraOffsetX = 40;
 
         //--------------------------------------------------
+        // Player Hud
+
+        private GameHud _gameHud;
+
+        //--------------------------------------------------
         // Random stuff
 
         private Random _rand;
@@ -90,6 +95,13 @@ namespace Super_Pete_The_Pirate.Scenes
             _rand = new Random();
             LoadMap(2);
             mapInfo = GameMap.Instance._tiledMap.Layers.ToString();
+            CreateHud();
+        }
+
+        private void CreateHud()
+        {
+            _gameHud = new GameHud(ImageManager.loadSystem("hudSpritesheet"));
+            _gameHud.SetPosition(new Vector2(10, 10));
         }
 
         private void LoadMap(int mapId)
@@ -353,6 +365,9 @@ namespace Super_Pete_The_Pirate.Scenes
 
             // Draw the particles
             SceneManager.Instance.ParticleManager.Draw(spriteBatch);
+
+            // Draw the Hud
+            _gameHud.Draw(spriteBatch);
 
             spriteBatch.End();
         }
