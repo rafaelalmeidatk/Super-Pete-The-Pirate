@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="11" height="7" tilewidth="32" tileheight="32" nextobjectid="8">
+ <tileset firstgid="1" name="tile" tilewidth="32" tileheight="32" tilecount="121" columns="11">
+  <image source="../imgs/tilesets/tile.png" width="352" height="352"/>
+  <tile id="57">
+   <properties>
+    <property name="type" value="TurtleWheel"/>
+   </properties>
+  </tile>
+ </tileset>
+ <imagelayer name="Camada de Imagem 1">
+  <image source="../imgs/tilesets/hills.png"/>
+ </imagelayer>
+ <layer name="Block" width="11" height="7">
+  <data encoding="csv">
+7,0,0,0,0,0,0,0,0,0,6,
+18,0,0,0,0,0,0,0,0,6,17,
+18,0,0,0,0,0,0,0,0,0,1,
+18,0,0,0,0,0,0,0,0,0,17,
+18,0,0,0,6,2,7,0,0,0,17,
+18,0,0,0,17,1,18,0,0,0,17,
+2,2,2,2,1,1,1,2,2,2,2
+</data>
+ </layer>
+ <objectgroup name="Player Spawn">
+  <object id="1" gid="56" x="64" y="160" width="32" height="32"/>
+ </objectgroup>
+ <objectgroup name="Enemies">
+  <object id="4" gid="59" x="96" y="128" width="32" height="32">
+   <properties>
+    <property name="FlyWidth" value="128"/>
+    <property name="type" value="Parrot"/>
+   </properties>
+  </object>
+  <object id="7" gid="59" x="224" y="96" width="32" height="32">
+   <properties>
+    <property name="FlipHorizontally" value="true"/>
+    <property name="FlyWidth" value="128"/>
+    <property name="type" value="Parrot"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <layer name="Detail" width="11" height="7">
+  <data encoding="csv">
+0,10,0,0,0,0,0,0,0,8,0,
+0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,3,
+0,0,0,0,9,9,9,0,0,0,0,
+0,0,0,8,0,0,0,10,0,0,0,
+0,9,9,9,0,0,0,9,9,9,0,
+1,0,0,0,0,0,0,0,0,0,1
+</data>
+ </layer>
+</map>
