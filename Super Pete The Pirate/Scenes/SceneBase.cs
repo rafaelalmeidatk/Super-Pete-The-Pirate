@@ -32,7 +32,6 @@ namespace Super_Pete_The_Pirate.Scenes
         {
             Content = new ContentManager(SceneManager.Instance.Content.ServiceProvider, "Content");
             _fpsCounter = new FramesPerSecondCounter();
-            _debugFont = Content.Load<SpriteFont>("fonts/DebugFont");
             DebugValues = new Dictionary<string, string>();
         }
 
@@ -57,8 +56,10 @@ namespace Super_Pete_The_Pirate.Scenes
             spriteBatch.Begin();
             spriteBatch.DrawString(_debugFont, string.Format("FPS: {0}", _fpsCounter.AverageFramesPerSecond), new Vector2(5, 5), Color.Gray);
             var i = 0;
+            /*
             foreach (KeyValuePair<string, string> value in DebugValues)
                 spriteBatch.DrawString(_debugFont, value.Key + ": " + value.Value, new Vector2(5, 25 + 20 * i++), Color.White);
+            */
             spriteBatch.End();
         }
 
