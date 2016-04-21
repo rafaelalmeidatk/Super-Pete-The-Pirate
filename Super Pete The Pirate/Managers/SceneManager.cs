@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using MonoGame.Extended.BitmapFonts;
 using MonoGame.Extended.Sprites;
 using MonoGame.Extended.ViewportAdapters;
 using Super_Pete_The_Pirate.Scenes;
@@ -52,6 +53,12 @@ namespace Super_Pete_The_Pirate
 
         public bool DebugMode = true;
 
+        //--------------------------------------------------
+        // Game font
+
+        private BitmapFont _gameFont;
+        public BitmapFont GameFont { get { return _gameFont; } }
+
         //----------------------//------------------------//
 
         public static SceneManager Instance
@@ -88,9 +95,10 @@ namespace Super_Pete_The_Pirate
             var transitionTexture = new Texture2D(GraphicsDevice, 1, 1, false, SurfaceFormat.Color);
             transitionTexture.SetData<Color>(new Color[] { Color.Black });
             _transitionImage = new Sprite(transitionTexture);
-            _transitionImage.Scale = new Vector2(WindowSize.X, WindowSize.Y);
+            _transitionImage.Scale = new Vector2(VirtualSize.X, VirtualSize.Y);
             _transitionImage.Alpha = 0.0f;
             _transitionImage.IsVisible = false;
+            _gameFont = Content.Load<BitmapFont>("fonts/Alagard");
             ParticleManager = new ParticleManager<ParticleState>(1024 * 20, ParticleState.UpdateParticle);
             _currentScene.LoadContent();
         }

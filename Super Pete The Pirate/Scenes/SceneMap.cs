@@ -25,6 +25,8 @@ namespace Super_Pete_The_Pirate.Scenes
 
         private Player _player;
 
+        public Player Player { get { return _player; } }
+
         //--------------------------------------------------
         // Enemies
 
@@ -101,7 +103,7 @@ namespace Super_Pete_The_Pirate.Scenes
         private void CreateHud()
         {
             _gameHud = new GameHud(ImageManager.loadSystem("hudSpritesheet"));
-            _gameHud.SetPosition(new Vector2(10, 10));
+            _gameHud.SetPosition(new Vector2(5, 5));
         }
 
         private void LoadMap(int mapId)
@@ -365,6 +367,11 @@ namespace Super_Pete_The_Pirate.Scenes
 
             // Draw the particles
             SceneManager.Instance.ParticleManager.Draw(spriteBatch);
+
+            spriteBatch.End();
+
+            spriteBatch.Begin(transformMatrix: SceneManager.Instance.ViewportAdapter.GetScaleMatrix(),
+                samplerState: SamplerState.PointClamp);
 
             // Draw the Hud
             _gameHud.Draw(spriteBatch);

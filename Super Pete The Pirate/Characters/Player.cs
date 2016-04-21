@@ -24,6 +24,18 @@ namespace Super_Pete_The_Pirate
 
         private int _coins;
 
+        //--------------------------------------------------
+        // Lives
+
+        private int _lives;
+        public int Lives { get { return _lives; } }
+
+        //--------------------------------------------------
+        // Ammo
+
+        private int _ammo;
+        public int Ammo { get { return _ammo; } }
+
         //----------------------//------------------------//
 
         public Player(Texture2D texture) : base(texture)
@@ -67,7 +79,8 @@ namespace Super_Pete_The_Pirate
             {
                 new Rectangle(32, 32, 32, 32),
                 new Rectangle(64, 32, 64, 32),
-                new Rectangle(128, 32, 64, 32)
+                new Rectangle(128, 32, 64, 32),
+                new Rectangle(192, 32, 64, 32)
             }, new int[] { 0, 0, 0, 0 }, new int[] { 0, 0, 0, 0 });
 
             CharacterSprite.AddAttackCollider("attack_sword", new List<List<Rectangle>>()
@@ -119,13 +132,13 @@ namespace Super_Pete_The_Pirate
 
             CharacterSprite.CreateFrameList("attack_shot", 50);
             CharacterSprite.AddCollider("attack_shot", new Rectangle(9, 2, 17, 30));
-            CharacterSprite.AddFramesToAttack("attack_shot", 3);
+            CharacterSprite.AddFramesToAttack("attack_shot", 2);
             CharacterSprite.AddFrames("attack_shot", new List<Rectangle>()
             {
                 new Rectangle(0, 128, 32, 32),
-                new Rectangle(32, 128, 32, 32),
-                new Rectangle(64, 128, 64, 32),
-                new Rectangle(128, 128, 64, 32)
+                new Rectangle(32, 128, 64, 32),
+                new Rectangle(96, 128, 64, 32),
+                new Rectangle(160, 128, 64, 32)
             }, new int[] { 0, 0, 0, 0 }, new int[] { 0, 0, 0, 0 });
 
             CharacterSprite.CreateFrameList("attack_shot_jumping", 50);
@@ -134,9 +147,9 @@ namespace Super_Pete_The_Pirate
             CharacterSprite.AddFrames("attack_shot_jumping", new List<Rectangle>()
             {
                 new Rectangle(0, 160, 32, 32),
-                new Rectangle(32, 160, 32, 32),
-                new Rectangle(64, 160, 64, 32),
-                new Rectangle(128, 160, 64, 32)
+                new Rectangle(32, 160, 64, 32),
+                new Rectangle(96, 160, 64, 32),
+                new Rectangle(160, 160, 64, 32)
             }, new int[] { 0, 0, 0, 0 }, new int[] { 0, 0, 0, 0 });
 
             Position = new Vector2(32, 160);
@@ -153,8 +166,9 @@ namespace Super_Pete_The_Pirate
             AttackCooldown = 300f;
 
             // Battle system init
-
-            _hp = 100;
+            _hp = 5;
+            _lives = 3;
+            _ammo = 5;
 
             // Coins init
             _coins = 0;

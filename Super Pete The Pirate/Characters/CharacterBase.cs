@@ -26,12 +26,10 @@ namespace Super_Pete_The_Pirate
         protected bool _requestErase;
         public bool RequestErase { get { return _requestErase; } }
         public float AttackCooldown { get; set; }
-
-        protected int _hp;
-
         public bool IsImunity { get { return CharacterSprite.ImmunityAnimationActive; } }
-
         protected bool _shot;
+        protected int _hp;
+        public int HP { get { return _hp; } }
 
         //--------------------------------------------------
         // Damage stuff
