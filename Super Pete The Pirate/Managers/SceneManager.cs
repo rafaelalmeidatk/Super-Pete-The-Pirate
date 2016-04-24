@@ -54,10 +54,14 @@ namespace Super_Pete_The_Pirate
         public bool DebugMode = true;
 
         //--------------------------------------------------
-        // Game font
+        // Game fonts
 
         private BitmapFont _gameFont;
         public BitmapFont GameFont { get { return _gameFont; } }
+
+        private BitmapFont _gameFontSmall;
+        public BitmapFont GameFontSmall { get { return _gameFontSmall; } }
+
 
         //----------------------//------------------------//
 
@@ -99,6 +103,7 @@ namespace Super_Pete_The_Pirate
             _transitionImage.Alpha = 0.0f;
             _transitionImage.IsVisible = false;
             _gameFont = Content.Load<BitmapFont>("fonts/Alagard");
+            _gameFontSmall = Content.Load<BitmapFont>("fonts/AlagardSmall");
             ParticleManager = new ParticleManager<ParticleState>(1024 * 20, ParticleState.UpdateParticle);
             _currentScene.LoadContent();
         }

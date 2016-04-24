@@ -20,6 +20,7 @@ namespace Super_Pete_The_Pirate
 
         protected bool _requestAttack;
         protected bool _isAttacking;
+        public bool IsAttacking { get { return _isAttacking; } }
         protected int _attackType;
         protected float _attackCooldownTick;
         protected string[] _attackFrameList;
@@ -288,7 +289,7 @@ namespace Super_Pete_The_Pirate
 
         #region Draw
 
-        public void DrawCharacter(SpriteBatch spriteBatch)
+        public virtual void DrawCharacter(SpriteBatch spriteBatch)
         {
             CharacterSprite.Draw(spriteBatch, new Vector2(BoundingRectangle.X, BoundingRectangle.Y));
         }

@@ -1,11 +1,13 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using MonoGame.Extended.BitmapFonts;
 using System.Collections.Generic;
 using System;
 using Super_Pete_The_Pirate.Sprites;
 using System.Diagnostics;
 using Super_Pete_The_Pirate.Scenes;
+using Super_Pete_The_Pirate.Objects;
 
 namespace Super_Pete_The_Pirate
 {
@@ -23,6 +25,7 @@ namespace Super_Pete_The_Pirate
         // Coins management
 
         private int _coins;
+        public int Coins { get { return _coins; } }
 
         //--------------------------------------------------
         // Lives
@@ -168,15 +171,30 @@ namespace Super_Pete_The_Pirate
             // Battle system init
             _hp = 5;
             _lives = 3;
-            _ammo = 5;
+            _ammo = 2;
 
             // Coins init
-            _coins = 0;
+            _coins = 250;
         }
 
-        public void AddCoins(int ammount)
+        public void AddCoins(int ammount, bool withAnimation = false)
         {
             _coins += ammount;
+        }
+
+        public void AddAmmo(int ammount)
+        {
+            _ammo += ammount;
+        }
+
+        public void AddHearts(int ammount)
+        {
+            _hp += ammount;
+        }
+
+        public void AddLives(int ammount)
+        {
+            _lives += ammount;
         }
 
         public override void Update(GameTime gameTime)
@@ -225,9 +243,9 @@ namespace Super_Pete_The_Pirate
             if (InputManager.Instace.KeyPressed(Keys.G))
                 _knockbackAcceleration = 5000f;
 
-            _isJumping = InputManager.Instace.KeyDown(Keys.Up);
+            _isJumping = InputManager.Instace.KeyDown(Keys.C);
 
-            if (InputManager.Instace.KeyPressed(Keys.Up) && _isOnGround)
+            if (InputManager.Instace.KeyPressed(Keys.C) && _isOnGround)
                 CreateJumpParticles();
 
             // Attack
@@ -294,6 +312,7 @@ namespace Super_Pete_The_Pirate
         private void Shot(int damage)
         {
             if (_shot) return;
+            _shot = true;
 
             var position = Position;
             var dx = 5;
@@ -305,8 +324,37 @@ namespace Super_Pete_The_Pirate
                 dx *= -1;
             }
             else position += new Vector2(45, 16);
+
+            if (_ammo <= 0)
+            {
+                CreateConfettiParticles(position, Math.Sign(dx));
+                return;
+            }
+
             ((SceneMap)SceneManager.Instance.GetCurrentScene()).CreateProjectile("common", position, dx, 0, damage, Objects.ProjectileSubject.FromPlayer);
-            _shot = true;
+            _ammo--;
+        }
+
+        private void CreateConfettiParticles(Vector2 position, int signal)
+        {
+            var texture = ImageManager.loadParticle("WhitePoint");
+            for (var i = 0; i < _rand.Next(2, 5); i++)
+            {
+                var velocity = new Vector2(_rand.NextFloat(10f, 100f) * signal, _rand.NextFloat(-200f, -100f));
+                var color = ColorUtil.HSVToColor(MathHelper.ToRadians(_rand.NextFloat(0, 359)), 0.6f, 0.95f);
+                var scale = _rand.Next(0, 2) == 0 ? new Vector2(2, 2) : new Vector2(3, 3);
+
+                var state = new ParticleState()
+                {
+                    Velocity = velocity,
+                    Type = ParticleType.Confetti,
+                    Gravity = 1.8f,
+                    UseCustomVelocity = true,
+                    VelocityMultiplier = 0.95f
+                };
+
+                SceneManager.Instance.ParticleManager.CreateParticle(texture, position, color, 800f, scale, state);
+            }
         }
     }
 }

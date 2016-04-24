@@ -11,7 +11,8 @@ namespace Super_Pete_The_Pirate
     {
         Smoke,
         GroundPieces,
-        Spark
+        Spark,
+        Confetti
     }
 
     public struct ParticleState
@@ -34,6 +35,8 @@ namespace Super_Pete_The_Pirate
         // H ammount of HSV
         public float H;
 
+        public float Rotation;
+
         //----------------------//------------------------//
 
         public static void UpdateParticle(ParticleManager<ParticleState>.Particle particle, GameTime gameTime)
@@ -47,7 +50,6 @@ namespace Super_Pete_The_Pirate
 
             float alpha = Math.Max(0, particle.PercentLife * 2 - particle.State.AlphaBase);
             alpha *= alpha;
-
             if (particle.State.Type == ParticleType.Spark)
             {
                 particle.State.H -= 1.4f;
@@ -55,6 +57,10 @@ namespace Super_Pete_The_Pirate
                 particle.Sprite.Rotation = vel.ToAngle();
                 var x = Math.Min(Math.Min(particle.State.Width, 0.2f * vel.Length() + 0.1f), alpha);
                 particle.Sprite.Scale = new Vector2(x, particle.Sprite.Scale.Y);
+            }
+            else if (particle.State.Type == ParticleType.Confetti)
+            {
+                particle.Sprite.Rotation = vel.ToAngle() + particle.State.Rotation;
             }
             else
             {
@@ -68,6 +74,7 @@ namespace Super_Pete_The_Pirate
             else
                 vel *= 0.97f;
 
+            particle.State.Rotation += 0.08f;
             particle.State.Velocity = vel;
         }
     }

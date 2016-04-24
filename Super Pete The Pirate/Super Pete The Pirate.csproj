@@ -59,6 +59,7 @@
     <Compile Include="Objects\GameHud.cs" />
     <Compile Include="Objects\GameMap.cs" />
     <Compile Include="Objects\GameProjectile.cs" />
+    <Compile Include="Objects\GameShop.cs" />
     <Compile Include="Objects\PhysicalObject.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -41,6 +41,12 @@ namespace Super_Pete_The_Pirate.Scenes
         private List<GameProjectile> _projectiles;
 
         //--------------------------------------------------
+        // Shops
+
+        private List<GameShop> _shops;
+        public List<GameShop> Shops { get { return _shops; } }
+
+        //--------------------------------------------------
         // Coins
 
         private List<GameCoin> _coins;
@@ -87,15 +93,18 @@ namespace Super_Pete_The_Pirate.Scenes
             // Projectiles init
             _projectilesTextures = new Dictionary<string, Texture2D>()
             {
-                {"common", ImageManager.loadProjectile("common")}
+                {"common", ImageManager.loadProjectile("Common")}
             };
             _projectiles = new List<GameProjectile>();
+
+            // Shops init
+            _shops = new List<GameShop>();
 
             // Coins init
             _coins = new List<GameCoin>();
 
             _rand = new Random();
-            LoadMap(3);
+            LoadMap(5);
             mapInfo = GameMap.Instance._tiledMap.Layers.ToString();
             CreateHud();
         }
@@ -103,12 +112,14 @@ namespace Super_Pete_The_Pirate.Scenes
         private void CreateHud()
         {
             _gameHud = new GameHud(ImageManager.loadSystem("hudSpritesheet"));
-            _gameHud.SetPosition(new Vector2(5, 5));
+            _gameHud.SetPosition(new Vector2(50, 5),
+                new Vector2(SceneManager.Instance.VirtualSize.X - 45, 5));
         }
 
         private void LoadMap(int mapId)
         {
             GameMap.Instance.LoadMap(Content, mapId);
+            SpawnShops();
             SpawnEnemies();
             SpawnPlayer();
             SpawnCoins();
@@ -179,6 +190,41 @@ namespace Super_Pete_The_Pirate.Scenes
             if (enemyName == "Mole") ((Mole)newEnemy).SetHolePoint((int)newEnemy.Position.X, y);
                 
             _enemies.Add(newEnemy);
+        }
+
+        private void SpawnShops()
+        {
+            var shopsGroup = GameMap.Instance.GetObjectGroup("Shops");
+            if (shopsGroup == null) return;
+            foreach (var shopObj in shopsGroup.Objects)
+            {
+                CreateShop(shopObj, Convert.ToInt32(shopObj.X), Convert.ToInt32(shopObj.Y));
+            }
+        }
+
+        private void CreateShop(TiledObject shopObj, int x, int y)
+        {
+            Debug.WriteLine("create shop");
+            var shopType = shopObj.Properties["Type"];
+            Debug.WriteLine(shopType);
+            if (shopType == null) return;
+            var shopTexture = ImageManager.loadMisc("Panel" + shopType);
+            var type = GameShopType.None;
+            switch (shopType)
+            {
+                case "Ammo":
+                    type = GameShopType.Ammo;
+                    break;
+                case "Hearts":
+                    type = GameShopType.Hearts;
+                    break;
+                case "Lives":
+                    type = GameShopType.Lives;
+                    break;
+            }
+            var arrowsTexture = ImageManager.loadSystem("ShopUpButton");
+            var shop = new GameShop(type, shopTexture, arrowsTexture, new Vector2(x, y));
+            _shops.Add(shop);
         }
 
         public void CreateProjectile(string name, Vector2 position, int dx, int dy, int damage, ProjectileSubject subject)
@@ -266,6 +312,28 @@ namespace Super_Pete_The_Pirate.Scenes
                 }
             }
 
+            for (var i = 0; i < _shops.Count; i++)
+            {
+                if (_shops[i].IsActive && !_player.BoundingRectangle.Intersects(_shops[i].BoundingRectangle))
+                {
+                    _shops[i].SetActive(false);
+                }
+                else if (!_shops[i].IsActive && _player.BoundingRectangle.Intersects(_shops[i].BoundingRectangle))
+                {
+                    _shops[i].SetActive(true);
+                }
+
+                if (_shops[i].IsActive && _player.IsAttacking && !_shops[i].IsDenied())
+                {
+                    _shops[i].SetArrowDenyState();
+                }
+                else if (_shops[i].IsDenied() && !_player.IsAttacking)
+                {
+                    _shops[i].SetArrowNormalState();
+                }
+                _shops[i].Update(gameTime);
+            }
+
             UpdateCamera();
             base.Update(gameTime);
 
@@ -277,22 +345,24 @@ namespace Super_Pete_The_Pirate.Scenes
 
         private void CreateParticle()
         {
-            var texture = ImageManager.loadParticle("GroundPiece");
-            for (var i = 0; i < 30; i++)
+            var texture = ImageManager.loadParticle("WhitePoint");
+            for (var i = 0; i < 5; i++)
             {
-                var position = new Vector2(_rand.NextFloat(100, 110), 100);
-                var velocity = new Vector2(_rand.NextFloat(-100f, 100f), _rand.NextFloat(-300f, -200f));
-
+                var position = new Vector2(100, 100);
+                var velocity = new Vector2(_rand.NextFloat(10f, 100f), _rand.NextFloat(-300f, -200f));
+                var color = ColorUtil.HSVToColor(MathHelper.ToRadians(_rand.NextFloat(0, 359)), 0.6f, 1f);
                 var scale = _rand.Next(0, 2) == 0 ? new Vector2(2, 2) : new Vector2(3, 3);
 
                 var state = new ParticleState()
                 {
                     Velocity = velocity,
-                    Type = ParticleType.GroundPieces,
-                    Gravity = 3.3f
+                    Type = ParticleType.Confetti,
+                    Gravity = 1.8f,
+                    UseCustomVelocity = true,
+                    VelocityMultiplier = 0.95f
                 };
 
-                SceneManager.Instance.ParticleManager.CreateParticle(texture, position, Color.White, 1000f, scale, state);
+                SceneManager.Instance.ParticleManager.CreateParticle(texture, position, color, 1000f, scale, state);
             }
         }
 
@@ -342,6 +412,12 @@ namespace Super_Pete_The_Pirate.Scenes
             GameMap.Instance.Draw(_camera, spriteBatch);
 
             spriteBatch.Begin(transformMatrix: _camera.GetViewMatrix(), samplerState: SamplerState.PointClamp);
+
+            // Draw the shops
+            for (var i = 0; i < _shops.Count; i++)
+            {
+                _shops[i].Draw(spriteBatch);
+            }
 
             // Draw the coins
             for (var i = 0; i < _coins.Count; i++)
