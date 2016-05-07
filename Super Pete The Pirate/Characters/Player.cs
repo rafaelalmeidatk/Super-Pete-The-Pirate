@@ -8,6 +8,7 @@ using Super_Pete_The_Pirate.Sprites;
 using System.Diagnostics;
 using Super_Pete_The_Pirate.Scenes;
 using Super_Pete_The_Pirate.Objects;
+using Super_Pete_The_Pirate.Managers;
 
 namespace Super_Pete_The_Pirate
 {
@@ -22,29 +23,26 @@ namespace Super_Pete_The_Pirate
         private const int ShotAttackJump = 3;
 
         //--------------------------------------------------
-        // Coins management
-
-        private int _coins;
-        public int Coins { get { return _coins; } }
+        // Coins
+        
+        public int Coins { get { return PlayerManager.Instance.Coins; } }
 
         //--------------------------------------------------
         // Lives
-
-        private int _lives;
-        public int Lives { get { return _lives; } }
+        
+        public int Lives { get { return PlayerManager.Instance.Lives; } }
 
         //--------------------------------------------------
         // Ammo
-
-        private int _ammo;
-        public int Ammo { get { return _ammo; } }
+        
+        public int Ammo { get { return PlayerManager.Instance.Ammo; } }
 
         //----------------------//------------------------//
 
         public Player(Texture2D texture) : base(texture)
         {
             // Stand
-            CharacterSprite.CreateFrameList("stand", 150);
+            CharacterSprite.CreateFrameList("stand", 140);
             CharacterSprite.AddCollider("stand", new Rectangle(9, 2, 17, 30));
             CharacterSprite.AddFrames("stand", new List<Rectangle>()
             {
@@ -75,7 +73,7 @@ namespace Super_Pete_The_Pirate
 
 
             // Sword Attack
-            CharacterSprite.CreateFrameList("attack_sword", 50);
+            CharacterSprite.CreateFrameList("attack_sword", 70);
             CharacterSprite.AddCollider("attack_sword", new Rectangle(9, 2, 17, 30));
             CharacterSprite.AddFramesToAttack("attack_sword", 1, 2);
             CharacterSprite.AddFrames("attack_sword", new List<Rectangle>()
@@ -94,7 +92,7 @@ namespace Super_Pete_The_Pirate
             }, 64);
 
             // Aerial Attack
-            CharacterSprite.CreateFrameList("attack_aerial", 50);
+            CharacterSprite.CreateFrameList("attack_aerial", 60);
             CharacterSprite.AddCollider("attack_aerial", new Rectangle(9, 2, 17, 30));
             CharacterSprite.AddFrames("attack_aerial", new List<Rectangle>()
             {
@@ -132,8 +130,7 @@ namespace Super_Pete_The_Pirate
             CharacterSprite.AddFramesToAttack("attack_aerial", 0, 1, 2, 3);
 
             // Shot Attack
-
-            CharacterSprite.CreateFrameList("attack_shot", 50);
+            CharacterSprite.CreateFrameList("attack_shot", 80);
             CharacterSprite.AddCollider("attack_shot", new Rectangle(9, 2, 17, 30));
             CharacterSprite.AddFramesToAttack("attack_shot", 2);
             CharacterSprite.AddFrames("attack_shot", new List<Rectangle>()
@@ -168,33 +165,14 @@ namespace Super_Pete_The_Pirate
 
             AttackCooldown = 300f;
 
-            // Battle system init
-            _hp = 5;
-            _lives = 3;
-            _ammo = 2;
-
-            // Coins init
-            _coins = 250;
-        }
-
-        public void AddCoins(int ammount, bool withAnimation = false)
-        {
-            _coins += ammount;
-        }
-
-        public void AddAmmo(int ammount)
-        {
-            _ammo += ammount;
-        }
-
-        public void AddHearts(int ammount)
-        {
-            _hp += ammount;
-        }
-
-        public void AddLives(int ammount)
-        {
-            _lives += ammount;
+            // Player init
+            if (!PlayerManager.Instance.Initialized)
+            {
+                PlayerManager.Instance.AddAmmo(2);
+                PlayerManager.Instance.AddLives(3);
+                PlayerManager.Instance.AddHearts(5);
+                PlayerManager.Instance.AddCoins(250);
+            }
         }
 
         public override void Update(GameTime gameTime)
@@ -325,14 +303,16 @@ namespace Super_Pete_The_Pirate
             }
             else position += new Vector2(45, 16);
 
-            if (_ammo <= 0)
+            if (PlayerManager.Instance.Ammo <= 0)
             {
+                if (CharacterSprite.Effect == SpriteEffects.FlipHorizontally)
+                    position -= new Vector2(23, 0);
                 CreateConfettiParticles(position, Math.Sign(dx));
                 return;
             }
 
-            ((SceneMap)SceneManager.Instance.GetCurrentScene()).CreateProjectile("common", position, dx, 0, damage, Objects.ProjectileSubject.FromPlayer);
-            _ammo--;
+            ((SceneMap)SceneManager.Instance.GetCurrentScene()).CreateProjectile("common", position, dx, 0, damage, ProjectileSubject.FromPlayer);
+            PlayerManager.Instance.AddAmmo(-1);
         }
 
         private void CreateConfettiParticles(Vector2 position, int signal)
@@ -340,7 +320,7 @@ namespace Super_Pete_The_Pirate
             var texture = ImageManager.loadParticle("WhitePoint");
             for (var i = 0; i < _rand.Next(2, 5); i++)
             {
-                var velocity = new Vector2(_rand.NextFloat(10f, 100f) * signal, _rand.NextFloat(-200f, -100f));
+                var velocity = new Vector2(_rand.NextFloat(10f, 100f) * signal, _rand.NextFloat(-220f, -100f));
                 var color = ColorUtil.HSVToColor(MathHelper.ToRadians(_rand.NextFloat(0, 359)), 0.6f, 0.95f);
                 var scale = _rand.Next(0, 2) == 0 ? new Vector2(2, 2) : new Vector2(3, 3);
 

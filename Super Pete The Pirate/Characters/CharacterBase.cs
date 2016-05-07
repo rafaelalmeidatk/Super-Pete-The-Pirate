@@ -240,19 +240,17 @@ namespace Super_Pete_The_Pirate
 
                 var position = new Vector2(BoundingRectangle.Center.X, BoundingRectangle.Bottom);
                 position.X += _rand.Next(5, 8) * side;
-                var velocity = new Vector2(_rand.NextFloat(2f, 5f) * side, _rand.NextFloat(-1f, -3f)) * 3f;
+                var velocity = new Vector2(_rand.NextFloat(3f, 6f) * side, _rand.NextFloat(-1f, -3f)) * 3f;
                 var size = new Vector2(_rand.NextFloat(5f, 7f), _rand.NextFloat(4f, 6f));
 
                 var state = new ParticleState()
                 {
                     Velocity = velocity,
-                    AlphaBase = _rand.NextFloat(0.2f, 0.6f),
-                    Type = ParticleType.Smoke,
-                    UseCustomVelocity = true,
-                    VelocityMultiplier = 1.05f
+                    AlphaBase = _rand.NextFloat(0.2f, 0.4f),
+                    Type = ParticleType.Smoke
                 };
 
-                SceneManager.Instance.ParticleManager.CreateParticle(ImageManager.loadParticle("Smoke"), position, Color.White, 1000f, size, state);
+                SceneManager.Instance.ParticleManager.CreateParticle(ImageManager.loadParticle("Smoke"), position, Color.White, 800f, size, state);
             }
         }
 
@@ -276,12 +274,12 @@ namespace Super_Pete_The_Pirate
                 var state = new ParticleState()
                 {
                     Velocity = velocity,
-                    AlphaBase = _rand.NextFloat(0.2f, 0.6f),
+                    AlphaBase = _rand.NextFloat(0.2f, 0.4f),
                     Type = ParticleType.Smoke,
                     UseCustomVelocity = true
                 };
 
-                SceneManager.Instance.ParticleManager.CreateParticle(ImageManager.loadParticle("Smoke"), position, Color.White, 1000f, size, state);
+                SceneManager.Instance.ParticleManager.CreateParticle(ImageManager.loadParticle("Smoke"), position, Color.White, 800f, size, state);
             }
         }
 

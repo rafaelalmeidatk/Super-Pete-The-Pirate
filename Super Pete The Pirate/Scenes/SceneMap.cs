@@ -15,6 +15,7 @@ using Super_Pete_The_Pirate.Characters;
 using Super_Pete_The_Pirate.Objects;
 using System.Diagnostics;
 using Super_Pete_The_Pirate.Sprites;
+using Super_Pete_The_Pirate.Managers;
 
 namespace Super_Pete_The_Pirate.Scenes
 {
@@ -204,9 +205,7 @@ namespace Super_Pete_The_Pirate.Scenes
 
         private void CreateShop(TiledObject shopObj, int x, int y)
         {
-            Debug.WriteLine("create shop");
             var shopType = shopObj.Properties["Type"];
-            Debug.WriteLine(shopType);
             if (shopType == null) return;
             var shopTexture = ImageManager.loadMisc("Panel" + shopType);
             var type = GameShopType.None;
@@ -306,7 +305,7 @@ namespace Super_Pete_The_Pirate.Scenes
                 }
                 else if (sprite.TextureRegion.Name.IndexOf("CoinSparkle") < 0 && _player.BoundingRectangle.Intersects(sprite.BoundingBox))
                 {
-                    _player.AddCoins(1);
+                    PlayerManager.Instance.AddCoins(1);
                     sprite.SetTexture(ImageManager.loadMisc("CoinSparkle"), false);
                     sprite.SetDelay(80);
                 }

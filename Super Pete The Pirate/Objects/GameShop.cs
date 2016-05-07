@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Super_Pete_The_Pirate.Managers;
 using Super_Pete_The_Pirate.Scenes;
 using System;
 using System.Collections.Generic;
@@ -149,20 +150,20 @@ namespace Super_Pete_The_Pirate.Objects
 
         private void ProcessBuy()
         {
-            var player = ((SceneMap)SceneManager.Instance.GetCurrentScene()).Player;
-            if (player.Coins >= _prices[_shopType])
+            var playerManager = PlayerManager.Instance;
+            if (playerManager.Coins >= _prices[_shopType])
             {
-                player.AddCoins(-_prices[_shopType]);
+                playerManager.AddCoins(-_prices[_shopType]);
                 switch (_shopType)
                 {
                     case GameShopType.Ammo:
-                        player.AddAmmo(1);
+                        playerManager.AddAmmo(1);
                         break;
                     case GameShopType.Hearts:
-                        player.AddHearts(1);
+                        playerManager.AddHearts(1);
                         break;
                     case GameShopType.Lives:
-                        player.AddLives(1);
+                        playerManager.AddLives(1);
                         break;
                 }
                 PerformClick();
