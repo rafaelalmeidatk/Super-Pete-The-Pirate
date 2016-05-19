@@ -56,6 +56,7 @@
     <Compile Include="Managers\ParticleState.cs" />
     <Compile Include="Managers\PlayerManager.cs" />
     <Compile Include="Managers\SceneManager.cs" />
+    <Compile Include="Objects\GameCheckpoint.cs" />
     <Compile Include="Objects\GameCoin.cs" />
     <Compile Include="Objects\GameHud.cs" />
     <Compile Include="Objects\GameMap.cs" />

@@ -48,6 +48,11 @@ namespace Super_Pete_The_Pirate.Scenes
         public List<GameShop> Shops { get { return _shops; } }
 
         //--------------------------------------------------
+        // Checkpoints
+
+        private List<GameCheckpoint> _checkpoints;
+
+        //--------------------------------------------------
         // Coins
 
         private List<GameCoin> _coins;
@@ -101,6 +106,10 @@ namespace Super_Pete_The_Pirate.Scenes
             // Shops init
             _shops = new List<GameShop>();
 
+            // Checkpoints init
+
+            _checkpoints = new List<GameCheckpoint>();
+
             // Coins init
             _coins = new List<GameCoin>();
 
@@ -122,6 +131,7 @@ namespace Super_Pete_The_Pirate.Scenes
             GameMap.Instance.LoadMap(Content, mapId);
             SpawnShops();
             SpawnEnemies();
+            SpawnCheckpoints();
             SpawnPlayer();
             SpawnCoins();
         }
@@ -152,6 +162,33 @@ namespace Super_Pete_The_Pirate.Scenes
             coin.CoinSprite.SetBoundingBox(coinBoudingBox);
             _coins.Add(coin);
             return coin;
+        }
+
+        public void SpawnCheckpoints()
+        {
+            var checkpointGroup = GameMap.Instance.GetObjectGroup("Checkpoints");
+            if (checkpointGroup == null) return;
+
+            foreach(var checkpointObj in checkpointGroup.Objects)
+            {
+                CreateCheckpoints(Convert.ToInt32(checkpointObj.X), Convert.ToInt32(checkpointObj.Y - 96));
+            }
+        }
+
+        private GameCheckpoint CreateCheckpoints(int x, int y)
+        {
+            var checkpointTexture = ImageManager.loadMisc("checkPointSpritesheet");
+            var checkpointFrames = new Rectangle[]
+            {
+                new Rectangle(0, 0, 64, 96),
+                new Rectangle(64, 0, 64, 96),
+                new Rectangle(128, 0, 64, 96)
+            };
+            var checkpointBoundingBox = new Rectangle(0, 24, 37, 72);
+            var checkpoint = new GameCheckpoint(checkpointTexture, checkpointFrames, 130, x, y);
+            checkpoint.SetBoundingBox(checkpointBoundingBox);
+            _checkpoints.Add(checkpoint);
+            return checkpoint;
         }
 
         private void SpawnPlayer()
@@ -333,6 +370,16 @@ namespace Super_Pete_The_Pirate.Scenes
                 _shops[i].Update(gameTime);
             }
 
+            for (var i = 0; i < _checkpoints.Count; i++)
+            {
+                if (!_checkpoints[i].IsChecked && _player.BoundingRectangle.Intersects(_checkpoints[i].BoundingBox))
+                {
+                    _checkpoints[i].OnPlayerCheck();
+                    Debug.WriteLine("aaa");
+                }
+                _checkpoints[i].Update(gameTime);
+            }
+
             UpdateCamera();
             base.Update(gameTime);
 
@@ -345,10 +392,10 @@ namespace Super_Pete_The_Pirate.Scenes
         private void CreateParticle()
         {
             var texture = ImageManager.loadParticle("WhitePoint");
-            for (var i = 0; i < 5; i++)
+            for (var i = 0; i < 20; i++)
             {
                 var position = new Vector2(100, 100);
-                var velocity = new Vector2(_rand.NextFloat(10f, 100f), _rand.NextFloat(-300f, -200f));
+                var velocity = new Vector2(_rand.NextFloat(-100f, 100f), _rand.NextFloat(-500f, -300f));
                 var color = ColorUtil.HSVToColor(MathHelper.ToRadians(_rand.NextFloat(0, 359)), 0.6f, 1f);
                 var scale = _rand.Next(0, 2) == 0 ? new Vector2(2, 2) : new Vector2(3, 3);
 
@@ -416,6 +463,13 @@ namespace Super_Pete_The_Pirate.Scenes
             for (var i = 0; i < _shops.Count; i++)
             {
                 _shops[i].Draw(spriteBatch);
+            }
+
+            // Draw the checkpoints
+            for (var i = 0; i < _checkpoints.Count; i++)
+            {
+                _checkpoints[i].Draw(spriteBatch);
+                if (debugMode) _checkpoints[i].DrawCollider(spriteBatch);
             }
 
             // Draw the coins

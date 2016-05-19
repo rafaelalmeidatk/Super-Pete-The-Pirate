@@ -61,6 +61,16 @@ namespace Super_Pete_The_Pirate.Sprites
             _looped = false;
         }
 
+        public void SetNewFrames(Rectangle[] frames, int delay, bool repeat = true)
+        {
+            _currentFrame = 0;
+            _repeat = repeat;
+            _delay = delay;
+            _delayTick = 0;
+            _looped = false;
+            _frames = frames;
+        }
+
         public void SetDelay(int delay)
         {
             _delay = delay;
@@ -71,7 +81,7 @@ namespace Super_Pete_The_Pirate.Sprites
             _boundingBox = boundingBox;
         }
 
-        public void Update(GameTime gameTime)
+        public virtual void Update(GameTime gameTime)
         {
             _delayTick += gameTime.ElapsedGameTime.Milliseconds;
             if (_delayTick > _delay)

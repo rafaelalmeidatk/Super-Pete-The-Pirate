@@ -80,7 +80,7 @@ namespace Super_Pete_The_Pirate
 
         private SceneManager()
         {
-            _currentScene = new SceneStageSelect();
+            _currentScene = new SceneMap();
         }
 
         public void RequestExit()
