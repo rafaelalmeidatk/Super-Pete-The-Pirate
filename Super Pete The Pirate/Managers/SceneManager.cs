@@ -62,6 +62,20 @@ namespace Super_Pete_The_Pirate
         private BitmapFont _gameFontSmall;
         public BitmapFont GameFontSmall { get { return _gameFontSmall; } }
 
+        private BitmapFont _gameFontBig;
+        public BitmapFont GameFontBig { get { return _gameFontBig; } }
+
+        //--------------------------------------------------
+        // Saves scene type
+
+        public enum SceneSavesType
+        {
+            Save,
+            Load,
+            NewGame
+        }
+
+        public SceneSavesType TypeOfSceneSaves = SceneSavesType.NewGame;
 
         //----------------------//------------------------//
 
@@ -80,7 +94,7 @@ namespace Super_Pete_The_Pirate
 
         private SceneManager()
         {
-            _currentScene = new SceneMap();
+            _currentScene = new SceneSaves();
         }
 
         public void RequestExit()
@@ -104,6 +118,7 @@ namespace Super_Pete_The_Pirate
             _transitionImage.IsVisible = false;
             _gameFont = Content.Load<BitmapFont>("fonts/Alagard");
             _gameFontSmall = Content.Load<BitmapFont>("fonts/AlagardSmall");
+            _gameFontBig = Content.Load<BitmapFont>("fonts/AlagardBig");
             ParticleManager = new ParticleManager<ParticleState>(1024 * 20, ParticleState.UpdateParticle);
             _currentScene.LoadContent();
         }

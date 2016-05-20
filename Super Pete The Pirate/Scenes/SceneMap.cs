@@ -121,7 +121,7 @@ namespace Super_Pete_The_Pirate.Scenes
 
         private void CreateHud()
         {
-            _gameHud = new GameHud(ImageManager.loadSystem("hudSpritesheet"));
+            _gameHud = new GameHud(ImageManager.loadSystem("IconsSpritesheet"));
             _gameHud.SetPosition(new Vector2(50, 5),
                 new Vector2(SceneManager.Instance.VirtualSize.X - 45, 5));
         }

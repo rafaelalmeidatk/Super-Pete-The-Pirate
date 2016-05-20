@@ -211,7 +211,6 @@ namespace Super_Pete_The_Pirate.Scenes
             spriteBatch.DrawString(SceneManager.Instance.GameFont, MapPressMessage, _pressZTextPosition, _fontColor);
 
             spriteBatch.End();
-
         }
 
         private void DrawWithShadow(SpriteBatch spriteBatch, String text, Vector2 position)
