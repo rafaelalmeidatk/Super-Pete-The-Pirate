@@ -37,6 +37,9 @@ namespace Super_Pete_The_Pirate.Sprites
 
         //----------------------//------------------------//
 
+        public AnimatedSprite(Texture2D texture, Rectangle[] frames, int delay, Vector2 position, bool repeat = true)
+            : this(texture, frames, delay, (int)position.X, (int)position.Y, repeat) { }
+         
         public AnimatedSprite(Texture2D texture, Rectangle[] frames, int delay, int x, int y, bool repeat = true) : base(texture)
         {
             _frames = frames;

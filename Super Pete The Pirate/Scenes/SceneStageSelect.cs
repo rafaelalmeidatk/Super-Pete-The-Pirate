@@ -9,6 +9,7 @@ using MonoGame.Extended.BitmapFonts;
 using Microsoft.Xna.Framework;
 using Super_Pete_The_Pirate.Managers;
 using Super_Pete_The_Pirate.Sprites;
+using Microsoft.Xna.Framework.Input;
 
 namespace Super_Pete_The_Pirate.Scenes
 {
@@ -66,6 +67,12 @@ namespace Super_Pete_The_Pirate.Scenes
         private Texture2D _backgroundTexture;
         private Texture2D _iconsTexture;
 
+        //--------------------------------------------------
+        // Selected index
+
+        private int _selectedIndex;
+        private bool _lockIndexControl;
+
         //----------------------//------------------------//
 
         public override void LoadContent()
@@ -101,6 +108,11 @@ namespace Super_Pete_The_Pirate.Scenes
 
             _backgroundTexture = ImageManager.loadScene(ScenePathName, "IslandMapBackground");
             _iconsTexture = ImageManager.loadScene(ScenePathName, "IconMap");
+
+            // Index init
+
+            _selectedIndex = PlayerManager.Instance.StagesCompleted >= 5 ? 4 : PlayerManager.Instance.StagesCompleted;
+            _lockIndexControl = false;
 
             setupMap();
         }
@@ -156,6 +168,23 @@ namespace Super_Pete_The_Pirate.Scenes
 
         public override void Update(GameTime gameTime)
         {
+            DebugValues["Selected Index"] = _selectedIndex.ToString();
+
+            if (!_lockIndexControl && InputManager.Instace.KeyPressed(Keys.Right, Keys.Up))
+            {
+                _selectedIndex = _selectedIndex + 1 > PlayerManager.Instance.StagesCompleted ? 0 : _selectedIndex + 1;
+                UpdatePeteHeadPosition();
+            }
+            if (!_lockIndexControl && InputManager.Instace.KeyPressed(Keys.Left, Keys.Down))
+            {
+                _selectedIndex = _selectedIndex - 1 < 0 ? PlayerManager.Instance.StagesCompleted : _selectedIndex - 1;
+                UpdatePeteHeadPosition();
+            }
+            if (!_lockIndexControl && InputManager.Instace.KeyPressed(Keys.Enter, Keys.Z))
+            {
+                LoadMap();
+            }
+
             _stageSelectionSprite.Update(gameTime);
             _stageSelectionPeteSprite.Update(gameTime);
             if (_pressZTextPosition.Y <= _pressZTextInitY + 7 && _pressZTextSide)
@@ -174,6 +203,17 @@ namespace Super_Pete_The_Pirate.Scenes
                 }
             }
             base.Update(gameTime);
+        }
+
+        private void UpdatePeteHeadPosition()
+        {
+            _stageSelectionPeteSprite.Position = _stageSelectionPositions[_selectedIndex];
+        }
+
+        private void LoadMap()
+        {
+            SceneManager.Instance.MapToLoad = _selectedIndex + 1;
+            SceneManager.Instance.ChangeScene("SceneMap");
         }
 
         #region Draws
@@ -196,10 +236,6 @@ namespace Super_Pete_The_Pirate.Scenes
             // Hearts and lives
             DrawCenteredSpritesOnRectangle(spriteBatch, _hpSpritesArea, _heartSprite, 7);
             DrawCenteredSpritesOnRectangle(spriteBatch, _livesSpritesArea, _lifeSprite, 2);
-
-            // Map sprites
-            _stageSelectionSprite.Draw(spriteBatch);
-            _stageSelectionPeteSprite.Draw(spriteBatch);
             
             for (var i = 0; i < GetCurrentStage(); i++)
             {
@@ -209,6 +245,10 @@ namespace Super_Pete_The_Pirate.Scenes
             }
 
             spriteBatch.DrawString(SceneManager.Instance.GameFont, MapPressMessage, _pressZTextPosition, _fontColor);
+            
+            // Map sprites
+            _stageSelectionSprite.Draw(spriteBatch);
+            _stageSelectionPeteSprite.Draw(spriteBatch);
 
             spriteBatch.End();
         }

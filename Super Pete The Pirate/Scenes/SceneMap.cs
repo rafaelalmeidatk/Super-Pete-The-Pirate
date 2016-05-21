@@ -113,9 +113,13 @@ namespace Super_Pete_The_Pirate.Scenes
             // Coins init
             _coins = new List<GameCoin>();
 
+            // Random init
             _rand = new Random();
-            LoadMap(5);
-            mapInfo = GameMap.Instance._tiledMap.Layers.ToString();
+
+            // Load the map
+            LoadMap(SceneManager.Instance.MapToLoad);
+
+            // Create the HUD
             CreateHud();
         }
 

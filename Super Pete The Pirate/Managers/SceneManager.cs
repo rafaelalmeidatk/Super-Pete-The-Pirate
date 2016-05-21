@@ -77,6 +77,11 @@ namespace Super_Pete_The_Pirate
 
         public SceneSavesType TypeOfSceneSaves = SceneSavesType.NewGame;
 
+        //--------------------------------------------------
+        // Map To Load
+
+        public int MapToLoad = 0;
+
         //----------------------//------------------------//
 
         public static SceneManager Instance
@@ -94,7 +99,7 @@ namespace Super_Pete_The_Pirate
 
         private SceneManager()
         {
-            _currentScene = new SceneSaves();
+            _currentScene = new SceneStageSelect();
         }
 
         public void RequestExit()
