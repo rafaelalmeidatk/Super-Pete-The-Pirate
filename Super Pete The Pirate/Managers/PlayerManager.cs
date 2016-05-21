@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -72,9 +73,9 @@ namespace Super_Pete_The_Pirate.Managers
             _ammo += amount;
         }
 
-        public void AddLives(int ammount)
+        public void AddLives(int amount)
         {
-            _lives += ammount;
+            _lives += amount;
         }
 
         public void AddHearts(int amount)

@@ -74,8 +74,6 @@ namespace Super_Pete_The_Pirate.Scenes
 
         private Random _rand;
 
-        private string mapInfo = "";
-
         //----------------------//------------------------//
 
         public Camera2D GetCamera()
@@ -379,7 +377,6 @@ namespace Super_Pete_The_Pirate.Scenes
                 if (!_checkpoints[i].IsChecked && _player.BoundingRectangle.Intersects(_checkpoints[i].BoundingBox))
                 {
                     _checkpoints[i].OnPlayerCheck();
-                    Debug.WriteLine("aaa");
                 }
                 _checkpoints[i].Update(gameTime);
             }

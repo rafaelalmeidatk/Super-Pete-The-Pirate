@@ -37,6 +37,11 @@ namespace Super_Pete_The_Pirate
         
         public int Ammo { get { return PlayerManager.Instance.Ammo; } }
 
+        //--------------------------------------------------
+        // HP
+
+        public new int HP { get { return PlayerManager.Instance.Hearts; } }
+
         //----------------------//------------------------//
 
         public Player(Texture2D texture) : base(texture)
@@ -173,6 +178,16 @@ namespace Super_Pete_The_Pirate
                 PlayerManager.Instance.AddHearts(5);
                 PlayerManager.Instance.AddCoins(250);
             }
+        }
+
+        public override void GainHP(int amount)
+        {
+            PlayerManager.Instance.AddHearts(amount);
+        }
+
+        public override int GetHp()
+        {
+            return HP;
         }
 
         public override void Update(GameTime gameTime)

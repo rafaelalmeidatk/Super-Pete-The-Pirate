@@ -2,9 +2,7 @@
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using Super_Pete_The_Pirate.Sprites;
-using System.Collections.Generic;
 
 namespace Super_Pete_The_Pirate
 {
@@ -112,12 +110,22 @@ namespace Super_Pete_The_Pirate
             _knockbackAcceleration = Math.Sign(BoundingRectangle.Center.X - subjectPosition.X) * 5000f;
             _velocity.Y = -300f;
 
-            _hp = _hp - damage < 0 ? 0 : _hp - damage;
-            if (_hp == 0)
+            GainHP(-damage);
+            if (GetHp() <= 0)
             {
                 _dyingAcceleration = Math.Sign(Position.X - subjectPosition.X) * 0.7f;
                 OnDie();
             }
+        }
+
+        public virtual void GainHP(int amount)
+        {
+            _hp += amount;
+        }
+
+        public virtual int GetHp()
+        {
+            return _hp;
         }
 
         public void ReceiveAttackWithPoint(int damage, Rectangle subjectRect)

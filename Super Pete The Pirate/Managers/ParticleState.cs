@@ -32,7 +32,7 @@ namespace Super_Pete_The_Pirate
         public ParticleType Type;
         public int Width;
 
-        // H ammount of HSV
+        // H amount of HSV
         public float H;
 
         public float Rotation;

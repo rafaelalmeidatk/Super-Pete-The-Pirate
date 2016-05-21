@@ -71,7 +71,6 @@ namespace Super_Pete_The_Pirate.Scenes
         // Selected index
 
         private int _selectedIndex;
-        private bool _lockIndexControl;
 
         //----------------------//------------------------//
 
@@ -112,7 +111,6 @@ namespace Super_Pete_The_Pirate.Scenes
             // Index init
 
             _selectedIndex = PlayerManager.Instance.StagesCompleted >= 5 ? 4 : PlayerManager.Instance.StagesCompleted;
-            _lockIndexControl = false;
 
             setupMap();
         }
@@ -170,17 +168,17 @@ namespace Super_Pete_The_Pirate.Scenes
         {
             DebugValues["Selected Index"] = _selectedIndex.ToString();
 
-            if (!_lockIndexControl && InputManager.Instace.KeyPressed(Keys.Right, Keys.Up))
+            if (InputManager.Instace.KeyPressed(Keys.Right, Keys.Up))
             {
                 _selectedIndex = _selectedIndex + 1 > PlayerManager.Instance.StagesCompleted ? 0 : _selectedIndex + 1;
                 UpdatePeteHeadPosition();
             }
-            if (!_lockIndexControl && InputManager.Instace.KeyPressed(Keys.Left, Keys.Down))
+            if (InputManager.Instace.KeyPressed(Keys.Left, Keys.Down))
             {
                 _selectedIndex = _selectedIndex - 1 < 0 ? PlayerManager.Instance.StagesCompleted : _selectedIndex - 1;
                 UpdatePeteHeadPosition();
             }
-            if (!_lockIndexControl && InputManager.Instace.KeyPressed(Keys.Enter, Keys.Z))
+            if (InputManager.Instace.KeyPressed(Keys.Enter, Keys.Z))
             {
                 LoadMap();
             }
