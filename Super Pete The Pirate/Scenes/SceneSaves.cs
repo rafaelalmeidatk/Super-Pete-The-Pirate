@@ -26,15 +26,18 @@ namespace Super_Pete_The_Pirate.Scenes
         // Strings
 
         private Dictionary<SceneManager.SceneSavesType, string> _titleStrings;
+        private string _emptySlotText;
 
         //--------------------------------------------------
         // Textures
 
         private Texture2D _backgroundTexture;
+        private Texture2D _loadingBackgroundTexture;
         private Texture2D _peteSpritesheet;
         private Texture2D _stageSpritesheet;
         private Texture2D _iconsSpritesheet; // Lives, ammo, coins and HUD
 
+        private AnimatedSprite _loadingAnimatedSprite;
         private AnimatedSprite _peteAnimatedSprite;
         private AnimatedSprite _nextStageMarkAnimatedSprite;
 
@@ -75,7 +78,10 @@ namespace Super_Pete_The_Pirate.Scenes
         //--------------------------------------------------
         // Save system
 
-        bool _lockInputHandle;
+        private SavesManager.GameSave[] _gameSaves;
+        private bool _loadingVisible;
+        private bool _lockInputHandle;
+        private int _loadResponses;
 
         //----------------------//------------------------//
 
@@ -92,12 +98,27 @@ namespace Super_Pete_The_Pirate.Scenes
                 { SceneManager.SceneSavesType.NewGame, "New Game" }
             };
 
+            _emptySlotText = "Empty";
+
             // Textures init
+
+            _loadingBackgroundTexture = new Texture2D(SceneManager.Instance.GraphicsDevice, 1, 1, false, SurfaceFormat.Color);
+            _loadingBackgroundTexture.SetData<Color>(new Color[] { Color.Black });
 
             _backgroundTexture = ImageManager.loadScene("saves", "SceneSavesBackground");
             _peteSpritesheet = ImageManager.loadScene("saves", "PeteSpritesheet");
             _stageSpritesheet = ImageManager.loadScene("saves", "StageSelectionSpritesheet");
             _iconsSpritesheet = ImageManager.loadSystem("IconsSpritesheet");
+
+            var loadingSpritesheet = ImageManager.loadScene("saves", "SavesLoadingSpritesheet");
+            var loadingFrames = new Rectangle[]
+            {
+                new Rectangle(0, 0, 32, 32),
+                new Rectangle(32, 0, 32, 32),
+                new Rectangle(64, 0, 32, 32)
+            };
+            _loadingAnimatedSprite = new AnimatedSprite(loadingSpritesheet, loadingFrames, 200,
+                new Vector2(SceneManager.Instance.VirtualSize.X - 35, SceneManager.Instance.VirtualSize.Y - 36));
 
             var peteFrames = new Rectangle[]
             {
@@ -164,24 +185,78 @@ namespace Super_Pete_The_Pirate.Scenes
             // Lock Input Handle
 
             _lockInputHandle = false;
+            _loadingVisible = true;
+            _loadResponses = 0;
+
+            ReadSaves();
+        }
+
+        private void ReadSaves()
+        {
+            _gameSaves = new SavesManager.GameSave[3];
+            SavesManager.Instance.ExecuteLoad(0, AfterLoad);
+        }
+
+        private void AfterLoad(int slot, SavesManager.GameSave gameSave)
+        {
+            _loadResponses++;
+            _gameSaves[slot] = gameSave;
+            Debug.WriteLine(gameSave.StagesCompleted);
+            if (_loadResponses == 2)
+            {
+                _loadingVisible = false;
+            }
+            else
+            {
+                SavesManager.Instance.ExecuteLoad(_loadResponses + 1, AfterLoad);
+            }
         }
 
         public override void Update(GameTime gameTime)
         {
-            if (InputManager.Instace.KeyPressed(Keys.Down))
+            if (!_loadingVisible)
             {
-                _slotIndex = _slotIndex >= 2 ? 0 : _slotIndex + 1;
-            }
-            if (InputManager.Instace.KeyPressed(Keys.Up))
-            {
-                _slotIndex = _slotIndex <= 0 ? 2 : _slotIndex - 1;
-            }
-            if (InputManager.Instace.KeyPressed(Keys.Z, Keys.Enter))
-            {
-                HandleConfirm();
+                if (InputManager.Instace.KeyPressed(Keys.Down))
+                {
+                    if (SceneManager.Instance.TypeOfSceneSaves == SceneManager.SceneSavesType.Load)
+                    {
+                        for (var i = 0; i < 3; i++)
+                        {
+                            _slotIndex = ++_slotIndex % 3;
+                            if (_gameSaves[_slotIndex].StagesCompleted > 0)
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        _slotIndex = ++_slotIndex % 3;
+                    }
+                }
+                if (InputManager.Instace.KeyPressed(Keys.Up))
+                {
+                    if (SceneManager.Instance.TypeOfSceneSaves == SceneManager.SceneSavesType.Load)
+                    {
+                        for (var i = 0; i < 3; i++)
+                        {
+                            _slotIndex = _slotIndex - 1 < 0 ? 2 : --_slotIndex % 3;
+                            if (_gameSaves[_slotIndex].StagesCompleted > 0)
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        _slotIndex = _slotIndex <= 0 ? 2 : _slotIndex - 1;
+                    }
+                }
+                if (InputManager.Instace.KeyPressed(Keys.Z, Keys.Enter))
+                {
+                    HandleConfirm();
+                }
             }
             _peteAnimatedSprite.Update(gameTime);
             _nextStageMarkAnimatedSprite.Update(gameTime);
+            if (_loadingVisible)
+                _loadingAnimatedSprite.Update(gameTime);
             base.Update(gameTime);
         }
 
@@ -192,26 +267,11 @@ namespace Super_Pete_The_Pirate.Scenes
                 case SceneManager.SceneSavesType.NewGame:
                     break;
                 case SceneManager.SceneSavesType.Load:
-                    Load();
                     break;
                 case SceneManager.SceneSavesType.Save:
                     Save();
                     break;
             }
-        }
-
-        private void Load()
-        {
-            if (!_lockInputHandle)
-            {
-                _lockInputHandle = true;
-                SavesManager.Instance.ExecuteLoad(_slotIndex, AfterActionExec, LoadFail);
-            }
-        }
-
-        private void LoadFail()
-        {
-            _lockInputHandle = false;
         }
 
         private void Save()
@@ -226,7 +286,6 @@ namespace Super_Pete_The_Pirate.Scenes
         private void AfterActionExec()
         {
             _lockInputHandle = false;
-            Debug.WriteLine("Hearts: " + PlayerManager.Instance.Hearts);
         }
 
         public override void Draw(SpriteBatch spriteBatch, ViewportAdapter viewportAdapter)
@@ -243,72 +302,89 @@ namespace Super_Pete_The_Pirate.Scenes
             var titleX = (SceneManager.Instance.VirtualSize.X - SceneManager.Instance.GameFontBig.MeasureString(titleString).X) / 2;
             spriteBatch.DrawString(SceneManager.Instance.GameFontBig, titleString, new Vector2(titleX, 10), _fontColor);
 
-            // Data just for simulation
-            var stagesCompleted = new int[] { 1, 3, 0 };
-            var lives = new int[] { 3, 5, 7 };
-            var hearts = new int[] { 2, 3, 5 };
-            var ammo = new int[] { 7, 13, 2 };
-            var coins = new int[] { 25, 9, 16 };
-
             // Slots
             for (var i = 0; i < 3; i++)
             {
                 var slotPosition = _slotsPosition[i].Location.ToVector2();
+                var gameFont = SceneManager.Instance.GameFont;
                 // Background
                 spriteBatch.Draw(_slotTexture, _slotsPosition[i], Color.White * 0.5f);
-                // Pete Head
-                if (_slotIndex == i)
+
+                // Check if the slot isn't empty
+                if (_gameSaves[i].StagesCompleted > 0)
                 {
-                    _peteAnimatedSprite.Position = slotPosition + _peteHeadPosition;
-                    _peteAnimatedSprite.Draw(spriteBatch);
+                    // Pete Head
+                    if (_slotIndex == i)
+                    {
+                        _peteAnimatedSprite.Position = slotPosition + _peteHeadPosition;
+                        _peteAnimatedSprite.Draw(spriteBatch);
+                    }
+                    else
+                    {
+                        spriteBatch.Draw(_peteSpritesheet, slotPosition + _peteHeadPosition, _peteDefaultFrame, Color.White);
+                    }
+                    // Save Name
+                    spriteBatch.DrawString(gameFont, "SAVE NAME", slotPosition + _namePosition, _fontColor);
+                    // Stages
+                    var divisorPosition = Vector2.Zero;
+                    for (var j = 0; j < _gameSaves[i].StagesCompleted; j++)
+                    {
+                        var markPosition = slotPosition + _stagesPosition + ((_stagePeteMarkFrame.Width + 4) * j * Vector2.UnitX);
+                        spriteBatch.Draw(_stageSpritesheet, markPosition, _stagePeteMarkFrame, Color.White);
+                        divisorPosition = markPosition + (_stagePeteMarkFrame.Width + 1) * Vector2.UnitX + (9 * Vector2.UnitY);
+                        spriteBatch.Draw(_stageSpritesheet, divisorPosition, _stageDivisorFrame, Color.White);
+                    }
+                    var nextMarkPos = (divisorPosition == Vector2.Zero) ? (slotPosition + _stagesPosition) : (divisorPosition - (9 * Vector2.UnitY) + (3 * Vector2.UnitX));
+                    if (_slotIndex == i)
+                    {
+                        _nextStageMarkAnimatedSprite.Position = nextMarkPos;
+                        _nextStageMarkAnimatedSprite.Draw(spriteBatch);
+                    }
+                    else
+                    {
+                        spriteBatch.Draw(_stageSpritesheet, nextMarkPos, _stageNextMarkFrame, Color.White);
+                    }
+                    // Lives
+                    var lives = _gameSaves[i].Lives;
+                    var livesWidth = (lives * _lifeFrame.Width) + (lives - 1);
+                    var livesPosition = slotPosition + (_slotsPosition[i].Width - livesWidth - _livesPosition.X) * Vector2.UnitX + _livesPosition.Y * Vector2.UnitY;
+                    for (var j = 0; j < lives; j++)
+                    {
+                        var lifePosition = livesPosition + ((_lifeFrame.Width + 1) * j * Vector2.UnitX);
+                        spriteBatch.Draw(_iconsSpritesheet, lifePosition, _lifeFrame, Color.White);
+                    }
+                    // Hearts
+                    var hearts = _gameSaves[i].Hearts;
+                    var heartsWidth = (hearts * _heartFrame.Width) + (hearts - 1) * 5;
+                    var heartsPosition = slotPosition + (_slotsPosition[i].Width - heartsWidth - _heartsPosition.X) * Vector2.UnitX + _heartsPosition.Y * Vector2.UnitY;
+                    for (var j = 0; j < hearts; j++)
+                    {
+                        var heartPosition = heartsPosition + ((_heartFrame.Width + 5) * j * Vector2.UnitX);
+                        spriteBatch.Draw(_iconsSpritesheet, heartPosition, _heartFrame, Color.White);
+                    }
+                    // Ammo
+                    spriteBatch.Draw(_iconsSpritesheet, slotPosition + _ammoPosition, _ammoFrame, Color.White);
+                    spriteBatch.DrawString(gameFont, _gameSaves[i].Ammo.ToString(), slotPosition + _ammoTextPosition, _fontColor);
+                    // Coins
+                    spriteBatch.Draw(_iconsSpritesheet, slotPosition + _coinsPosition, _coinFrame, Color.White);
+                    spriteBatch.DrawString(gameFont, _gameSaves[i].Coins.ToString(), slotPosition + _coinsTextPosition, _fontColor);
                 }
                 else
                 {
-                    spriteBatch.Draw(_peteSpritesheet, slotPosition + _peteHeadPosition, _peteDefaultFrame, Color.White);
+                    // Empty slot text
+                    var emptySlotTextSize = gameFont.MeasureString(_emptySlotText);
+                    var emptyPosition = new Vector2(slotPosition.X + (_slotsPosition[i].Width - emptySlotTextSize.X) / 2,
+                        slotPosition.Y + (_slotsPosition[i].Height - emptySlotTextSize.Y) / 2);
+                    spriteBatch.DrawString(gameFont, "Empty", emptyPosition, _fontColor);
                 }
-                // Save Name
-                spriteBatch.DrawString(SceneManager.Instance.GameFont, "SAVE NAME", slotPosition + _namePosition, _fontColor);
-                // Stages
-                var divisorPosition = Vector2.Zero;
-                for (var j = 0; j < stagesCompleted[i]; j++)
-                {
-                    var markPosition = slotPosition + _stagesPosition + ((_stagePeteMarkFrame.Width + 4) * j * Vector2.UnitX);
-                    spriteBatch.Draw(_stageSpritesheet, markPosition, _stagePeteMarkFrame, Color.White);
-                    divisorPosition = markPosition + (_stagePeteMarkFrame.Width + 1) * Vector2.UnitX + (9 * Vector2.UnitY);
-                    spriteBatch.Draw(_stageSpritesheet, divisorPosition, _stageDivisorFrame, Color.White);
-                }
-                var nextMarkPos = (divisorPosition == Vector2.Zero) ? (slotPosition + _stagesPosition) : (divisorPosition - (9 * Vector2.UnitY) + (3 * Vector2.UnitX));
-                if (_slotIndex == i)
-                {
-                    _nextStageMarkAnimatedSprite.Position = nextMarkPos;
-                    _nextStageMarkAnimatedSprite.Draw(spriteBatch);
-                }
-                else
-                {
-                    spriteBatch.Draw(_stageSpritesheet, nextMarkPos, _stageNextMarkFrame, Color.White);
-                }
-                // Lives
-                var livesWidth = (lives[i] * _lifeFrame.Width) + (lives[i] - 1);
-                var livesPosition = slotPosition + (_slotsPosition[i].Width - livesWidth - _livesPosition.X) * Vector2.UnitX + _livesPosition.Y * Vector2.UnitY;
-                for (var j = 0; j < lives[i]; j++)
-                {
-                    var lifePosition = livesPosition + ((_lifeFrame.Width + 1) * j * Vector2.UnitX);
-                    spriteBatch.Draw(_iconsSpritesheet, lifePosition, _lifeFrame, Color.White);
-                }
-                // Hearts
-                var heartsWidth = (hearts[i] * _heartFrame.Width) + (hearts[i] - 1) * 5;
-                var heartsPosition = slotPosition + (_slotsPosition[i].Width - heartsWidth - _heartsPosition.X) * Vector2.UnitX + _heartsPosition.Y * Vector2.UnitY;
-                for (var j = 0; j < hearts[i]; j++)
-                {
-                    var heartPosition = heartsPosition + ((_heartFrame.Width + 5) * j * Vector2.UnitX);
-                    spriteBatch.Draw(_iconsSpritesheet, heartPosition, _heartFrame, Color.White);
-                }
-                // Ammo
-                spriteBatch.Draw(_iconsSpritesheet, slotPosition + _ammoPosition, _ammoFrame, Color.White);
-                spriteBatch.DrawString(SceneManager.Instance.GameFont, ammo[i].ToString(), slotPosition + _ammoTextPosition, _fontColor);
-                // Coins
-                spriteBatch.Draw(_iconsSpritesheet, slotPosition + _coinsPosition, _coinFrame, Color.White);
-                spriteBatch.DrawString(SceneManager.Instance.GameFont, coins[i].ToString(), slotPosition + _coinsTextPosition, _fontColor);
+            }
+
+            if (_loadingVisible)
+            {
+                var screenSize = SceneManager.Instance.GraphicsDevice.Viewport.Bounds;
+                spriteBatch.Draw(_loadingBackgroundTexture, new Rectangle(0, 0, screenSize.Width, screenSize.Height),
+                    Color.White * 0.5f);
+                _loadingAnimatedSprite.Draw(spriteBatch);
             }
 
             spriteBatch.End();

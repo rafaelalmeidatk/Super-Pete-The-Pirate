@@ -19,7 +19,7 @@ namespace Super_Pete_The_Pirate.Managers
         // Singleton variables
 
         private static SavesManager _instance = null;
-        public static readonly object _padlock = new object();
+        private static readonly object _padlock = new object();
 
         public static SavesManager Instance
         {
@@ -53,8 +53,8 @@ namespace Super_Pete_The_Pirate.Managers
         private StorageDevice _storageDevice;
         private string _storageContainerName;
         private int _slot;
-        private Action _callback;
-        private Action _failCallback;
+        private Action _saveCallback;
+        private Action<int, GameSave> _loadCallback;
 
         //----------------------//------------------------//
 
@@ -62,14 +62,14 @@ namespace Super_Pete_The_Pirate.Managers
         {
             _storageContainerName = "Super Pete The Pirate";
             _slot = 0;
-            _callback = null;
-            _failCallback = null;
+            _saveCallback = null;
+            _loadCallback = null;
         }
 
         public void ExecuteSave(int slot, Action callback = null)
         {
             _slot = slot;
-            _callback = callback;
+            _saveCallback = callback;
             _storageDevice = null;
             StorageDevice.BeginShowSelector(PlayerIndex.One, Save, null);
         }
@@ -100,16 +100,15 @@ namespace Super_Pete_The_Pirate.Managers
                 stream.Close();
                 container.Dispose();
                 result.AsyncWaitHandle.Close();
-                if (_callback != null)
-                    _callback();
+                if (_saveCallback != null)
+                    _saveCallback();
             }
         }
 
-        public void ExecuteLoad(int slot, Action sucessCallback, Action failCallback)
+        public void ExecuteLoad(int slot, Action<int, GameSave> callback)
         {
             _slot = slot;
-            _callback = sucessCallback;
-            _failCallback = failCallback;
+            _loadCallback = callback;
             _storageDevice = null;
             StorageDevice.BeginShowSelector(PlayerIndex.One, Load, null);
         }
@@ -119,8 +118,9 @@ namespace Super_Pete_The_Pirate.Managers
             _storageDevice = StorageDevice.EndShowSelector(result);
             if (_storageDevice != null && _storageDevice.IsConnected)
             {
-                var error = false;
+                GameSave saveData = new GameSave();
                 var filename = String.Format("save{0:00}.dat", _slot);
+                Debug.WriteLine(filename);
                 IAsyncResult r = _storageDevice.BeginOpenContainer(_storageContainerName, null, null);
                 result.AsyncWaitHandle.WaitOne();
                 StorageContainer container = _storageDevice.EndOpenContainer(r);
@@ -130,34 +130,27 @@ namespace Super_Pete_The_Pirate.Managers
                     try
                     {
                         IFormatter formatter = new BinaryFormatter();
-                        GameSave saveData = (GameSave)formatter.Deserialize(stream);
+                        saveData = (GameSave)formatter.Deserialize(stream);
+                        Debug.WriteLine("Teste");
+                        Debug.WriteLine(saveData.Coins);
+                        Debug.WriteLine(saveData.Hearts);
                         stream.Close();
                         container.Dispose();
                         PlayerManager.Instance.SetData(saveData.Ammo, saveData.Lives, saveData.Hearts, saveData.Coins, saveData.StagesCompleted);
                     }
-                    catch (Exception)
+                    catch (Exception ex)
                     {
+                        Debug.WriteLine(ex.ToString());
                         stream.Close();
                         container.Dispose();
                         container.DeleteFile(filename);
-                        error = true;
                     }
-                }
-                else
-                {
-                    error = true;
                 }
 
                 result.AsyncWaitHandle.Close();
 
-                if (error && _failCallback != null)
-                {
-                    _failCallback();
-                }
-                else if (_callback != null)
-                {
-                    _callback();
-                }
+                if (_loadCallback != null)
+                    _loadCallback(_slot, saveData);
             }
         }
     }

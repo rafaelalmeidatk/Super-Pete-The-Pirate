@@ -100,7 +100,7 @@ namespace Super_Pete_The_Pirate
         private SceneManager()
         {
             TypeOfSceneSaves = SceneSavesType.Load;
-            _currentScene = new SceneSaves();
+            _currentScene = new SceneStageSelect();
         }
 
         public void RequestExit()
@@ -171,7 +171,7 @@ namespace Super_Pete_The_Pirate
             if (_beginTransitionFade)
             {
                 if (_transitionImage.Alpha < 1.0f)
-                    _transitionImage.Alpha += 0.05f;
+                    _transitionImage.Alpha += 0.1f;
                 else
                     _beginTransitionFade = false;
             }
@@ -186,7 +186,7 @@ namespace Super_Pete_The_Pirate
                 }
 
                 if (_transitionImage.Alpha > 0.0f)
-                    _transitionImage.Alpha -= 0.01f;
+                    _transitionImage.Alpha -= 0.1f;
                 else
                 {
                     _transitionImage.IsVisible = false;
