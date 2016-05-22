@@ -91,6 +91,7 @@ namespace Super_Pete_The_Pirate.Managers
                 };
                 IAsyncResult r = _storageDevice.BeginOpenContainer(_storageContainerName, null, null);
                 result.AsyncWaitHandle.WaitOne();
+                Thread.Sleep(1500);
                 StorageContainer container = _storageDevice.EndOpenContainer(r);
                 if (container.FileExists(filename))
                     container.DeleteFile(filename);
@@ -120,7 +121,6 @@ namespace Super_Pete_The_Pirate.Managers
             {
                 GameSave saveData = new GameSave();
                 var filename = String.Format("save{0:00}.dat", _slot);
-                Debug.WriteLine(filename);
                 IAsyncResult r = _storageDevice.BeginOpenContainer(_storageContainerName, null, null);
                 result.AsyncWaitHandle.WaitOne();
                 StorageContainer container = _storageDevice.EndOpenContainer(r);
@@ -131,12 +131,8 @@ namespace Super_Pete_The_Pirate.Managers
                     {
                         IFormatter formatter = new BinaryFormatter();
                         saveData = (GameSave)formatter.Deserialize(stream);
-                        Debug.WriteLine("Teste");
-                        Debug.WriteLine(saveData.Coins);
-                        Debug.WriteLine(saveData.Hearts);
                         stream.Close();
                         container.Dispose();
-                        PlayerManager.Instance.SetData(saveData.Ammo, saveData.Lives, saveData.Hearts, saveData.Coins, saveData.StagesCompleted);
                     }
                     catch (Exception ex)
                     {

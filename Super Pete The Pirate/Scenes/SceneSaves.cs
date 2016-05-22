@@ -3,20 +3,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using MonoGame.Extended.ViewportAdapters;
 using MonoGame.Extended.BitmapFonts;
 using Microsoft.Xna.Framework;
 using Super_Pete_The_Pirate.Sprites;
 using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Storage;
 using Super_Pete_The_Pirate.Managers;
-using System.IO;
-using System.Xml.Serialization;
-using Super_Pete_The_Pirate.Objects;
 using System.Diagnostics;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Formatters.Binary;
 
 namespace Super_Pete_The_Pirate.Scenes
 {
@@ -35,7 +28,7 @@ namespace Super_Pete_The_Pirate.Scenes
         private Texture2D _loadingBackgroundTexture;
         private Texture2D _peteSpritesheet;
         private Texture2D _stageSpritesheet;
-        private Texture2D _iconsSpritesheet; // Lives, ammo, coins and HUD
+        private Texture2D _iconsSpritesheet; // Lives, ammo, hearts and coins
 
         private AnimatedSprite _loadingAnimatedSprite;
         private AnimatedSprite _peteAnimatedSprite;
@@ -80,7 +73,6 @@ namespace Super_Pete_The_Pirate.Scenes
 
         private SavesManager.GameSave[] _gameSaves;
         private bool _loadingVisible;
-        private bool _lockInputHandle;
         private int _loadResponses;
 
         //----------------------//------------------------//
@@ -182,9 +174,8 @@ namespace Super_Pete_The_Pirate.Scenes
             _slotTexture = new Texture2D(SceneManager.Instance.GraphicsDevice, 1, 1, false, SurfaceFormat.Color);
             _slotTexture.SetData<Color>(new Color[] { Color.Orange });
 
-            // Lock Input Handle
-
-            _lockInputHandle = false;
+            // General variables
+            
             _loadingVisible = true;
             _loadResponses = 0;
 
@@ -201,14 +192,13 @@ namespace Super_Pete_The_Pirate.Scenes
         {
             _loadResponses++;
             _gameSaves[slot] = gameSave;
-            Debug.WriteLine(gameSave.StagesCompleted);
-            if (_loadResponses == 2)
+            if (_loadResponses == 3)
             {
                 _loadingVisible = false;
             }
             else
             {
-                SavesManager.Instance.ExecuteLoad(_loadResponses + 1, AfterLoad);
+                SavesManager.Instance.ExecuteLoad(_loadResponses, AfterLoad);
             }
         }
 
@@ -216,29 +206,29 @@ namespace Super_Pete_The_Pirate.Scenes
         {
             if (!_loadingVisible)
             {
-                if (InputManager.Instace.KeyPressed(Keys.Down))
+                if (InputManager.Instace.KeyPressed(Keys.Down, Keys.Right))
                 {
                     if (SceneManager.Instance.TypeOfSceneSaves == SceneManager.SceneSavesType.Load)
                     {
                         for (var i = 0; i < 3; i++)
                         {
-                            _slotIndex = ++_slotIndex % 3;
+                            _slotIndex = _slotIndex >= 2 ? 0 : _slotIndex + 1;
                             if (_gameSaves[_slotIndex].StagesCompleted > 0)
                                 break;
                         }
                     }
                     else
                     {
-                        _slotIndex = ++_slotIndex % 3;
+                        _slotIndex = _slotIndex >= 2 ? 0 : _slotIndex + 1;
                     }
                 }
-                if (InputManager.Instace.KeyPressed(Keys.Up))
+                if (InputManager.Instace.KeyPressed(Keys.Up, Keys.Left))
                 {
                     if (SceneManager.Instance.TypeOfSceneSaves == SceneManager.SceneSavesType.Load)
                     {
                         for (var i = 0; i < 3; i++)
                         {
-                            _slotIndex = _slotIndex - 1 < 0 ? 2 : --_slotIndex % 3;
+                            _slotIndex = _slotIndex <= 0 ? 2 : _slotIndex - 1;
                             if (_gameSaves[_slotIndex].StagesCompleted > 0)
                                 break;
                         }
@@ -253,10 +243,13 @@ namespace Super_Pete_The_Pirate.Scenes
                     HandleConfirm();
                 }
             }
+
             _peteAnimatedSprite.Update(gameTime);
             _nextStageMarkAnimatedSprite.Update(gameTime);
+
             if (_loadingVisible)
                 _loadingAnimatedSprite.Update(gameTime);
+
             base.Update(gameTime);
         }
 
@@ -276,16 +269,16 @@ namespace Super_Pete_The_Pirate.Scenes
 
         private void Save()
         {
-            if (!_lockInputHandle)
+            if (!_loadingVisible)
             {
-                _lockInputHandle = true;
+                _loadingVisible = true;
                 SavesManager.Instance.ExecuteSave(_slotIndex, AfterActionExec);
             }
         }
         
         private void AfterActionExec()
         {
-            _lockInputHandle = false;
+            _loadingVisible = false;
         }
 
         public override void Draw(SpriteBatch spriteBatch, ViewportAdapter viewportAdapter)
@@ -375,7 +368,7 @@ namespace Super_Pete_The_Pirate.Scenes
                     var emptySlotTextSize = gameFont.MeasureString(_emptySlotText);
                     var emptyPosition = new Vector2(slotPosition.X + (_slotsPosition[i].Width - emptySlotTextSize.X) / 2,
                         slotPosition.Y + (_slotsPosition[i].Height - emptySlotTextSize.Y) / 2);
-                    spriteBatch.DrawString(gameFont, "Empty", emptyPosition, _fontColor);
+                    spriteBatch.DrawString(gameFont, _emptySlotText, emptyPosition, _fontColor);
                 }
             }
 
