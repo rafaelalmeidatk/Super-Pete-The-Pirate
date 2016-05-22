@@ -9,6 +9,14 @@ using MonoGame.Extended.BitmapFonts;
 using Microsoft.Xna.Framework;
 using Super_Pete_The_Pirate.Sprites;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Storage;
+using Super_Pete_The_Pirate.Managers;
+using System.IO;
+using System.Xml.Serialization;
+using Super_Pete_The_Pirate.Objects;
+using System.Diagnostics;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace Super_Pete_The_Pirate.Scenes
 {
@@ -63,6 +71,11 @@ namespace Super_Pete_The_Pirate.Scenes
         private Vector2 _ammoTextPosition;
         private Vector2 _coinsPosition;
         private Vector2 _coinsTextPosition;
+
+        //--------------------------------------------------
+        // Save system
+
+        bool _lockInputHandle;
 
         //----------------------//------------------------//
 
@@ -147,6 +160,10 @@ namespace Super_Pete_The_Pirate.Scenes
 
             _slotTexture = new Texture2D(SceneManager.Instance.GraphicsDevice, 1, 1, false, SurfaceFormat.Color);
             _slotTexture.SetData<Color>(new Color[] { Color.Orange });
+
+            // Lock Input Handle
+
+            _lockInputHandle = false;
         }
 
         public override void Update(GameTime gameTime)
@@ -159,9 +176,57 @@ namespace Super_Pete_The_Pirate.Scenes
             {
                 _slotIndex = _slotIndex <= 0 ? 2 : _slotIndex - 1;
             }
+            if (InputManager.Instace.KeyPressed(Keys.Z, Keys.Enter))
+            {
+                HandleConfirm();
+            }
             _peteAnimatedSprite.Update(gameTime);
             _nextStageMarkAnimatedSprite.Update(gameTime);
             base.Update(gameTime);
+        }
+
+        private void HandleConfirm()
+        {
+            switch (SceneManager.Instance.TypeOfSceneSaves)
+            {
+                case SceneManager.SceneSavesType.NewGame:
+                    break;
+                case SceneManager.SceneSavesType.Load:
+                    Load();
+                    break;
+                case SceneManager.SceneSavesType.Save:
+                    Save();
+                    break;
+            }
+        }
+
+        private void Load()
+        {
+            if (!_lockInputHandle)
+            {
+                _lockInputHandle = true;
+                SavesManager.Instance.ExecuteLoad(_slotIndex, AfterActionExec, LoadFail);
+            }
+        }
+
+        private void LoadFail()
+        {
+            _lockInputHandle = false;
+        }
+
+        private void Save()
+        {
+            if (!_lockInputHandle)
+            {
+                _lockInputHandle = true;
+                SavesManager.Instance.ExecuteSave(_slotIndex, AfterActionExec);
+            }
+        }
+        
+        private void AfterActionExec()
+        {
+            _lockInputHandle = false;
+            Debug.WriteLine("Hearts: " + PlayerManager.Instance.Hearts);
         }
 
         public override void Draw(SpriteBatch spriteBatch, ViewportAdapter viewportAdapter)

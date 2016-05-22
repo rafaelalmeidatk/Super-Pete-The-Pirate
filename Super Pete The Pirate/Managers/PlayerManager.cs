@@ -48,24 +48,23 @@ namespace Super_Pete_The_Pirate.Managers
         private int _stagesCompleted;
         public int StagesCompleted { get { return _stagesCompleted; } }
 
-        //--------------------------------------------------
-        // Initialized?
-
-        private bool _initialized;
-        public bool Initialized { get { return _initialized; } }
-
         //----------------------//------------------------//
 
-        public PlayerManager()
+        private PlayerManager()
         {
-            _initialized = false;
-
-            _ammo = 0;
-            _lives = 0;
-            _hearts = 0;
-            _coins = 0;
-
+            _ammo = 2;
+            _lives = 3;
+            _hearts = 5;
+            _coins = 250;
             _stagesCompleted = 3;
+        }
+
+        public void SetData(int ammo, int lives, int hearts, int coins, int stagesCompleted)
+        {
+            _ammo = ammo;
+            _lives = lives;
+            _hearts = hearts;
+            _stagesCompleted = stagesCompleted;
         }
 
         public void AddAmmo(int amount)

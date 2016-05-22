@@ -388,6 +388,25 @@ namespace Super_Pete_The_Pirate.Scenes
             {
                 CreateParticle();
             }
+
+            if (InputManager.Instace.KeyPressed(Keys.Q))
+            {
+                CallSavesSceneToSave();
+            }
+        }
+
+        private void UpdateCamera()
+        {
+            var size = SceneManager.Instance.WindowSize;
+            var viewport = SceneManager.Instance.ViewportAdapter;
+            var newPosition = _player.Position - new Vector2(viewport.VirtualWidth / 2f, viewport.VirtualHeight / 2f);
+            var playerOffsetX = _playerCameraOffsetX + _player.CharacterSprite.GetColliderWidth() / 2;
+            var playerOffsetY = _player.CharacterSprite.GetFrameHeight() / 2;
+            var x = MathHelper.Lerp(_camera.Position.X, newPosition.X + playerOffsetX, _cameraSmooth);
+            x = MathHelper.Clamp(x, 0.0f, GameMap.Instance.MapWidth - viewport.VirtualWidth);
+            var y = MathHelper.Lerp(_camera.Position.Y, newPosition.Y + playerOffsetY, _cameraSmooth);
+            y = MathHelper.Clamp(y, 0.0f, GameMap.Instance.MapHeight - viewport.VirtualHeight);
+            _camera.Position = new Vector2(x, y);
         }
 
         private void CreateParticle()
@@ -436,18 +455,10 @@ namespace Super_Pete_The_Pirate.Scenes
             }
         }
 
-        private void UpdateCamera()
+        private void CallSavesSceneToSave()
         {
-            var size = SceneManager.Instance.WindowSize;
-            var viewport = SceneManager.Instance.ViewportAdapter;
-            var newPosition = _player.Position - new Vector2(viewport.VirtualWidth / 2f, viewport.VirtualHeight / 2f);
-            var playerOffsetX = _playerCameraOffsetX + _player.CharacterSprite.GetColliderWidth() / 2;
-            var playerOffsetY = _player.CharacterSprite.GetFrameHeight() / 2;
-            var x = MathHelper.Lerp(_camera.Position.X, newPosition.X + playerOffsetX, _cameraSmooth);
-            x = MathHelper.Clamp(x, 0.0f, GameMap.Instance.MapWidth - viewport.VirtualWidth);
-            var y = MathHelper.Lerp(_camera.Position.Y, newPosition.Y + playerOffsetY, _cameraSmooth);
-            y = MathHelper.Clamp(y, 0.0f, GameMap.Instance.MapHeight - viewport.VirtualHeight);
-            _camera.Position = new Vector2(x, y);
+            SceneManager.Instance.TypeOfSceneSaves = SceneManager.SceneSavesType.Save;
+            SceneManager.Instance.ChangeScene("SceneSaves");
         }
 
         public override void Draw(SpriteBatch spriteBatch, ViewportAdapter viewportAdapter)

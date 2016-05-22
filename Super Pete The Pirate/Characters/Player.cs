@@ -169,15 +169,6 @@ namespace Super_Pete_The_Pirate
             };
 
             AttackCooldown = 300f;
-
-            // Player init
-            if (!PlayerManager.Instance.Initialized)
-            {
-                PlayerManager.Instance.AddAmmo(2);
-                PlayerManager.Instance.AddLives(3);
-                PlayerManager.Instance.AddHearts(5);
-                PlayerManager.Instance.AddCoins(250);
-            }
         }
 
         public override void GainHP(int amount)
