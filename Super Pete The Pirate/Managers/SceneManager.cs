@@ -100,7 +100,7 @@ namespace Super_Pete_The_Pirate
         private SceneManager()
         {
             TypeOfSceneSaves = SceneSavesType.Load;
-            _currentScene = new SceneStageSelect();
+            _currentScene = new SceneSaves();
         }
 
         public void RequestExit()

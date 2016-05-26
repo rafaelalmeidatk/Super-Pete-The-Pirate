@@ -255,11 +255,13 @@ namespace Super_Pete_The_Pirate.Scenes
 
         private void HandleConfirm()
         {
+            if (_loadingVisible) return;
             switch (SceneManager.Instance.TypeOfSceneSaves)
             {
                 case SceneManager.SceneSavesType.NewGame:
                     break;
                 case SceneManager.SceneSavesType.Load:
+                    Load();
                     break;
                 case SceneManager.SceneSavesType.Save:
                     Save();
@@ -267,13 +269,17 @@ namespace Super_Pete_The_Pirate.Scenes
             }
         }
 
+        private void Load()
+        {
+            var save = _gameSaves[_slotIndex];
+            PlayerManager.Instance.SetData(save.Ammo, save.Lives, save.Hearts, save.Coins, save.StagesCompleted);
+            SceneManager.Instance.ChangeScene("SceneStageSelect");
+        }
+
         private void Save()
         {
-            if (!_loadingVisible)
-            {
-                _loadingVisible = true;
-                SavesManager.Instance.ExecuteSave(_slotIndex, AfterActionExec);
-            }
+            _loadingVisible = true;
+            SavesManager.Instance.ExecuteSave(_slotIndex, AfterActionExec);
         }
         
         private void AfterActionExec()

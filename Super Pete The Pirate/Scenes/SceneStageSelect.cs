@@ -226,14 +226,14 @@ namespace Super_Pete_The_Pirate.Scenes
             spriteBatch.Draw(_backgroundTexture, _backgroundTexture.Bounds, Color.White);
 
             // Strings
-            DrawWithShadow(spriteBatch, "7", _ammoPosition);
-            DrawWithShadow(spriteBatch, "320", _coinsPosition);
+            DrawWithShadow(spriteBatch, PlayerManager.Instance.Ammo.ToString(), _ammoPosition);
+            DrawWithShadow(spriteBatch, PlayerManager.Instance.Coins.ToString(), _coinsPosition);
             DrawWithShadow(spriteBatch, "HP", _hpTextPosition);
             DrawWithShadow(spriteBatch, "Lives", _livesTextPosition);
 
             // Hearts and lives
-            DrawCenteredSpritesOnRectangle(spriteBatch, _hpSpritesArea, _heartSprite, 7);
-            DrawCenteredSpritesOnRectangle(spriteBatch, _livesSpritesArea, _lifeSprite, 2);
+            DrawCenteredSpritesOnRectangle(spriteBatch, _hpSpritesArea, _heartSprite, PlayerManager.Instance.Hearts);
+            DrawCenteredSpritesOnRectangle(spriteBatch, _livesSpritesArea, _lifeSprite, PlayerManager.Instance.Lives);
             
             for (var i = 0; i < GetCurrentStage(); i++)
             {
