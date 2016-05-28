@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
 using MonoGame.Extended.Sprites;
 using MonoGame.Extended.Maps.Tiled;
+using MonoGame.Extended.BitmapFonts;
 using MonoGame.Extended.ViewportAdapters;
 using Microsoft.Xna.Framework.Input;
 using Super_Pete_The_Pirate.Characters;
@@ -61,8 +62,8 @@ namespace Super_Pete_The_Pirate.Scenes
         // Camera stuff
 
         private Camera2D _camera;
-        private float _cameraSmooth = 0.1f;
-        private int _playerCameraOffsetX = 40;
+        private const float CameraSmooth = 0.1f;
+        private const int PlayerCameraOffsetX = 40;
 
         //--------------------------------------------------
         // Player Hud
@@ -70,9 +71,20 @@ namespace Super_Pete_The_Pirate.Scenes
         private GameHud _gameHud;
 
         //--------------------------------------------------
-        // Random stuff
+        // Random
 
         private Random _rand;
+
+        //--------------------------------------------------
+        // End stage
+
+        private bool _drawEndStage;
+        private Texture2D _endBackground;
+        private bool _stageFinished;
+
+        private Vector2 _stageCompleteTitlePost;
+
+        private const string StageCompleteTitle = "Stage Complete!";
 
         //----------------------//------------------------//
 
@@ -105,7 +117,6 @@ namespace Super_Pete_The_Pirate.Scenes
             _shops = new List<GameShop>();
 
             // Checkpoints init
-
             _checkpoints = new List<GameCheckpoint>();
 
             // Coins init
@@ -114,11 +125,24 @@ namespace Super_Pete_The_Pirate.Scenes
             // Random init
             _rand = new Random();
 
+            // End stage init
+            InitializeEndStage();
+
             // Load the map
             LoadMap(SceneManager.Instance.MapToLoad);
 
             // Create the HUD
             CreateHud();
+        }
+
+        private void InitializeEndStage()
+        {
+            var screenSize = SceneManager.Instance.VirtualSize;
+            var font = SceneManager.Instance.GameFontBig;
+            _stageFinished = false;
+
+            _endBackground = new Texture2D(SceneManager.Instance.GraphicsDevice, 1, 1, false, SurfaceFormat.Color);
+            _endBackground.SetData<Color>(new Color[] { Color.Black });
         }
 
         private void CreateHud()
@@ -272,7 +296,7 @@ namespace Super_Pete_The_Pirate.Scenes
 
         public override void Update(GameTime gameTime)
         {
-            _player.Update(gameTime);
+            _player.UpdateWithKeyLock(gameTime, _stageFinished);
 
             if (InputManager.Instace.KeyPressed(Keys.F)) _projectiles[0].Acceleration = new Vector2(_projectiles[0].Acceleration.X * -1, 0);
 
@@ -391,7 +415,7 @@ namespace Super_Pete_The_Pirate.Scenes
 
             if (InputManager.Instace.KeyPressed(Keys.Q))
             {
-                CallSavesSceneToSave();
+                FinishStage();
             }
         }
 
@@ -400,11 +424,11 @@ namespace Super_Pete_The_Pirate.Scenes
             var size = SceneManager.Instance.WindowSize;
             var viewport = SceneManager.Instance.ViewportAdapter;
             var newPosition = _player.Position - new Vector2(viewport.VirtualWidth / 2f, viewport.VirtualHeight / 2f);
-            var playerOffsetX = _playerCameraOffsetX + _player.CharacterSprite.GetColliderWidth() / 2;
+            var playerOffsetX = PlayerCameraOffsetX + _player.CharacterSprite.GetColliderWidth() / 2;
             var playerOffsetY = _player.CharacterSprite.GetFrameHeight() / 2;
-            var x = MathHelper.Lerp(_camera.Position.X, newPosition.X + playerOffsetX, _cameraSmooth);
+            var x = MathHelper.Lerp(_camera.Position.X, newPosition.X + playerOffsetX, CameraSmooth);
             x = MathHelper.Clamp(x, 0.0f, GameMap.Instance.MapWidth - viewport.VirtualWidth);
-            var y = MathHelper.Lerp(_camera.Position.Y, newPosition.Y + playerOffsetY, _cameraSmooth);
+            var y = MathHelper.Lerp(_camera.Position.Y, newPosition.Y + playerOffsetY, CameraSmooth);
             y = MathHelper.Clamp(y, 0.0f, GameMap.Instance.MapHeight - viewport.VirtualHeight);
             _camera.Position = new Vector2(x, y);
         }
@@ -453,6 +477,11 @@ namespace Super_Pete_The_Pirate.Scenes
 
                 SceneManager.Instance.ParticleManager.CreateParticle(texture, position, color, 200f, scale, state);
             }
+        }
+
+        private void FinishStage()
+        {
+            _stageFinished = true;
         }
 
         private void CallSavesSceneToSave()
@@ -516,6 +545,25 @@ namespace Super_Pete_The_Pirate.Scenes
 
             // Draw the Hud
             _gameHud.Draw(spriteBatch);
+
+            if (_stageFinished)
+            {
+                // Draw the end stage
+
+                var screenSize = SceneManager.Instance.VirtualSize;
+                var font = SceneManager.Instance.GameFontBig;
+
+                spriteBatch.Draw(_endBackground, new Rectangle(0, 0, (int)screenSize.X, (int)screenSize.Y), Color.White * 0.5f);
+
+                var stageCompletedX = (screenSize.X - font.MeasureString(StageCompleteTitle).X) / 2;
+                //_stageCompleteTitleY = MathHelper.Lerp(_stageCompleteTitleY, 20, 0.1f);
+
+                spriteBatch.DrawString(SceneManager.Instance.GameFontBig, StageCompleteTitle,
+                    new Vector2(stageCompletedX + 1, 21), Color.Black);
+
+                spriteBatch.DrawString(SceneManager.Instance.GameFontBig, StageCompleteTitle,
+                    new Vector2(stageCompletedX, 20), Color.White);
+            }
 
             spriteBatch.End();
         }

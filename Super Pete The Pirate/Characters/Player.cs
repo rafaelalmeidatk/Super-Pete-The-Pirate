@@ -42,6 +42,11 @@ namespace Super_Pete_The_Pirate
 
         public new int HP { get { return PlayerManager.Instance.Hearts; } }
 
+        //--------------------------------------------------
+        // Keys locked (no movement)
+
+        private bool _keysLocked;
+
         //----------------------//------------------------//
 
         public Player(Texture2D texture) : base(texture)
@@ -169,6 +174,8 @@ namespace Super_Pete_The_Pirate
             };
 
             AttackCooldown = 300f;
+
+            _keysLocked = false;
         }
 
         public override void GainHP(int amount)
@@ -179,6 +186,14 @@ namespace Super_Pete_The_Pirate
         public override int GetHp()
         {
             return HP;
+        }
+
+        public void UpdateWithKeyLock(GameTime gameTime, bool keyLock)
+        {
+            _keysLocked = keyLock;
+            if (!keyLock)
+                CheckKeys(gameTime);
+            base.Update(gameTime);
         }
 
         public override void Update(GameTime gameTime)
@@ -204,7 +219,7 @@ namespace Super_Pete_The_Pirate
                     CharacterSprite.SetFrameList(_attackFrameList[_attackType]);
             } else if (!_isOnGround)
                 CharacterSprite.SetFrameList("jumping");
-            else if (InputManager.Instace.KeyDown(Keys.Left) || InputManager.Instace.KeyDown(Keys.Right))
+            else if ((InputManager.Instace.KeyDown(Keys.Left) || InputManager.Instace.KeyDown(Keys.Right)) && !_keysLocked)
                 CharacterSprite.SetFrameList("walking");
             else
                 CharacterSprite.SetFrameList("stand");
@@ -238,7 +253,6 @@ namespace Super_Pete_The_Pirate
 
             if (InputManager.Instace.KeyPressed(Keys.A) && !_isAttacking)
                 RequestAttack(ShotAttack);
-
         }
 
         private void StartNormalAttack()
