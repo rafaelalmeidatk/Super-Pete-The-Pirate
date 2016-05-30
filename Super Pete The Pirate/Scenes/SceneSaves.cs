@@ -28,7 +28,7 @@ namespace Super_Pete_The_Pirate.Scenes
         private Texture2D _loadingBackgroundTexture;
         private Texture2D _peteSpritesheet;
         private Texture2D _stageSpritesheet;
-        private Texture2D _iconsSpritesheet; // Lives, ammo, hearts and coins
+        private Texture2D _iconsSpritesheet;
 
         private AnimatedSprite _loadingAnimatedSprite;
         private AnimatedSprite _peteAnimatedSprite;
@@ -47,12 +47,12 @@ namespace Super_Pete_The_Pirate.Scenes
         // Font color
 
         private Color _fontColor;
+        private Color _secFontColor;
 
         //--------------------------------------------------
         // Slots
 
         private Rectangle[] _slotsPosition;
-        private Texture2D _slotTexture;
         private int _slotIndex;
 
         //--------------------------------------------------
@@ -145,6 +145,7 @@ namespace Super_Pete_The_Pirate.Scenes
             // Font color init
 
             _fontColor = new Color(31, 29, 28);
+            _secFontColor = new Color(222, 196, 158);
 
             // Slots init
 
@@ -168,11 +169,6 @@ namespace Super_Pete_The_Pirate.Scenes
             _ammoTextPosition = new Vector2(206, 30);
             _coinsPosition = new Vector2(228, 28);
             _coinsTextPosition = new Vector2(250, 30);
-
-            // Slot texture (temporary)
-
-            _slotTexture = new Texture2D(SceneManager.Instance.GraphicsDevice, 1, 1, false, SurfaceFormat.Color);
-            _slotTexture.SetData<Color>(new Color[] { Color.Orange });
 
             // General variables
             
@@ -299,6 +295,7 @@ namespace Super_Pete_The_Pirate.Scenes
             // Title
             var titleString = _titleStrings[SceneManager.Instance.TypeOfSceneSaves];
             var titleX = (SceneManager.Instance.VirtualSize.X - SceneManager.Instance.GameFontBig.MeasureString(titleString).X) / 2;
+            //spriteBatch.DrawTextWithShadow(SceneManager.Instance.GameFontBig, titleString, new Vector2(titleX, 10), _secFontColor);
             spriteBatch.DrawString(SceneManager.Instance.GameFontBig, titleString, new Vector2(titleX, 10), _fontColor);
 
             // Slots
@@ -306,8 +303,6 @@ namespace Super_Pete_The_Pirate.Scenes
             {
                 var slotPosition = _slotsPosition[i].Location.ToVector2();
                 var gameFont = SceneManager.Instance.GameFont;
-                // Background
-                spriteBatch.Draw(_slotTexture, _slotsPosition[i], Color.White * 0.5f);
 
                 // Check if the slot isn't empty
                 if (_gameSaves[i].StagesCompleted > 0)

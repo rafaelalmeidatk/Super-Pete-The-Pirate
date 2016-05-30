@@ -82,7 +82,7 @@ namespace Super_Pete_The_Pirate.Scenes
         private Texture2D _endBackground;
         private bool _stageFinished;
 
-        private Vector2 _stageCompleteTitlePost;
+        private Vector2 _stageCompleteTitlePos;
 
         private const string StageCompleteTitle = "Stage Complete!";
 
@@ -143,6 +143,9 @@ namespace Super_Pete_The_Pirate.Scenes
 
             _endBackground = new Texture2D(SceneManager.Instance.GraphicsDevice, 1, 1, false, SurfaceFormat.Color);
             _endBackground.SetData<Color>(new Color[] { Color.Black });
+
+            var titleMesured = font.MeasureString(StageCompleteTitle);
+            _stageCompleteTitlePos = new Vector2((screenSize.X - titleMesured.X) / 2, -titleMesured.Y);
         }
 
         private void CreateHud()
@@ -413,9 +416,19 @@ namespace Super_Pete_The_Pirate.Scenes
                 CreateParticle();
             }
 
+            if (!_stageFinished)
+            {
+                //FinishStage();
+            }
+
             if (InputManager.Instace.KeyPressed(Keys.Q))
             {
                 FinishStage();
+            }
+
+            if (_stageFinished)
+            {
+                UpdateStageFinished();
             }
         }
 
@@ -482,6 +495,11 @@ namespace Super_Pete_The_Pirate.Scenes
         private void FinishStage()
         {
             _stageFinished = true;
+        }
+
+        private void UpdateStageFinished()
+        {
+            _stageCompleteTitlePos.Y = MathHelper.Lerp(_stageCompleteTitlePos.Y, 20, 0.1f);
         }
 
         private void CallSavesSceneToSave()
@@ -556,13 +574,8 @@ namespace Super_Pete_The_Pirate.Scenes
                 spriteBatch.Draw(_endBackground, new Rectangle(0, 0, (int)screenSize.X, (int)screenSize.Y), Color.White * 0.5f);
 
                 var stageCompletedX = (screenSize.X - font.MeasureString(StageCompleteTitle).X) / 2;
-                //_stageCompleteTitleY = MathHelper.Lerp(_stageCompleteTitleY, 20, 0.1f);
 
-                spriteBatch.DrawString(SceneManager.Instance.GameFontBig, StageCompleteTitle,
-                    new Vector2(stageCompletedX + 1, 21), Color.Black);
-
-                spriteBatch.DrawString(SceneManager.Instance.GameFontBig, StageCompleteTitle,
-                    new Vector2(stageCompletedX, 20), Color.White);
+                spriteBatch.DrawTextWithShadow(font, StageCompleteTitle, _stageCompleteTitlePos, Color.White);
             }
 
             spriteBatch.End();
