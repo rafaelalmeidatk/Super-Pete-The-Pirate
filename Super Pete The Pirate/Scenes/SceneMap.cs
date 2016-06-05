@@ -317,8 +317,8 @@ namespace Super_Pete_The_Pirate.Scenes
             {
                 _enemies[i].Update(gameTime);
 
-                if (_enemies[i].HasViewRange && _enemies[i].ViewRangeCooldown <= 0f && _camera.Contains(_enemies[i].BoundingRectangle) != ContainmentType.Disjoint
-                    && _enemies[i].ViewRange.Intersects(_player.BoundingRectangle))
+                if (_enemies[i].HasViewRange && _enemies[i].ViewRangeCooldown <= 0f && _camera.Contains(_enemies[i].BoundingRectangle) != ContainmentType.Disjoint &&
+                    _enemies[i].ViewRange.Intersects(_player.BoundingRectangle))
                 {
                         _enemies[i].PlayerOnSight(_player.Position);
                 }

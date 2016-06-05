@@ -25,22 +25,22 @@ namespace Super_Pete_The_Pirate
         //--------------------------------------------------
         // Coins
         
-        public int Coins { get { return PlayerManager.Instance.Coins; } }
+        public int Coins => PlayerManager.Instance.Coins;
 
         //--------------------------------------------------
         // Lives
         
-        public int Lives { get { return PlayerManager.Instance.Lives; } }
+        public int Lives => PlayerManager.Instance.Lives;
 
         //--------------------------------------------------
         // Ammo
         
-        public int Ammo { get { return PlayerManager.Instance.Ammo; } }
+        public int Ammo => PlayerManager.Instance.Ammo;
 
         //--------------------------------------------------
         // HP
 
-        public new int HP { get { return PlayerManager.Instance.Hearts; } }
+        public new int HP => PlayerManager.Instance.Hearts;
 
         //--------------------------------------------------
         // Keys locked (no movement)
