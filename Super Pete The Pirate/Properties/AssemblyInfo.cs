@@ -9,8 +9,8 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyProduct("Super Pete The Pirate")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyDescription("")]
-[assembly: AssemblyCompany("HEAVEN KILLERS RELEASE GROUP")]
-[assembly: AssemblyCopyright("Copyright © HEAVEN KILLERS RELEASE GROUP 2016")]
+[assembly: AssemblyCompany("Phantom Ignition")]
+[assembly: AssemblyCopyright("Copyright © Phantom Ignition 2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
