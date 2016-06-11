@@ -82,18 +82,7 @@ namespace Super_Pete_The_Pirate.Scenes
         private bool _drawEndStage;
         private Texture2D _endBackground;
         private bool _stageFinished;
-
-        private Vector2 _stageCompleteTitlePos;
-
-        private float _stageCompleteLeftX;
-        private float _stageCompleteRightX;
-
-        private float _stageCompleteFirstPhaseTime;
-        private const float StageCompleteFirstPhaseTime = 1000.0f;
-
-        private const string StageCompleteTitle = "Stage Complete!";
-        private const string StageCompleteCoins = "Coins earned:";
-        private const string StageCompleteHearts = "Hearts wasteds:";
+        private SceneMapSFHelper _stageFinishedHelper;
 
         //----------------------//------------------------//
 
@@ -153,14 +142,8 @@ namespace Super_Pete_The_Pirate.Scenes
             _endBackground = new Texture2D(SceneManager.Instance.GraphicsDevice, 1, 1, false, SurfaceFormat.Color);
             _endBackground.SetData<Color>(new Color[] { Color.Black });
 
-            var titleMesured = font.MeasureString(StageCompleteTitle);
-            _stageCompleteTitlePos = new Vector2((screenSize.X - titleMesured.X) / 2, -titleMesured.Y);
-
-            _stageCompleteFirstPhaseTime = 0.0f;
-
-            _stageCompleteLeftX = 0.0f;
-            _stageCompleteRightX = 0.0f;
-    }
+            _stageFinishedHelper = new SceneMapSFHelper();
+        }
 
         private void CreateHud()
         {
@@ -442,7 +425,7 @@ namespace Super_Pete_The_Pirate.Scenes
 
             if (_stageFinished)
             {
-                UpdateStageFinished(gameTime);
+                _stageFinishedHelper.Update(gameTime);
             }
         }
 
@@ -509,14 +492,7 @@ namespace Super_Pete_The_Pirate.Scenes
         private void FinishStage()
         {
             _stageFinished = true;
-        }
-
-        private void UpdateStageFinished(GameTime gameTime)
-        {
-            _stageCompleteFirstPhaseTime += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
-            _stageCompleteTitlePos.Y = MathHelper.Lerp(_stageCompleteTitlePos.Y, 20, 0.1f);
-            if (_stageCompleteLeftX < 20)
-                _stageCompleteLeftX = MathHelper.Lerp(-500, 20, _stageCompleteFirstPhaseTime / StageCompleteFirstPhaseTime);
+            _stageFinishedHelper.Initialize(240, 3, 12, new TimeSpan(0, 7, 32));
         }
 
         private void CallSavesSceneToSave()
@@ -590,11 +566,7 @@ namespace Super_Pete_The_Pirate.Scenes
 
                 spriteBatch.Draw(_endBackground, new Rectangle(0, 0, (int)screenSize.X, (int)screenSize.Y), Color.White * 0.5f);
 
-                var stageCompletedX = (screenSize.X - font.MeasureString(StageCompleteTitle).X) / 2;
-                var coinsPos = new Vector2(_stageCompleteLeftX, 60);
-
-                spriteBatch.DrawTextWithShadow(font, StageCompleteTitle, _stageCompleteTitlePos, Color.White);
-                spriteBatch.DrawTextWithShadow(font, StageCompleteCoins, coinsPos, Color.White);
+                _stageFinishedHelper.Draw(spriteBatch);
             }
 
             spriteBatch.End();

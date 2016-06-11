@@ -70,6 +70,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Scenes\SceneBase.cs" />
     <Compile Include="Scenes\SceneMap.cs" />
+    <Compile Include="Scenes\SceneMapSFHelper.cs" />
     <Compile Include="Scenes\SceneSaves.cs" />
     <Compile Include="Scenes\SceneStageSelect.cs" />
     <Compile Include="Scenes\SceneTitle.cs" />
