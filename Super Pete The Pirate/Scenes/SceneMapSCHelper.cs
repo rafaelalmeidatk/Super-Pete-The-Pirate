@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Super_Pete_The_Pirate.Scenes
 {
-    class SceneMapSFHelper
+    class SceneMapSCHelper
     {
         //--------------------------------------------------
         // Phase
@@ -50,7 +50,7 @@ namespace Super_Pete_The_Pirate.Scenes
         //--------------------------------------------------
         // Strings
 
-        private const string Title = "Stage Complete!";
+        private const string Title = "Stage Completed!";
         private const string CoinsEarned = "Coins earned:";
         private const string HeartsLost = "Hearts lost:";
         private const string EnemiesDefeated = "Enemies defeated:";
@@ -71,7 +71,7 @@ namespace Super_Pete_The_Pirate.Scenes
 
         //----------------------//------------------------//
 
-        public SceneMapSFHelper()
+        public SceneMapSCHelper()
         {
             _phase = 0;
 

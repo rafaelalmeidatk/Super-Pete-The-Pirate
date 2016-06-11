@@ -82,7 +82,7 @@ namespace Super_Pete_The_Pirate.Scenes
         private bool _drawEndStage;
         private Texture2D _endBackground;
         private bool _stageFinished;
-        private SceneMapSFHelper _stageFinishedHelper;
+        private SceneMapSCHelper _stageCompletedHelper;
 
         //----------------------//------------------------//
 
@@ -142,7 +142,7 @@ namespace Super_Pete_The_Pirate.Scenes
             _endBackground = new Texture2D(SceneManager.Instance.GraphicsDevice, 1, 1, false, SurfaceFormat.Color);
             _endBackground.SetData<Color>(new Color[] { Color.Black });
 
-            _stageFinishedHelper = new SceneMapSFHelper();
+            _stageCompletedHelper = new SceneMapSCHelper();
         }
 
         private void CreateHud()
@@ -425,7 +425,7 @@ namespace Super_Pete_The_Pirate.Scenes
 
             if (_stageFinished)
             {
-                _stageFinishedHelper.Update(gameTime);
+                _stageCompletedHelper.Update(gameTime);
             }
         }
 
@@ -492,7 +492,7 @@ namespace Super_Pete_The_Pirate.Scenes
         private void FinishStage()
         {
             _stageFinished = true;
-            _stageFinishedHelper.Initialize(240, 3, 12, new TimeSpan(0, 7, 32));
+            _stageCompletedHelper.Initialize(240, 3, 12, new TimeSpan(0, 7, 32));
         }
 
         private void CallSavesSceneToSave()
@@ -566,7 +566,7 @@ namespace Super_Pete_The_Pirate.Scenes
 
                 spriteBatch.Draw(_endBackground, new Rectangle(0, 0, (int)screenSize.X, (int)screenSize.Y), Color.White * 0.5f);
 
-                _stageFinishedHelper.Draw(spriteBatch);
+                _stageCompletedHelper.Draw(spriteBatch);
             }
 
             spriteBatch.End();
