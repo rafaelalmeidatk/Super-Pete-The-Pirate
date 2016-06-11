@@ -26,7 +26,7 @@ namespace Super_Pete_The_Pirate
         private Texture2D _colliderTexture;
 
         //--------------------------------------------------
-        // Encapsulaments
+        // Map Size
 
         public int MapWidth { get { return _tiledMap == null ? 0 : _tiledMap.WidthInPixels; } }
         public int MapHeight { get { return _tiledMap == null ? 0 : _tiledMap.HeightInPixels; } }

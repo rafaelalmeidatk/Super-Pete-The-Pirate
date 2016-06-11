@@ -17,6 +17,7 @@ using Super_Pete_The_Pirate.Objects;
 using System.Diagnostics;
 using Super_Pete_The_Pirate.Sprites;
 using Super_Pete_The_Pirate.Managers;
+using Super_Pete_The_Pirate.Extensions;
 
 namespace Super_Pete_The_Pirate.Scenes
 {
@@ -84,7 +85,15 @@ namespace Super_Pete_The_Pirate.Scenes
 
         private Vector2 _stageCompleteTitlePos;
 
+        private float _stageCompleteLeftX;
+        private float _stageCompleteRightX;
+
+        private float _stageCompleteFirstPhaseTime;
+        private const float StageCompleteFirstPhaseTime = 1000.0f;
+
         private const string StageCompleteTitle = "Stage Complete!";
+        private const string StageCompleteCoins = "Coins earned:";
+        private const string StageCompleteHearts = "Hearts wasteds:";
 
         //----------------------//------------------------//
 
@@ -133,8 +142,6 @@ namespace Super_Pete_The_Pirate.Scenes
 
             // Create the HUD
             CreateHud();
-
-            LoadMap(1);
         }
 
         private void InitializeEndStage()
@@ -148,7 +155,12 @@ namespace Super_Pete_The_Pirate.Scenes
 
             var titleMesured = font.MeasureString(StageCompleteTitle);
             _stageCompleteTitlePos = new Vector2((screenSize.X - titleMesured.X) / 2, -titleMesured.Y);
-        }
+
+            _stageCompleteFirstPhaseTime = 0.0f;
+
+            _stageCompleteLeftX = 0.0f;
+            _stageCompleteRightX = 0.0f;
+    }
 
         private void CreateHud()
         {
@@ -160,8 +172,66 @@ namespace Super_Pete_The_Pirate.Scenes
         private void LoadMap(int mapId)
         {
             GameMap.Instance.LoadMap(Content, mapId);
+            SpawnShops();
             SpawnEnemies();
+            SpawnCheckpoints();
             SpawnPlayer();
+            SpawnCoins();
+        }
+
+        private void SpawnCoins()
+        {
+            var coinsGroup = GameMap.Instance.GetObjectGroup("Coins");
+            if (coinsGroup == null) return;
+
+            foreach (var coinObj in coinsGroup.Objects)
+            {
+                CreateCoin(Convert.ToInt32(coinObj.X), Convert.ToInt32(coinObj.Y - 32), Vector2.Zero, false);
+            }
+        }
+
+        public GameCoin CreateCoin(int x, int y, Vector2 velocity, bool applyPhyics)
+        {
+            var coinTexture = ImageManager.loadMisc("Coin");
+            var coinFrames = new Rectangle[]
+            {
+                new Rectangle(0, 0, 32, 32),
+                new Rectangle(32, 0, 32, 32),
+                new Rectangle(64, 0, 32, 32),
+                new Rectangle(96, 0, 32, 32)
+            };
+            var coinBoudingBox = new Rectangle(8, 8, 16, 16);
+            var coin = new GameCoin(coinTexture, coinFrames, 120, x, y, velocity, applyPhyics);
+            coin.CoinSprite.SetBoundingBox(coinBoudingBox);
+            _coins.Add(coin);
+            return coin;
+        }
+
+        public void SpawnCheckpoints()
+        {
+            var checkpointGroup = GameMap.Instance.GetObjectGroup("Checkpoints");
+            if (checkpointGroup == null) return;
+
+            foreach (var checkpointObj in checkpointGroup.Objects)
+            {
+                CreateCheckpoints(Convert.ToInt32(checkpointObj.X), Convert.ToInt32(checkpointObj.Y - 96));
+            }
+        }
+
+        private GameCheckpoint CreateCheckpoints(int x, int y)
+        {
+            var checkpointTexture = ImageManager.loadMisc("checkPointSpritesheet");
+            var checkpointFrames = new Rectangle[]
+            {
+                new Rectangle(0, 0, 64, 96),
+                new Rectangle(64, 0, 64, 96),
+                new Rectangle(128, 0, 64, 96)
+            };
+            var checkpointBoundingBox = new Rectangle(0, 24, 37, 72);
+            var checkpoint = new GameCheckpoint(checkpointTexture, checkpointFrames, 130, x, y);
+            checkpoint.SetBoundingBox(checkpointBoundingBox);
+            _checkpoints.Add(checkpoint);
+            return checkpoint;
         }
 
         private void SpawnPlayer()
@@ -175,7 +245,65 @@ namespace Super_Pete_The_Pirate.Scenes
             var enemiesGroup = GameMap.Instance.GetObjectGroup("Enemies");
             if (enemiesGroup == null) return;
             var tileSize = GameMap.Instance.TileSize;
-            CreateEnemy(enemieObj, Convert.ToInt32(enemieObj.X), Convert.ToInt32(enemieObj.Y));
+            foreach (var enemieObj in enemiesGroup.Objects)
+            {
+                CreateEnemy(enemieObj, Convert.ToInt32(enemieObj.X), Convert.ToInt32(enemieObj.Y));
+            }
+        }
+
+        public void CreateEnemy(TiledObject enemyObj, int x, int y)
+        {
+            var enemyName = enemyObj.Properties["type"];
+            if (enemyName == null) return;
+            var texture = ImageManager.loadCharacter(enemyName);
+            var newEnemy = (Enemy)Activator.CreateInstance(Type.GetType("Super_Pete_The_Pirate.Characters." + enemyName), texture);
+            newEnemy.Position = new Vector2(x, y - 32);
+            if (enemyObj.Properties.ContainsKey("FlipHorizontally"))
+                newEnemy.CharacterSprite.Effect = enemyObj.Properties["FlipHorizontally"] == "true" ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
+            if (enemyName == "Parrot")
+            {
+                var width = enemyObj.Properties.ContainsKey("FlyWidth") ? int.Parse(enemyObj.Properties["FlyWidth"]) : 224;
+                ((Parrot)newEnemy).SetFlyWidth(width);
+                var rangeDec = newEnemy.CharacterSprite.Effect.HasFlag(SpriteEffects.FlipHorizontally) ? width : 0;
+                ((Parrot)newEnemy).SetFlyRange((int)newEnemy.Position.X - rangeDec, (int)newEnemy.Position.Y);
+            }
+
+            if (enemyName == "Mole") ((Mole)newEnemy).SetHolePoint((int)newEnemy.Position.X, y);
+
+            _enemies.Add(newEnemy);
+        }
+
+        private void SpawnShops()
+        {
+            var shopsGroup = GameMap.Instance.GetObjectGroup("Shops");
+            if (shopsGroup == null) return;
+            foreach (var shopObj in shopsGroup.Objects)
+            {
+                CreateShop(shopObj, Convert.ToInt32(shopObj.X), Convert.ToInt32(shopObj.Y));
+            }
+        }
+
+        private void CreateShop(TiledObject shopObj, int x, int y)
+        {
+            var shopType = shopObj.Properties["Type"];
+            if (shopType == null) return;
+            var shopTexture = ImageManager.loadMisc("Panel" + shopType);
+            var type = GameShopType.None;
+            switch (shopType)
+            {
+                case "Ammo":
+                    type = GameShopType.Ammo;
+                    break;
+                case "Hearts":
+                    type = GameShopType.Hearts;
+                    break;
+                case "Lives":
+                    type = GameShopType.Lives;
+                    break;
+            }
+            var arrowsTexture = ImageManager.loadSystem("ShopUpButton");
+            var shop = new GameShop(type, shopTexture, arrowsTexture, new Vector2(x, y));
+            _shops.Add(shop);
         }
 
         public void CreateProjectile(string name, Vector2 position, int dx, int dy, int damage, ProjectileSubject subject)
@@ -198,7 +326,7 @@ namespace Super_Pete_The_Pirate.Scenes
                 if (_projectiles[i].RequestErase)
                     _projectiles.Remove(_projectiles[i]);
             }
-            
+
             for (var i = 0; i < _enemies.Count; i++)
             {
                 _enemies[i].Update(gameTime);
@@ -206,7 +334,7 @@ namespace Super_Pete_The_Pirate.Scenes
                 if (_enemies[i].HasViewRange && _enemies[i].ViewRangeCooldown <= 0f && _camera.Contains(_enemies[i].BoundingRectangle) != ContainmentType.Disjoint &&
                     _enemies[i].ViewRange.Intersects(_player.BoundingRectangle))
                 {
-                        _enemies[i].PlayerOnSight(_player.Position);
+                    _enemies[i].PlayerOnSight(_player.Position);
                 }
 
                 if (!_enemies[i].Dying && _enemies[i].ContactDamageEnabled && _enemies[i].BoundingRectangle.Intersects(_player.BoundingRectangle))
@@ -304,7 +432,7 @@ namespace Super_Pete_The_Pirate.Scenes
 
             if (!_stageFinished)
             {
-                //FinishStage();
+                FinishStage();
             }
 
             if (InputManager.Instace.KeyPressed(Keys.Q))
@@ -314,7 +442,7 @@ namespace Super_Pete_The_Pirate.Scenes
 
             if (_stageFinished)
             {
-                UpdateStageFinished();
+                UpdateStageFinished(gameTime);
             }
         }
 
@@ -383,9 +511,12 @@ namespace Super_Pete_The_Pirate.Scenes
             _stageFinished = true;
         }
 
-        private void UpdateStageFinished()
+        private void UpdateStageFinished(GameTime gameTime)
         {
+            _stageCompleteFirstPhaseTime += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
             _stageCompleteTitlePos.Y = MathHelper.Lerp(_stageCompleteTitlePos.Y, 20, 0.1f);
+            if (_stageCompleteLeftX < 20)
+                _stageCompleteLeftX = MathHelper.Lerp(-500, 20, _stageCompleteFirstPhaseTime / StageCompleteFirstPhaseTime);
         }
 
         private void CallSavesSceneToSave()
@@ -460,8 +591,10 @@ namespace Super_Pete_The_Pirate.Scenes
                 spriteBatch.Draw(_endBackground, new Rectangle(0, 0, (int)screenSize.X, (int)screenSize.Y), Color.White * 0.5f);
 
                 var stageCompletedX = (screenSize.X - font.MeasureString(StageCompleteTitle).X) / 2;
+                var coinsPos = new Vector2(_stageCompleteLeftX, 60);
 
                 spriteBatch.DrawTextWithShadow(font, StageCompleteTitle, _stageCompleteTitlePos, Color.White);
+                spriteBatch.DrawTextWithShadow(font, StageCompleteCoins, coinsPos, Color.White);
             }
 
             spriteBatch.End();
