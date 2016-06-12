@@ -1,7 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended.Sprites;
+using Super_Pete_The_Pirate.Managers;
 using Super_Pete_The_Pirate.Sprites;
 using System;
 using System.Collections.Generic;
@@ -27,7 +29,7 @@ namespace Super_Pete_The_Pirate.Scenes
         private const float RowShowMaxTick = 800.0f;
 
         private float _rankShowTick;
-        private const float RankShowMaxTick = 500.0f;
+        private const float RankShowMaxTick = 250.0f;
 
         //--------------------------------------------------
         // Positions
@@ -64,6 +66,11 @@ namespace Super_Pete_The_Pirate.Scenes
         private Vector2 _rankSentencePosition;
         private float _rankSentenceAlpha;
 
+        //--------------------------------------------------
+        // Sounds FX
+
+        private SoundEffect _numberSe;
+
         //----------------------//------------------------//
 
         public SceneMapSCHelper()
@@ -92,6 +99,8 @@ namespace Super_Pete_The_Pirate.Scenes
                 { "F", "F of fail" }
             };
             _rankSentenceAlpha = 0.0f;
+
+            _numberSe = SoundManager.loadSe("Numbers");
         }
 
         public void Initialize(int coins, int hearts, int enemies, TimeSpan time)
@@ -141,7 +150,7 @@ namespace Super_Pete_The_Pirate.Scenes
                     new Rectangle(80, 0, 80, 80),
                     new Rectangle(160, 0, 80, 80)
                 };
-                _rankSprite = new AnimatedSprite(texture, frames, 120, Vector2.Zero);
+                _rankSprite = new AnimatedSprite(texture, frames, 100, Vector2.Zero);
                 _rankSprite.Origin = new Vector2(40, 40);
             }
             else
@@ -205,7 +214,13 @@ namespace Super_Pete_The_Pirate.Scenes
                 {
                     if (_rowIndex < _values.GetLength(0))
                     {
-                        _values[i, 0] = (int)MathHelper.Lerp(0, _values[i, 1], delta);
+                        var newValue = (int)MathHelper.Lerp(0, _values[i, 1], delta);
+                        if (_values[i, 0] != newValue)
+                        {
+                            _numberSe.Play();
+                        }
+                        _values[i, 0] = newValue;
+
                         if (_values[i, 0] >= _values[i, 1])
                         {
                             _rowIndex++;
@@ -214,7 +229,12 @@ namespace Super_Pete_The_Pirate.Scenes
                     }
                     else
                     {
-                        _timeValues[0] = TimeSpan.FromTicks((long)MathHelper.Lerp(0.0f, _timeValues[1].Ticks, delta));
+                        var newValue = TimeSpan.FromTicks((long)MathHelper.Lerp(0.0f, _timeValues[1].Ticks, delta));
+                        if (!_timeValues[0].Equals(newValue))
+                        {
+                            _numberSe.Play();
+                        }
+                        _timeValues[0] = newValue;
                         if (_timeValues[0] >= _timeValues[1])
                             _phase++;
                     }

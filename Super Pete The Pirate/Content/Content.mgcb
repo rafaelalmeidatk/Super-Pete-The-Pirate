@@ -576,3 +576,51 @@
 /processorParam:TextureFormat=Color
 /build:imgs/scenes/map/rankS.png
 
+#begin sounds/se/Aerial.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sounds/se/Aerial.ogg
+
+#begin sounds/se/Cancel.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sounds/se/Cancel.ogg
+
+#begin sounds/se/Confirm.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sounds/se/Confirm.ogg
+
+#begin sounds/se/Footstep.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sounds/se/Footstep.ogg
+
+#begin sounds/se/Hit.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sounds/se/Hit.ogg
+
+#begin sounds/se/Numbers.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sounds/se/Numbers.ogg
+
+#begin sounds/se/Select.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sounds/se/Select.ogg
+
+#begin sounds/se/Sword.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sounds/se/Sword.ogg
+
