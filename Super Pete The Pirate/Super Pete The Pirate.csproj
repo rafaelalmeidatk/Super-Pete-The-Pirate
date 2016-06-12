@@ -52,6 +52,7 @@
     <Compile Include="Extensions\SpriteBatchExtensions.cs" />
     <Compile Include="Extensions\Vector2Extensions.cs" />
     <Compile Include="GameMain.cs" />
+    <Compile Include="Managers\IconsManager.cs" />
     <Compile Include="Managers\ImageManager.cs" />
     <Compile Include="Managers\InputManager.cs" />
     <Compile Include="Managers\ParticleManager.cs" />

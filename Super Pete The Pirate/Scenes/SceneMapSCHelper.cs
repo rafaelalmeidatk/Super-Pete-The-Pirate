@@ -67,6 +67,11 @@ namespace Super_Pete_The_Pirate.Scenes
         private float _rankSentenceAlpha;
 
         //--------------------------------------------------
+        // Buttons
+
+        private float _buttonsAlpha;
+
+        //--------------------------------------------------
         // Sounds FX
 
         private SoundEffect _numberSe;
@@ -100,6 +105,7 @@ namespace Super_Pete_The_Pirate.Scenes
             };
             _rankSentenceAlpha = 0.0f;
 
+            _buttonsAlpha = 0.0f;
             _numberSe = SoundManager.loadSe("Numbers");
         }
 
@@ -194,6 +200,12 @@ namespace Super_Pete_The_Pirate.Scenes
                 }
             }
 
+            if (InputManager.Instace.KeyPressed(Keys.Z, Keys.Enter))
+                SceneManager.Instance.ChangeScene("SceneStageSelect");
+
+            if (InputManager.Instace.KeyPressed(Keys.X))
+                SceneManager.Instance.ChangeScene("SceneMap");
+
             if (_phase == 0)
             {
                 if (_titlePosition.Y < 20)
@@ -259,6 +271,9 @@ namespace Super_Pete_The_Pirate.Scenes
 
             if (_rank == "S")
                 ((AnimatedSprite)_rankSprite).Update(gameTime);
+
+            if (_buttonsAlpha < 1.0f)
+                _buttonsAlpha += (float)gameTime.ElapsedGameTime.TotalSeconds;
         }
 
         public void Draw(SpriteBatch spriteBatch)
@@ -302,6 +317,9 @@ namespace Super_Pete_The_Pirate.Scenes
                 else
                     _rankSprite.Draw(spriteBatch);
             }
+
+            IconsManager.Instance.DrawActionButton(spriteBatch, new Vector2(5, screenSize.Y - 40), false, "Continue", _buttonsAlpha, true);
+            IconsManager.Instance.DrawCancelButton(spriteBatch, new Vector2(5, screenSize.Y - 20), false, "Retry!", _buttonsAlpha, true);
         }
 
         private string FormatTime(TimeSpan time)
