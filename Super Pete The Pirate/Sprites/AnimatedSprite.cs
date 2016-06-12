@@ -104,7 +104,10 @@ namespace Super_Pete_The_Pirate.Sprites
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(TextureRegion.Texture, Position, _frames[_currentFrame], Color * Alpha, Rotation, Origin, Scale, Effect, 0);
+            if (IsVisible)
+            {
+                spriteBatch.Draw(TextureRegion.Texture, Position, _frames[_currentFrame], Color * Alpha, Rotation, Origin, Scale, Effect, 0);
+            }
         }
 
         public void DrawCollider(SpriteBatch spriteBatch)

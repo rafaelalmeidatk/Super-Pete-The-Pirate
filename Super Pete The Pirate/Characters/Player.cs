@@ -81,7 +81,6 @@ namespace Super_Pete_The_Pirate
                 new Rectangle(0, 32, 32, 32)
             }, new int[] { 0, 0, 0, 0 }, new int[] { 0, 0, 0, 0 });
 
-
             // Sword Attack
             CharacterSprite.CreateFrameList("attack_sword", 70);
             CharacterSprite.AddCollider("attack_sword", new Rectangle(9, 2, 17, 30));
