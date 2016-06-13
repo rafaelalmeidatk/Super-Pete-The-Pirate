@@ -27,10 +27,7 @@ namespace Super_Pete_The_Pirate
         }
         protected Vector2 _velocity;
 
-        public bool IsOnGround
-        {
-            get { return _isOnGround; }
-        }
+        public bool IsOnGround => _isOnGround;
         protected bool _isOnGround;
 
         protected float _movement;
@@ -80,8 +77,8 @@ namespace Super_Pete_The_Pirate
         //--------------------------------------------------
         // Combat system usage
 
+        public bool Dying => _dying;
         protected bool _dying;
-        public bool Dying { get { return _dying; } }
 
         //--------------------------------------------------
         // Bounding rectangle

@@ -7,9 +7,6 @@ using Super_Pete_The_Pirate.Managers;
 using Super_Pete_The_Pirate.Sprites;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Super_Pete_The_Pirate.Scenes
 {
@@ -54,6 +51,7 @@ namespace Super_Pete_The_Pirate.Scenes
         //--------------------------------------------------
         // Values
 
+        private bool _numbersTime;
         private TimeSpan[] _timeValues;
         private int[,] _values;
 
@@ -109,7 +107,7 @@ namespace Super_Pete_The_Pirate.Scenes
             _numberSe = SoundManager.loadSe("Numbers");
         }
 
-        public void Initialize(int coins, int hearts, int enemies, TimeSpan time)
+        public void Initialize(int coins, int hearts, int enemies, TimeSpan time, bool failed)
         {
             var screenSize = SceneManager.Instance.VirtualSize;
             var font = SceneManager.Instance.GameFont;
@@ -146,7 +144,11 @@ namespace Super_Pete_The_Pirate.Scenes
 
             _timeValues = new TimeSpan[] { new TimeSpan(), time };
 
-            _rank = "S";
+            if (failed)
+                _rank = "F";
+            else
+                _rank = "S";
+            
             if (_rank == "S")
             {
                 var texture = ImageManager.loadScene(SceneResFolder, "rank" + _rank);
@@ -173,7 +175,7 @@ namespace Super_Pete_The_Pirate.Scenes
 
         public void Update(GameTime gameTime)
         {
-            if (InputManager.Instace.KeyPressed(Keys.Enter, Keys.Space))
+            if (InputManager.Instace.KeyPressed(Keys.Enter, Keys.Z))
             {
                 if (_phase == 0)
                 {
@@ -182,6 +184,7 @@ namespace Super_Pete_The_Pirate.Scenes
                         _rowsInnerPositionsRight[_rowIndex, 0] = _rowsInnerPositionsRight[_rowIndex, 2];
                         _rowsInnerPositionsLeft[_rowIndex, 0] = 20.0f;
                         _rowShowTick = 0.0f;
+                        _numbersTime = true;
                     }
                     else
                     {
@@ -190,6 +193,7 @@ namespace Super_Pete_The_Pirate.Scenes
                             _values[_rowIndex, 0] = _values[_rowIndex, 1];
                             _rowIndex++;
                             _rowShowTick = 0.0f;
+                            _numbersTime = false;
                         }
                         else
                         {
@@ -200,11 +204,16 @@ namespace Super_Pete_The_Pirate.Scenes
                 }
             }
 
-            if (InputManager.Instace.KeyPressed(Keys.Z, Keys.Enter))
-                SceneManager.Instance.ChangeScene("SceneStageSelect");
+            if (InputManager.Instace.KeyPressed(Keys.Z, Keys.Enter) && _phase >= 2)
+            {
+                if (PlayerManager.Instance.StagesCompleted < GameMap.Instance.CurrentMapId)
+                    PlayerManager.Instance.CompleteStage();
+                SceneManager.Instance.TypeOfSceneSaves = SceneManager.SceneSavesType.Save;
+                SceneManager.Instance.ChangeScene("SceneSaves");
+            }
 
             if (InputManager.Instace.KeyPressed(Keys.X))
-                SceneManager.Instance.ChangeScene("SceneMap");
+                SceneManager.Instance.ChangeScene("SceneMap"); // Restart the stage
 
             if (_phase == 0)
             {
@@ -215,12 +224,15 @@ namespace Super_Pete_The_Pirate.Scenes
                 var delta = _rowShowTick / RowShowMaxTick;
                 var i = _rowIndex;
 
-                if (_rowsInnerPositionsLeft[i, 0] < 20.0f)
+                if (_rowsInnerPositionsLeft[i, 0] < 20.0f && !_numbersTime)
                 {
                     _rowsInnerPositionsRight[i, 0] = MathHelper.Lerp(_rowsInnerPositionsRight[i, 1], _rowsInnerPositionsRight[i, 2], delta);
                     _rowsInnerPositionsLeft[i, 0] = MathHelper.Lerp(_rowsInnerPositionsLeft[i, 1], 20.0f, delta);
                     if (_rowsInnerPositionsLeft[i, 0] >= 20.0f)
+                    {
                         _rowShowTick = 0.0f;
+                        _numbersTime = true;
+                    }
                 }
                 else
                 {
@@ -237,6 +249,7 @@ namespace Super_Pete_The_Pirate.Scenes
                         {
                             _rowIndex++;
                             _rowShowTick = 0.0f;
+                            _numbersTime = false;
                         }
                     }
                     else
@@ -319,7 +332,7 @@ namespace Super_Pete_The_Pirate.Scenes
             }
 
             IconsManager.Instance.DrawActionButton(spriteBatch, new Vector2(5, screenSize.Y - 40), false, "Continue", _buttonsAlpha, true);
-            IconsManager.Instance.DrawCancelButton(spriteBatch, new Vector2(5, screenSize.Y - 20), false, "Retry!", _buttonsAlpha, true);
+            IconsManager.Instance.DrawCancelButton(spriteBatch, new Vector2(5, screenSize.Y - 20), false, "Restart", _buttonsAlpha, true);
         }
 
         private string FormatTime(TimeSpan time)

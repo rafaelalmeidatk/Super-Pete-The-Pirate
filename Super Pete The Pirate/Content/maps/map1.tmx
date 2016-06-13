@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="12" height="8" tilewidth="32" tileheight="32" nextobjectid="21">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="12" height="8" tilewidth="32" tileheight="32" nextobjectid="28">
  <tileset firstgid="1" name="tile" tilewidth="32" tileheight="32" tilecount="121" columns="11">
   <image source="../imgs/tilesets/tile.png" width="352" height="352"/>
  </tileset>
@@ -43,23 +43,21 @@
 </data>
  </layer>
  <objectgroup name="Enemies">
-  <object id="15" gid="56" x="224" y="192" width="32" height="32">
+  <properties>
+   <property name="type" value="SniperPig"/>
+  </properties>
+  <object id="24" gid="57" x="320" y="96" width="32" height="32">
    <properties>
     <property name="type" value="SniperPig"/>
    </properties>
   </object>
-  <object id="16" gid="56" x="288" y="96" width="32" height="32">
-   <properties>
-    <property name="type" value="SniperPig"/>
-   </properties>
-  </object>
-  <object id="17" gid="56" x="32" y="64" width="32" height="32">
+  <object id="26" gid="57" x="32" y="64" width="32" height="32">
    <properties>
     <property name="type" value="SniperPig"/>
    </properties>
   </object>
  </objectgroup>
  <objectgroup name="Player Spawn">
-  <object id="20" gid="58" x="32" y="192" width="32" height="32"/>
+  <object id="23" gid="56" x="64" y="192" width="32" height="32"/>
  </objectgroup>
 </map>

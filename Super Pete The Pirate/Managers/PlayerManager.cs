@@ -42,6 +42,10 @@ namespace Super_Pete_The_Pirate.Managers
         private int _coins;
         public int Coins { get { return _coins; } }
 
+        public const int InitialAmmo = 5;
+        public const int InitialLives = 1;
+        public const int InitialHearts = 1;
+
         //--------------------------------------------------
         // Stages completed
 
@@ -52,11 +56,16 @@ namespace Super_Pete_The_Pirate.Managers
 
         private PlayerManager()
         {
-            _ammo = 2;
-            _lives = 3;
-            _hearts = 5;
+            _ammo = InitialAmmo;
+            _lives = InitialLives;
+            _hearts = InitialHearts;
             _coins = 250;
-            _stagesCompleted = 3;
+            _stagesCompleted = 0;
+        }
+
+        public void CreateNewGame()
+        {
+            SetData(InitialAmmo, InitialLives, InitialHearts, 0, 0);
         }
 
         public void SetData(int ammo, int lives, int hearts, int coins, int stagesCompleted)
@@ -67,9 +76,20 @@ namespace Super_Pete_The_Pirate.Managers
             _stagesCompleted = stagesCompleted;
         }
 
+        public void HandleRespawn()
+        {
+            _lives--;
+            _hearts = InitialHearts;
+        }
+
         public void AddAmmo(int amount)
         {
             _ammo += amount;
+        }
+
+        public void SetAmmo(int ammo)
+        {
+            _ammo = ammo;
         }
 
         public void AddLives(int amount)
@@ -87,9 +107,15 @@ namespace Super_Pete_The_Pirate.Managers
             _coins += amount;
         }
 
+        public void SetCoins(int coins)
+        {
+            _coins = coins;
+        }
+
         public void CompleteStage()
         {
-            _stagesCompleted++;
+            if (_stagesCompleted < 5)
+                _stagesCompleted++;
         }
     }
 }

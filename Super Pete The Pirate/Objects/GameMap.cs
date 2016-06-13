@@ -44,6 +44,12 @@ namespace Super_Pete_The_Pirate
             Platform = 2
         }
 
+        //--------------------------------------------------
+        // Current Map ID
+
+        private int _currentMapId;
+        public int CurrentMapId => _currentMapId;
+
         //----------------------//------------------------//
 
         public static GameMap Instance
@@ -64,11 +70,13 @@ namespace Super_Pete_The_Pirate
             _tileColliderBoxes = new List<Rectangle>();
             _colliderTexture = new Texture2D(SceneManager.Instance.GraphicsDevice, 1, 1, false, SurfaceFormat.Color);
             _colliderTexture.SetData<Color>(new Color[] { Color.Red });
+            _currentMapId = 0;
         }
 
         public void LoadMap(ContentManager contentManager, int id)
         {
             _tiledMap = contentManager.Load<TiledMap>(String.Format("maps/map{0}", id));
+            _currentMapId = id;
             var blockedLayer = (TiledTileLayer)_tiledMap.GetLayer("Block");
             if (blockedLayer == null) return;
             foreach (var tile in blockedLayer.Tiles)
@@ -78,6 +86,11 @@ namespace Super_Pete_The_Pirate
                     _tileColliderBoxes.Add(new Rectangle(tile.X * (int)TileSize.X, tile.Y * (int)TileSize.Y, (int)TileSize.X, (int)TileSize.Y));
                 }
             }
+        }
+
+        public void UnloadMap()
+        {
+            _tileColliderBoxes.Clear();
         }
 
         public int GetTileByX(double x)

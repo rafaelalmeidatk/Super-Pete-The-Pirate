@@ -40,6 +40,7 @@ namespace Super_Pete_The_Pirate.Managers
 
         private Rectangle[] _zButton;
         private Rectangle[] _xButton;
+        private Rectangle[] _rightArrow;
 
         //----------------------//------------------------//
 
@@ -57,16 +58,27 @@ namespace Super_Pete_The_Pirate.Managers
                 new Rectangle(15, 0, 15, 15),
                 new Rectangle(60, 0, 15, 15)
             };
+
+            _rightArrow = new Rectangle[]
+            {
+                new Rectangle(45, 45, 15, 15),
+                new Rectangle(60, 45, 15, 15)
+            };
         }
 
         public void DrawActionButton(SpriteBatch spriteBatch, Vector2 position, bool pressed, string label, float alpha, bool labelWithShadow = false)
         {
-            DrawButton(spriteBatch, position, pressed ? _zButton[0] : _zButton[1], label, alpha, labelWithShadow);
+            DrawButton(spriteBatch, position, pressed ? _zButton[1] : _zButton[0], label, alpha, labelWithShadow);
         }
 
         public void DrawCancelButton(SpriteBatch spriteBatch, Vector2 position, bool pressed, string label, float alpha, bool labelWithShadow = false)
         {
-            DrawButton(spriteBatch, position, pressed ? _xButton[0] : _xButton[1], label, alpha, labelWithShadow);
+            DrawButton(spriteBatch, position, pressed ? _xButton[1] : _xButton[0], label, alpha, labelWithShadow);
+        }
+
+        public void DrawRightArrow(SpriteBatch spriteBatch, Vector2 position, bool pressed)
+        {
+            DrawButton(spriteBatch, position, pressed ? _rightArrow[1] : _rightArrow[0], "", 1.0f, false);
         }
 
         private void DrawButton(SpriteBatch spriteBatch, Vector2 position, Rectangle sprite, string label, float alpha, bool labelWithShadow)

@@ -80,7 +80,7 @@ namespace Super_Pete_The_Pirate
         //--------------------------------------------------
         // Map To Load
 
-        public int MapToLoad = 4;
+        public int MapToLoad = 5;
 
         //----------------------//------------------------//
 
@@ -99,7 +99,7 @@ namespace Super_Pete_The_Pirate
 
         private SceneManager()
         {
-            TypeOfSceneSaves = SceneSavesType.Load;
+            TypeOfSceneSaves = SceneSavesType.Save;
             _currentScene = new SceneMap();
         }
 

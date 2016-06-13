@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="15" height="8" tilewidth="32" tileheight="32" nextobjectid="6">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="15" height="8" tilewidth="32" tileheight="32" nextobjectid="8">
  <tileset firstgid="1" name="map5" tilewidth="32" tileheight="32" tilecount="121" columns="11">
   <image source="../imgs/tilesets/tile.png" width="352" height="352"/>
  </tileset>
@@ -64,5 +64,17 @@
  </objectgroup>
  <objectgroup name="Checkpoints">
   <object id="5" gid="71" x="128" y="224" width="32" height="32"/>
+ </objectgroup>
+ <objectgroup name="Enemies">
+  <object id="6" gid="57" x="0" y="160" width="32" height="32">
+   <properties>
+    <property name="type" value="SniperPig"/>
+   </properties>
+  </object>
+  <object id="7" gid="57" x="448" y="160" width="32" height="32">
+   <properties>
+    <property name="type" value="SniperPig"/>
+   </properties>
+  </object>
  </objectgroup>
 </map>

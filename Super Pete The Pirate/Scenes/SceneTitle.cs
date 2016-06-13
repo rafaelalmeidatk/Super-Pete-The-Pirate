@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended.BitmapFonts;
 using MonoGame.Extended.Sprites;
 using MonoGame.Extended.ViewportAdapters;
+using Super_Pete_The_Pirate.Managers;
 
 namespace Super_Pete_The_Pirate.Scenes
 {
@@ -123,12 +124,16 @@ namespace Super_Pete_The_Pirate.Scenes
             if (InputManager.Instace.KeyPressed(Keys.Down) || InputManager.Instace.KeyPressed(Keys.Right))
                 _index = _index + 1 > _menuOptions.Length - 1 ? 0 : _index + 1;
 
-            if (_phase == MenuPhase && InputManager.Instace.KeyPressed(Keys.Enter))
+            if (_phase == MenuPhase && InputManager.Instace.KeyPressed(Keys.Z, Keys.Enter))
             {
                 switch (_index)
                 {
                     case NewGame:
-                        SceneManager.Instance.ChangeScene("SceneMap");
+                        CommandNewGame();
+                        break;
+
+                    case LoadGame:
+                        CommandLoadGame();
                         break;
 
                     case Exit:
@@ -136,6 +141,18 @@ namespace Super_Pete_The_Pirate.Scenes
                         break;
                 }
             }
+        }
+
+        private void CommandNewGame()
+        {
+            PlayerManager.Instance.CreateNewGame();
+            SceneManager.Instance.ChangeScene("SceneStageSelect");
+        }
+
+        private void CommandLoadGame()
+        {
+            SceneManager.Instance.TypeOfSceneSaves = SceneManager.SceneSavesType.Load;
+            SceneManager.Instance.ChangeScene("SceneSaves");
         }
 
         public override void Draw(SpriteBatch spriteBatch, ViewportAdapter viewportAdapter)

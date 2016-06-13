@@ -43,9 +43,27 @@ namespace Super_Pete_The_Pirate
         public new int HP => PlayerManager.Instance.Hearts;
 
         //--------------------------------------------------
+        // Death tick
+
+        private float _deathTick;
+        private const float DeathMaxTick = 1500.0f;
+
+        //--------------------------------------------------
+        // Request respawn
+
+        private bool _requestRespawn;
+        public bool RequestRespawn => _requestRespawn;
+
+        //--------------------------------------------------
         // Keys locked (no movement)
 
         private bool _keysLocked;
+
+        //--------------------------------------------------
+        // Keys locked (no movement)
+
+        private bool _active;
+        public bool Active => _active;
 
         //----------------------//------------------------//
 
@@ -173,7 +191,9 @@ namespace Super_Pete_The_Pirate
             };
 
             AttackCooldown = 300f;
-
+            _deathTick = 0.0f;
+            _requestRespawn = false;
+            _active = true;
             _keysLocked = false;
         }
 
@@ -187,17 +207,24 @@ namespace Super_Pete_The_Pirate
             return HP;
         }
 
-        public void UpdateWithKeyLock(GameTime gameTime, bool keyLock)
+        public void Update(GameTime gameTime, bool keyLock)
         {
+            if (!_active) return;
+
             _keysLocked = keyLock;
             if (!keyLock)
                 CheckKeys(gameTime);
-            base.Update(gameTime);
-        }
 
-        public override void Update(GameTime gameTime)
-        {
-            CheckKeys(gameTime);
+            if (_dying)
+            {
+                _deathTick += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+                if (_deathTick >= DeathMaxTick)
+                {
+                    _requestRespawn = true;
+                    _active = false;
+                }
+            }
+
             base.Update(gameTime);
         }
 

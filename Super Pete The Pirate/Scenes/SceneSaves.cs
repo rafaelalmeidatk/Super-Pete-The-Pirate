@@ -10,6 +10,7 @@ using Super_Pete_The_Pirate.Sprites;
 using Microsoft.Xna.Framework.Input;
 using Super_Pete_The_Pirate.Managers;
 using System.Diagnostics;
+using Super_Pete_The_Pirate.Extensions;
 
 namespace Super_Pete_The_Pirate.Scenes
 {
@@ -19,7 +20,7 @@ namespace Super_Pete_The_Pirate.Scenes
         // Strings
 
         private Dictionary<SceneManager.SceneSavesType, string> _titleStrings;
-        private string _emptySlotText;
+        private const string EmptySlotText = "Empty";
 
         //--------------------------------------------------
         // Textures
@@ -54,6 +55,8 @@ namespace Super_Pete_The_Pirate.Scenes
 
         private Rectangle[] _slotsPosition;
         private int _slotIndex;
+        private Vector2 _arrowPosition;
+        private float _arrowPositionInc;
 
         //--------------------------------------------------
         // Positions
@@ -89,8 +92,6 @@ namespace Super_Pete_The_Pirate.Scenes
                 { SceneManager.SceneSavesType.Load, "Load Game" },
                 { SceneManager.SceneSavesType.NewGame, "New Game" }
             };
-
-            _emptySlotText = "Empty";
 
             // Textures init
 
@@ -170,6 +171,9 @@ namespace Super_Pete_The_Pirate.Scenes
             _coinsPosition = new Vector2(228, 28);
             _coinsTextPosition = new Vector2(250, 30);
 
+            // Arrow init
+            _arrowPosition = new Vector2(10, _slotsPosition[_slotIndex].Y + (_slotsPosition[_slotIndex].Height - 15) / 2);
+
             // General variables
             
             _loadingVisible = true;
@@ -217,7 +221,9 @@ namespace Super_Pete_The_Pirate.Scenes
                     {
                         _slotIndex = _slotIndex >= 2 ? 0 : _slotIndex + 1;
                     }
+                    UpdateArrowPosition();
                 }
+
                 if (InputManager.Instace.KeyPressed(Keys.Up, Keys.Left))
                 {
                     if (SceneManager.Instance.TypeOfSceneSaves == SceneManager.SceneSavesType.Load)
@@ -233,15 +239,21 @@ namespace Super_Pete_The_Pirate.Scenes
                     {
                         _slotIndex = _slotIndex <= 0 ? 2 : _slotIndex - 1;
                     }
+                    UpdateArrowPosition();
                 }
+
                 if (InputManager.Instace.KeyPressed(Keys.Z, Keys.Enter))
-                {
                     HandleConfirm();
-                }
+
+                if (InputManager.Instace.KeyPressed(Keys.X, Keys.Escape))
+                    HandleExit();
             }
 
             _peteAnimatedSprite.Update(gameTime);
             _nextStageMarkAnimatedSprite.Update(gameTime);
+            _arrowPositionInc = (float)MathUtils.SinInterpolation(-1.2, 1.2, gameTime.TotalGameTime.TotalMilliseconds / 3);
+
+            DebugValues["slot index"] = _slotIndex.ToString();
 
             if (_loadingVisible)
                 _loadingAnimatedSprite.Update(gameTime);
@@ -249,20 +261,26 @@ namespace Super_Pete_The_Pirate.Scenes
             base.Update(gameTime);
         }
 
+        private void UpdateArrowPosition()
+        {
+            _arrowPosition.Y = _slotsPosition[_slotIndex].Y + ((_slotsPosition[_slotIndex].Height - 15) / 2) - 1;
+        }
+
         private void HandleConfirm()
         {
             if (_loadingVisible) return;
-            switch (SceneManager.Instance.TypeOfSceneSaves)
-            {
-                case SceneManager.SceneSavesType.NewGame:
-                    break;
-                case SceneManager.SceneSavesType.Load:
-                    Load();
-                    break;
-                case SceneManager.SceneSavesType.Save:
-                    Save();
-                    break;
-            }
+            if (SceneManager.Instance.TypeOfSceneSaves == SceneManager.SceneSavesType.Load)
+                Load();
+            else if (SceneManager.Instance.TypeOfSceneSaves == SceneManager.SceneSavesType.Save)
+                Save();
+        }
+
+        private void HandleExit()
+        {
+            if (SceneManager.Instance.TypeOfSceneSaves == SceneManager.SceneSavesType.Load)
+                SceneManager.Instance.ChangeScene("SceneTitle");
+            else if (SceneManager.Instance.TypeOfSceneSaves == SceneManager.SceneSavesType.Save)
+                SceneManager.Instance.ChangeScene("SceneStageSelect");
         }
 
         private void Load()
@@ -281,6 +299,7 @@ namespace Super_Pete_The_Pirate.Scenes
         private void AfterActionExec()
         {
             _loadingVisible = false;
+            SceneManager.Instance.ChangeScene("SceneStageSelect");
         }
 
         public override void Draw(SpriteBatch spriteBatch, ViewportAdapter viewportAdapter)
@@ -366,12 +385,14 @@ namespace Super_Pete_The_Pirate.Scenes
                 else
                 {
                     // Empty slot text
-                    var emptySlotTextSize = gameFont.MeasureString(_emptySlotText);
+                    var emptySlotTextSize = gameFont.MeasureString(EmptySlotText);
                     var emptyPosition = new Vector2(slotPosition.X + (_slotsPosition[i].Width - emptySlotTextSize.X) / 2,
                         slotPosition.Y + (_slotsPosition[i].Height - emptySlotTextSize.Y) / 2);
-                    spriteBatch.DrawString(gameFont, _emptySlotText, emptyPosition, _fontColor);
+                    spriteBatch.DrawString(gameFont, EmptySlotText, emptyPosition, _fontColor);
                 }
             }
+
+            IconsManager.Instance.DrawRightArrow(spriteBatch, _arrowPosition + _arrowPositionInc * Vector2.UnitY, false);
 
             if (_loadingVisible)
             {

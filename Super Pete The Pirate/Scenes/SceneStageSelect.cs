@@ -123,9 +123,9 @@ namespace Super_Pete_The_Pirate.Scenes
                 new Vector2(151, 88),
                 new Vector2(192, 172),
                 new Vector2(231, 126),
-                new Vector2(278, 143)
+                new Vector2(278, 134)
             };
-            var stageSelectionPosition = _stageSelectionPositions[GetCurrentStage()];
+            var stageSelectionPosition = GetCurrentStage() == 5 ? Vector2.Zero : _stageSelectionPositions[GetCurrentStage()];
 
             _stageSelectionSpritesheet = ImageManager.loadScene(ScenePathName, "StageSelectionSpritesheet");
             var stageSelectionFrames = new Rectangle[]
@@ -138,6 +138,8 @@ namespace Super_Pete_The_Pirate.Scenes
             _stageSelectionSprite = new AnimatedSprite(_stageSelectionSpritesheet, stageSelectionFrames, 130, 
                 (int)stageSelectionPosition.X, (int)stageSelectionPosition.Y);
             _stageSelectionSprite.Origin = new Vector2(9, 9);
+            if (GetCurrentStage() == 5)
+                _stageSelectionSprite.IsVisible = false;
 
             var _stageSelectionPeteSpritesheet = ImageManager.loadScene(ScenePathName, "StageSelectionPeteSpritesheet");
             var _stageSelectionPeteFrames = new Rectangle[]
@@ -170,12 +172,14 @@ namespace Super_Pete_The_Pirate.Scenes
 
             if (InputManager.Instace.KeyPressed(Keys.Right, Keys.Up))
             {
-                _selectedIndex = _selectedIndex + 1 > PlayerManager.Instance.StagesCompleted ? 0 : _selectedIndex + 1;
+                var limit = PlayerManager.Instance.StagesCompleted == 5 ? 4 : PlayerManager.Instance.StagesCompleted;
+                _selectedIndex = _selectedIndex + 1 > limit ? 0 : _selectedIndex + 1;
                 UpdatePeteHeadPosition();
             }
             if (InputManager.Instace.KeyPressed(Keys.Left, Keys.Down))
             {
-                _selectedIndex = _selectedIndex - 1 < 0 ? PlayerManager.Instance.StagesCompleted : _selectedIndex - 1;
+                var limit = PlayerManager.Instance.StagesCompleted == 5 ? 4 : PlayerManager.Instance.StagesCompleted;
+                _selectedIndex = _selectedIndex - 1 < 0 ? limit : _selectedIndex - 1;
                 UpdatePeteHeadPosition();
             }
             if (InputManager.Instace.KeyPressed(Keys.Enter, Keys.Z))

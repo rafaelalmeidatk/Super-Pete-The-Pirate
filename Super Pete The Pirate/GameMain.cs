@@ -79,8 +79,7 @@ namespace Super_Pete_The_Pirate
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape)
-                || SceneManager.Instance.RequestingExit)
+            if (SceneManager.Instance.RequestingExit)
                 Exit();
 
             SceneManager.Instance.Update(gameTime);
