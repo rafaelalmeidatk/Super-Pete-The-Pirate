@@ -328,6 +328,10 @@ namespace Super_Pete_The_Pirate.Scenes
         public override void Update(GameTime gameTime)
         {
             _player.Update(gameTime, _stageFinished);
+
+            if (InputManager.Instace.KeyPressed(Keys.Up))
+                _enemies[0].Velocity = new Vector2(_enemies[0].Velocity.X, -5000f);
+
             if (_player.RequestRespawn)
                 HandlePlayerRespawn();
 

@@ -636,3 +636,20 @@
 /processorParam:TextureFormat=Color
 /build:imgs/system/ButtonsSpritesheet.png
 
+#begin imgs/characters/Boss.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:imgs/characters/Boss.png
+
+#begin maps/map6.tmx
+/importer:TiledMapImporter
+/processor:TiledMapProcessor
+/build:maps/map6.tmx
+

@@ -38,6 +38,7 @@
     <ApplicationIcon>Icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Characters\Boss.cs" />
     <Compile Include="Characters\CharacterBase.cs" />
     <Compile Include="Characters\Enemy.cs" />
     <Compile Include="Characters\Mole.cs" />

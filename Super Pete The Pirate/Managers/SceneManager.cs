@@ -80,7 +80,7 @@ namespace Super_Pete_The_Pirate
         //--------------------------------------------------
         // Map To Load
 
-        public int MapToLoad = 5;
+        public int MapToLoad = 6;
 
         //----------------------//------------------------//
 
