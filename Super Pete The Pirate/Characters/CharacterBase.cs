@@ -92,7 +92,7 @@ namespace Super_Pete_The_Pirate
             _firstGroudLand = false;
         }
 
-        public void RequestAttack(int type)
+        public virtual void RequestAttack(int type)
         {
             if (_attackCooldownTick <= 0f)
             {
@@ -220,7 +220,7 @@ namespace Super_Pete_The_Pirate
             else if (_isAttacking)
                 CharacterSprite.SetFrameList(_attackFrameList[_attackType]);
             else if (!_isOnGround)
-                CharacterSprite.SetFrameList("jumping");
+                CharacterSprite.SetIfFrameListExists("jumping");
             else
                 CharacterSprite.SetFrameList("stand");
         }

@@ -51,6 +51,7 @@
     <Compile Include="Extensions\RandomExtensions.cs" />
     <Compile Include="Extensions\RectangleExtensions.cs" />
     <Compile Include="Extensions\SpriteBatchExtensions.cs" />
+    <Compile Include="Extensions\Utils.cs" />
     <Compile Include="Extensions\Vector2Extensions.cs" />
     <Compile Include="GameMain.cs" />
     <Compile Include="Managers\IconsManager.cs" />

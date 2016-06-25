@@ -34,7 +34,7 @@
   <object id="1" gid="56" x="160" y="224" width="32" height="32"/>
  </objectgroup>
  <objectgroup name="Enemies">
-  <object id="2" gid="60" x="288" y="32" width="32" height="32">
+  <object id="2" gid="60" x="288" y="224" width="32" height="32">
    <properties>
     <property name="type" value="Boss"/>
    </properties>

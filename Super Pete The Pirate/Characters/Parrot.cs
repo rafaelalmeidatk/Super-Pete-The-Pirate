@@ -1,9 +1,11 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Super_Pete_The_Pirate.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using static Super_Pete_The_Pirate.Extensions.Utils;
 
 namespace Super_Pete_The_Pirate.Characters
 {
@@ -11,16 +13,10 @@ namespace Super_Pete_The_Pirate.Characters
     {
         //--------------------------------------------------
         // Mechanics
-
-        private enum FlyDirection
-        {
-            Left,
-            Right
-        }
         
         private int _flyWidth = 224;
         private Rectangle _flyRange;
-        private FlyDirection _flyDirection;
+        private Direction _flyDirection;
 
         //----------------------//------------------------//
 
@@ -58,7 +54,7 @@ namespace Super_Pete_The_Pirate.Characters
             // Combat system init
             _hp = 4;
             _damage = 2;
-            _flyDirection = FlyDirection.Right;
+            _flyDirection = Direction.Right;
 
             IgnoreGravity = true;
         }
@@ -90,19 +86,19 @@ namespace Super_Pete_The_Pirate.Characters
 
         public override void Update(GameTime gameTime)
         {
-            _velocity.X = _flyDirection == FlyDirection.Right ? 200f : -200f;
+            _velocity.X = _flyDirection == Direction.Right ? 200f : -200f;
 
             base.Update(gameTime);
 
-            if (_flyDirection == FlyDirection.Right && (Position.X >= _flyRange.Right || Velocity.X == 0))
+            if (_flyDirection == Direction.Right && (Position.X >= _flyRange.Right || Velocity.X == 0))
             {
                 CharacterSprite.Effect = SpriteEffects.FlipHorizontally;
-                _flyDirection = FlyDirection.Left;
+                _flyDirection = Direction.Left;
             }
-            else if (_flyDirection == FlyDirection.Left && (Position.X <= _flyRange.Left || Velocity.X == 0))
+            else if (_flyDirection == Direction.Left && (Position.X <= _flyRange.Left || Velocity.X == 0))
             {
                 CharacterSprite.Effect = SpriteEffects.None;
-                _flyDirection = FlyDirection.Right;
+                _flyDirection = Direction.Right;
             }
         }
 

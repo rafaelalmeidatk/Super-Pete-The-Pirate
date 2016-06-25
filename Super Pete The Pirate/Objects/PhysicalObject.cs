@@ -63,7 +63,7 @@ namespace Super_Pete_The_Pirate
         //--------------------------------------------------
         // Move direction
 
-        public enum Direction
+        public enum MoveDirection
         {
             Horizontal,
             Vertical
@@ -138,7 +138,7 @@ namespace Super_Pete_The_Pirate
                 Position += _velocity.X * Vector2.UnitX * elapsed;
                 Position = new Vector2((float)Math.Round(Position.X), Position.Y);
                 if (!_dying)
-                    HandleCollisions(Direction.Horizontal);
+                    HandleCollisions(MoveDirection.Horizontal);
             }
 
             if (_velocity.Y != 0f)
@@ -146,7 +146,7 @@ namespace Super_Pete_The_Pirate
                 Position += _velocity.Y * Vector2.UnitY * elapsed;
                 Position = new Vector2(Position.X, (float)Math.Round(Position.Y));
                 if (!_dying)
-                    HandleCollisions(Direction.Vertical);
+                    HandleCollisions(MoveDirection.Vertical);
             }
 
             // If the collision stopped us from moving, reset the velocity to zero.
@@ -221,7 +221,7 @@ namespace Super_Pete_The_Pirate
             return velocityY;
         }
 
-        protected void HandleCollisions(Direction direction)
+        protected void HandleCollisions(MoveDirection direction)
         {
             Rectangle bounds = BoundingRectangle;
             var tileSize = GameMap.Instance.TileSize.X;

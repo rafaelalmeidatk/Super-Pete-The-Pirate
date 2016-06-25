@@ -330,7 +330,9 @@ namespace Super_Pete_The_Pirate.Scenes
             _player.Update(gameTime, _stageFinished);
 
             if (InputManager.Instace.KeyPressed(Keys.Up))
-                _enemies[0].Velocity = new Vector2(_enemies[0].Velocity.X, -5000f);
+            {
+                ((Boss)_enemies[0]).RequestAttack(0);
+            }
 
             if (_player.RequestRespawn)
                 HandlePlayerRespawn();
