@@ -79,11 +79,13 @@ namespace Super_Pete_The_Pirate
             _currentMapId = id;
             var blockedLayer = (TiledTileLayer)_tiledMap.GetLayer("Block");
             if (blockedLayer == null) return;
+            var tsx = (int)TileSize.X;
+            var tsy = (int)TileSize.Y;
             foreach (var tile in blockedLayer.Tiles)
             {
                 if (tile.Id != 0)
                 {
-                    _tileColliderBoxes.Add(new Rectangle(tile.X * (int)TileSize.X, tile.Y * (int)TileSize.Y, (int)TileSize.X, (int)TileSize.Y));
+                    _tileColliderBoxes.Add(new Rectangle(tile.X * tsx, tile.Y * tsy, tsx, tsy));
                 }
             }
         }

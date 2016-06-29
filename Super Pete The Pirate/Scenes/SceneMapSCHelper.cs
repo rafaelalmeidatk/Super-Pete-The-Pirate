@@ -42,7 +42,8 @@ namespace Super_Pete_The_Pirate.Scenes
         //--------------------------------------------------
         // Strings
 
-        private const string Title = "Stage Completed!";
+        private const string TitleCompleted = "Stage Completed!";
+        private const string TitleFailed = "Stage Failed...";
         private const string CoinsEarned = "Coins earned:";
         private const string HeartsLost = "Hearts lost:";
         private const string EnemiesDefeated = "Enemies defeated:";
@@ -74,6 +75,11 @@ namespace Super_Pete_The_Pirate.Scenes
 
         private SoundEffect _numberSe;
 
+        //--------------------------------------------------
+        // Completed
+
+        private bool _completed;
+
         //----------------------//------------------------//
 
         public SceneMapSCHelper()
@@ -84,9 +90,6 @@ namespace Super_Pete_The_Pirate.Scenes
             var font = SceneManager.Instance.GameFontBig;
 
             _initialRightX = screenSize.X + 20;
-
-            var titleMesured = font.MeasureString(Title);
-            _titlePosition = new Vector2((screenSize.X - titleMesured.X) / 2, -titleMesured.Y);
 
             _rankShowTick = 0.0f;
             _rowShowTick = 0.0f;
@@ -111,6 +114,9 @@ namespace Super_Pete_The_Pirate.Scenes
         {
             var screenSize = SceneManager.Instance.VirtualSize;
             var font = SceneManager.Instance.GameFont;
+
+            var titleMesured = font.MeasureString(failed ? TitleCompleted : TitleFailed);
+            _titlePosition = new Vector2((screenSize.X - titleMesured.X) / 2, -titleMesured.Y);
 
             var l1 = font.MeasureString(CoinsEarned);
             var l2 = font.MeasureString(HeartsLost);
@@ -145,9 +151,14 @@ namespace Super_Pete_The_Pirate.Scenes
             _timeValues = new TimeSpan[] { new TimeSpan(), time };
 
             if (failed)
+            {
                 _rank = "F";
+            }
             else
+            {
+                _completed = true;
                 _rank = "S";
+            }
             
             if (_rank == "S")
             {
@@ -307,7 +318,7 @@ namespace Super_Pete_The_Pirate.Scenes
             var timeLPos = new Vector2(_rowsInnerPositionsLeft[3, 0], 135);
             var timeRPos = new Vector2(_rowsInnerPositionsRight[3, 0], 135);
 
-            spriteBatch.DrawTextWithShadow(fontBig, Title, _titlePosition, Color.White);
+            spriteBatch.DrawTextWithShadow(fontBig, _completed ? TitleCompleted : TitleFailed, _titlePosition, Color.White);
 
             spriteBatch.DrawTextWithShadow(font, CoinsEarned, coinsLPos, Color.White);
             spriteBatch.DrawTextWithShadow(font, _values[0, 0].ToString(), coinsRPos, Color.White);

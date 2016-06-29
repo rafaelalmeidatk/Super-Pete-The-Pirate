@@ -44,7 +44,7 @@ namespace Super_Pete_The_Pirate.Managers
 
         public const int InitialAmmo = 5;
         public const int InitialLives = 1;
-        public const int InitialHearts = 100;
+        public const int InitialHearts = 5;
 
         //--------------------------------------------------
         // Stages completed

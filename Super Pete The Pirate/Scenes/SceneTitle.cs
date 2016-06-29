@@ -10,30 +10,39 @@ using MonoGame.Extended.BitmapFonts;
 using MonoGame.Extended.Sprites;
 using MonoGame.Extended.ViewportAdapters;
 using Super_Pete_The_Pirate.Managers;
+using Super_Pete_The_Pirate.Extensions;
 
 namespace Super_Pete_The_Pirate.Scenes
 {
     class SceneTitle : SceneBase
     {
         //--------------------------------------------------
+        // Scene Name
+
+        private const string ScenePathName = "title";
+
+        //--------------------------------------------------
         // Font
 
         private BitmapFont _bitmapFont;
 
         //--------------------------------------------------
-        // Images
+        // Sprites
 
-        private Sprite _backgroundImage;
+        private Sprite _backgroundSprite;
+        private Sprite _logoSprite;
 
         //--------------------------------------------------
         // Press Any Button
 
+        private float _pressAnyButtonInitialY;
         private Vector2 _pressAnyButtonPosition;
 
         //--------------------------------------------------
         // Menu
 
-        private Color _menuDefaultColor;
+        private Color _menuItemColor;
+        private Color _menuShadowColor;
         private string[] _menuOptions;
         private int _menuY;
 
@@ -66,21 +75,26 @@ namespace Super_Pete_The_Pirate.Scenes
         {
             base.LoadContent();
             _bitmapFont = Content.Load<BitmapFont>("fonts/Alagard");
+            var viewportWidth = SceneManager.Instance.ViewportAdapter.VirtualWidth;
+            var viewportHeight = SceneManager.Instance.ViewportAdapter.VirtualHeight;
 
             // Background
-            var texture = new Texture2D(SceneManager.Instance.GraphicsDevice, 1, 1, false, SurfaceFormat.Color);
-            texture.SetData<Color>(new Color[] { Color.LightGreen });
-            _backgroundImage = new Sprite(texture);
-            _backgroundImage.Origin = Vector2.Zero;
-            _backgroundImage.Scale = new Vector2(SceneManager.Instance.VirtualSize.X, SceneManager.Instance.VirtualSize.Y);
+            _backgroundSprite = new Sprite(ImageManager.loadScene(ScenePathName, "Background"));
+            _backgroundSprite.Origin = Vector2.Zero;
+
+            // Logo
+            _logoSprite = new Sprite(ImageManager.loadSystem("Logo"));
+            _logoSprite.Position = new Vector2(viewportWidth / 2, 80);
 
             // Press any button
-            var pabX = (SceneManager.Instance.ViewportAdapter.VirtualWidth - _bitmapFont.GetSize("Press Any Button").Width) / 2;
-            var pabY = SceneManager.Instance.ViewportAdapter.VirtualHeight - _bitmapFont.GetSize("Press Any Button").Height - 20;
+            var pabX = (viewportWidth - _bitmapFont.GetSize("Press Any Button").Width) / 2;
+            var pabY = viewportHeight - _bitmapFont.GetSize("Press Any Button").Height - 15;
             _pressAnyButtonPosition = new Vector2(pabX, pabY);
+            _pressAnyButtonInitialY = pabY;
 
             // Menu init
-            _menuDefaultColor = new Color(23, 34, 68);
+            _menuItemColor = new Color(68, 44, 45);
+            _menuShadowColor = new Color(243, 171, 71);
             _menuOptions = new string[]
             {
                 "New Game",
@@ -88,15 +102,12 @@ namespace Super_Pete_The_Pirate.Scenes
                 "Options",
                 "Exit"
             };
-            _menuY = SceneManager.Instance.ViewportAdapter.VirtualHeight - (_menuOptions.Length * _bitmapFont.LineHeight) - 7;
+            _menuY = viewportHeight - (_menuOptions.Length * _bitmapFont.LineHeight) - 7;
 
             // Menu icon
             _menuIconBaseY = _menuY + _bitmapFont.LineHeight / 2;
-            _menuIcon = new Sprite(ImageManager.loadScene("title", "indexIcon"));
+            _menuIcon = new Sprite(ImageManager.loadScene(ScenePathName, "indexIcon"));
             _menuIcon.Position = new Vector2(13, _menuIconBaseY);
-
-            _index = 0;
-            _phase = 0;
         }
 
         public override void UnloadContent()
@@ -112,8 +123,14 @@ namespace Super_Pete_The_Pirate.Scenes
 
             _menuIcon.Position = new Vector2(_menuIcon.Position.X, _menuIconBaseY + (_bitmapFont.LineHeight * _index));
 
-            if (_phase == PressAnyButtonPhase && InputManager.Instace.CurrentKeyState.GetPressedKeys().Length > 0)
-                _phase = MenuPhase;
+            if (_phase == PressAnyButtonPhase)
+            {
+                if (InputManager.Instace.CurrentKeyState.GetPressedKeys().Length > 0)
+                    _phase = MenuPhase;
+
+                var delta = (float)gameTime.TotalGameTime.TotalMilliseconds / 10;
+                _pressAnyButtonPosition.Y = (float)MathUtils.SinInterpolation(_pressAnyButtonInitialY, _pressAnyButtonInitialY + 5, delta);
+            }
         }
 
         private void HandleInput()
@@ -160,19 +177,21 @@ namespace Super_Pete_The_Pirate.Scenes
             base.Draw(spriteBatch, viewportAdapter);
             spriteBatch.Begin(transformMatrix: viewportAdapter.GetScaleMatrix(), samplerState: SamplerState.PointClamp);
 
-            // Background
-            spriteBatch.Draw(_backgroundImage);
+            // Background and Logo
+            spriteBatch.Draw(_backgroundSprite);
+            spriteBatch.Draw(_logoSprite);
 
             if (_phase == PressAnyButtonPhase)
             {
-                spriteBatch.DrawString(_bitmapFont, "Press Any Button", _pressAnyButtonPosition, Color.White);
+                spriteBatch.DrawString(_bitmapFont, "Press Any Button", _pressAnyButtonPosition, _menuItemColor);
             }
             else if (_phase == MenuPhase)
             {
                 // Menu
                 for (var i = 0; i < _menuOptions.Length; i++)
-                    spriteBatch.DrawString(_bitmapFont, _menuOptions[i], new Vector2(25, _menuY + (i * _bitmapFont.LineHeight)), _menuDefaultColor);
-                spriteBatch.Draw(this._menuIcon);
+                    spriteBatch.DrawString(_bitmapFont, _menuOptions[i],
+                        new Vector2(25, _menuY + (i * _bitmapFont.LineHeight)), _menuItemColor);
+                spriteBatch.Draw(_menuIcon);
             }
 
             spriteBatch.End();
