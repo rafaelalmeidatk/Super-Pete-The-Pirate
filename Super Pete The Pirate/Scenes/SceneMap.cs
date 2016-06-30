@@ -95,6 +95,11 @@ namespace Super_Pete_The_Pirate.Scenes
         private SceneMapSCHelper _stageCompletedHelper;
 
         //--------------------------------------------------
+        // Pause Helper
+
+        private SceneMapPauseHelper _pauseHelper;
+
+        //--------------------------------------------------
         // Track variables
 
         private int _coinsEarned;
@@ -143,6 +148,9 @@ namespace Super_Pete_The_Pirate.Scenes
 
             // End stage init
             InitializeEndStage();
+
+            // Pause helper init
+            _pauseHelper = new SceneMapPauseHelper();
 
             // Track variables init
             _coinsEarned = 0;
@@ -327,17 +335,21 @@ namespace Super_Pete_The_Pirate.Scenes
 
         public override void Update(GameTime gameTime)
         {
-            _player.Update(gameTime, _stageFinished);
+            base.Update(gameTime);
 
-            if (InputManager.Instace.KeyPressed(Keys.Up))
-            {
-                ((Boss)_enemies[0]).RequestAttack(0);
-            }
+            _pauseHelper.Update(gameTime);
+
+            if (_pauseHelper.Paused && InputManager.Instace.KeyPressed(Keys.Escape))
+                _pauseHelper.SetPaused(false);
+            else if (!_pauseHelper.Paused && InputManager.Instace.KeyPressed(Keys.Escape, Keys.P))
+                _pauseHelper.SetPaused(true);
+
+            if (_pauseHelper.Paused) return;
+
+            _player.Update(gameTime, _stageFinished);
 
             if (_player.RequestRespawn)
                 HandlePlayerRespawn();
-
-            if (InputManager.Instace.KeyPressed(Keys.F)) _projectiles[0].Acceleration = new Vector2(_projectiles[0].Acceleration.X * -1, 0);
 
             for (var i = 0; i < _projectiles.Count; i++)
             {
@@ -455,16 +467,10 @@ namespace Super_Pete_The_Pirate.Scenes
             }
 
             UpdateCamera();
-            base.Update(gameTime);
 
             if (InputManager.Instace.KeyPressed(Keys.P))
             {
                 CreateParticle();
-            }
-
-            if (!_stageFinished)
-            {
-                //FinishStage();
             }
 
             if (InputManager.Instace.KeyPressed(Keys.Q))
@@ -648,6 +654,8 @@ namespace Super_Pete_The_Pirate.Scenes
 
                 _stageCompletedHelper.Draw(spriteBatch);
             }
+
+            _pauseHelper.Draw(spriteBatch);
 
             spriteBatch.End();
         }

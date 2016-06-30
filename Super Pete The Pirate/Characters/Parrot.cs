@@ -52,7 +52,7 @@ namespace Super_Pete_The_Pirate.Characters
             }, new int[] { 0, 0, 0, 0 }, new int[] { 0, 0, 0, 0 });
 
             // Combat system init
-            _hp = 2;
+            _hp = 1;
             _damage = 2;
             _flyDirection = Direction.Right;
 

@@ -89,8 +89,7 @@ namespace Super_Pete_The_Pirate.Scenes
             _titleStrings = new Dictionary<SceneManager.SceneSavesType, string>()
             {
                 { SceneManager.SceneSavesType.Save, "Save Game"},
-                { SceneManager.SceneSavesType.Load, "Load Game" },
-                { SceneManager.SceneSavesType.NewGame, "New Game" }
+                { SceneManager.SceneSavesType.Load, "Load Game" }
             };
 
             // Textures init

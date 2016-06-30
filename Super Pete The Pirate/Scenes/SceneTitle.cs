@@ -22,11 +22,6 @@ namespace Super_Pete_The_Pirate.Scenes
         private const string ScenePathName = "title";
 
         //--------------------------------------------------
-        // Font
-
-        private BitmapFont _bitmapFont;
-
-        //--------------------------------------------------
         // Sprites
 
         private Sprite _backgroundSprite;
@@ -74,7 +69,6 @@ namespace Super_Pete_The_Pirate.Scenes
         public override void LoadContent()
         {
             base.LoadContent();
-            _bitmapFont = Content.Load<BitmapFont>("fonts/Alagard");
             var viewportWidth = SceneManager.Instance.ViewportAdapter.VirtualWidth;
             var viewportHeight = SceneManager.Instance.ViewportAdapter.VirtualHeight;
 
@@ -87,8 +81,8 @@ namespace Super_Pete_The_Pirate.Scenes
             _logoSprite.Position = new Vector2(viewportWidth / 2, 80);
 
             // Press any button
-            var pabX = (viewportWidth - _bitmapFont.GetSize("Press Any Button").Width) / 2;
-            var pabY = viewportHeight - _bitmapFont.GetSize("Press Any Button").Height - 15;
+            var pabX = (viewportWidth - SceneManager.Instance.GameFont.GetSize("Press Any Button").Width) / 2;
+            var pabY = viewportHeight - SceneManager.Instance.GameFont.GetSize("Press Any Button").Height - 15;
             _pressAnyButtonPosition = new Vector2(pabX, pabY);
             _pressAnyButtonInitialY = pabY;
 
@@ -102,10 +96,10 @@ namespace Super_Pete_The_Pirate.Scenes
                 "Options",
                 "Exit"
             };
-            _menuY = viewportHeight - (_menuOptions.Length * _bitmapFont.LineHeight) - 7;
+            _menuY = viewportHeight - (_menuOptions.Length * SceneManager.Instance.GameFont.LineHeight) - 7;
 
             // Menu icon
-            _menuIconBaseY = _menuY + _bitmapFont.LineHeight / 2;
+            _menuIconBaseY = _menuY + SceneManager.Instance.GameFont.LineHeight / 2;
             _menuIcon = new Sprite(ImageManager.loadScene(ScenePathName, "indexIcon"));
             _menuIcon.Position = new Vector2(13, _menuIconBaseY);
         }
@@ -121,7 +115,7 @@ namespace Super_Pete_The_Pirate.Scenes
 
             HandleInput();
 
-            _menuIcon.Position = new Vector2(_menuIcon.Position.X, _menuIconBaseY + (_bitmapFont.LineHeight * _index));
+            _menuIcon.Position = new Vector2(_menuIcon.Position.X, _menuIconBaseY + (SceneManager.Instance.GameFont.LineHeight * _index));
 
             if (_phase == PressAnyButtonPhase)
             {
@@ -183,14 +177,14 @@ namespace Super_Pete_The_Pirate.Scenes
 
             if (_phase == PressAnyButtonPhase)
             {
-                spriteBatch.DrawString(_bitmapFont, "Press Any Button", _pressAnyButtonPosition, _menuItemColor);
+                spriteBatch.DrawString(SceneManager.Instance.GameFont, "Press Any Button", _pressAnyButtonPosition, _menuItemColor);
             }
             else if (_phase == MenuPhase)
             {
                 // Menu
                 for (var i = 0; i < _menuOptions.Length; i++)
-                    spriteBatch.DrawString(_bitmapFont, _menuOptions[i],
-                        new Vector2(25, _menuY + (i * _bitmapFont.LineHeight)), _menuItemColor);
+                    spriteBatch.DrawString(SceneManager.Instance.GameFont, _menuOptions[i],
+                        new Vector2(25, _menuY + (i * SceneManager.Instance.GameFont.LineHeight)), _menuItemColor);
                 spriteBatch.Draw(_menuIcon);
             }
 

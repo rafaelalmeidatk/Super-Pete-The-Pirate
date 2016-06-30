@@ -59,7 +59,7 @@ namespace Super_Pete_The_Pirate.Managers
             _ammo = InitialAmmo;
             _lives = InitialLives;
             _hearts = InitialHearts;
-            _coins = 250;
+            _coins = 0;
             _stagesCompleted = 0;
         }
 

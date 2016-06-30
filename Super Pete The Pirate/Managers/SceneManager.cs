@@ -71,16 +71,15 @@ namespace Super_Pete_The_Pirate
         public enum SceneSavesType
         {
             Save,
-            Load,
-            NewGame
+            Load
         }
 
-        public SceneSavesType TypeOfSceneSaves = SceneSavesType.NewGame;
+        public SceneSavesType TypeOfSceneSaves = SceneSavesType.Load;
 
         //--------------------------------------------------
         // Map To Load
 
-        public int MapToLoad = 6;
+        public int MapToLoad = 1;
 
         //----------------------//------------------------//
 
@@ -100,7 +99,7 @@ namespace Super_Pete_The_Pirate
         private SceneManager()
         {
             TypeOfSceneSaves = SceneSavesType.Save;
-            _currentScene = new SceneTitle();
+            _currentScene = new SceneMap();
         }
 
         public void RequestExit()
