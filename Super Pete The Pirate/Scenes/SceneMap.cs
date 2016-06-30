@@ -100,6 +100,11 @@ namespace Super_Pete_The_Pirate.Scenes
         private SceneMapPauseHelper _pauseHelper;
 
         //--------------------------------------------------
+        // Background Helper
+
+        private SceneMapBackgroundHelper _backgroundHelper;
+
+        //--------------------------------------------------
         // Track variables
 
         private int _coinsEarned;
@@ -151,6 +156,9 @@ namespace Super_Pete_The_Pirate.Scenes
 
             // Pause helper init
             _pauseHelper = new SceneMapPauseHelper();
+
+            // Background init
+            _backgroundHelper = new SceneMapBackgroundHelper();
 
             // Track variables init
             _coinsEarned = 0;
@@ -591,6 +599,8 @@ namespace Super_Pete_The_Pirate.Scenes
         {
             base.Draw(spriteBatch, viewportAdapter);
             var debugMode = SceneManager.Instance.DebugMode;
+
+            _backgroundHelper.Draw(_camera, spriteBatch);
 
             // Draw the camera (with the map)
             GameMap.Instance.Draw(_camera, spriteBatch);
