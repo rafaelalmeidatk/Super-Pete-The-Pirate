@@ -40,7 +40,7 @@ namespace Super_Pete_The_Pirate
         protected const float MoveAcceleration = 13000.0f;
         protected const float MaxMoveSpeed = 1750.0f;
         protected const float GroundDragFactor = 0.48f;
-        protected const float AirDragFactor = 0.58f;
+        protected const float AirDragFactor = 0.52f;
 
         //--------------------------------------------------
         // Constants for controlling vertical movement

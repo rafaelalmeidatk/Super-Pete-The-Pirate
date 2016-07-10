@@ -344,7 +344,7 @@ namespace Super_Pete_The_Pirate.Scenes
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
-
+            _backgroundHelper.Update(_camera);
             _pauseHelper.Update(gameTime);
 
             if (_pauseHelper.Paused && InputManager.Instace.KeyPressed(Keys.Escape))
