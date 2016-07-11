@@ -274,7 +274,8 @@ namespace Super_Pete_The_Pirate
                 CreateJumpParticles();
 
             // Attack
-            if (InputManager.Instace.KeyPressed(Keys.S) && !_isAttacking)
+            if (!_isAttacking &&
+                ((_isOnGround && InputManager.Instace.KeyPressed(Keys.S)) || (!_isOnGround && InputManager.Instace.KeyDown(Keys.S))))
                 StartNormalAttack();
 
             if (InputManager.Instace.KeyPressed(Keys.A) && !_isAttacking)
@@ -347,7 +348,10 @@ namespace Super_Pete_The_Pirate
                 position += new Vector2(13, 14);
                 dx *= -1;
             }
-            else position += new Vector2(45, 16);
+            else
+            {
+                position += new Vector2(45, 16);
+            }
 
             if (PlayerManager.Instance.Ammo <= 0)
             {

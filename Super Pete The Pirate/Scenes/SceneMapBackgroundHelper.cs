@@ -43,7 +43,7 @@ namespace Super_Pete_The_Pirate.Scenes
 
         public void Update(Camera2D camera)
         {
-            _verticalOffset = GameMap.Instance.MapHeight - SceneManager.Instance.VirtualSize.Y - camera.Position.Y;
+            _verticalOffset = Math.Max(GameMap.Instance.MapHeight - SceneManager.Instance.VirtualSize.Y - camera.Position.Y, 0);
         }
 
         public void Draw(Camera2D camera, SpriteBatch spriteBatch)
