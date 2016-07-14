@@ -43,7 +43,7 @@ namespace Super_Pete_The_Pirate.Managers
         public int Coins { get { return _coins; } }
 
         public const int InitialAmmo = 5;
-        public const int InitialLives = 1;
+        public const int InitialLives = 3;
         public const int InitialHearts = 5;
 
         //--------------------------------------------------

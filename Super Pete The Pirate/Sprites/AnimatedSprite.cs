@@ -114,5 +114,10 @@ namespace Super_Pete_The_Pirate.Sprites
         {
             spriteBatch.Draw(_colliderTexture, BoundingBox, Color.White * 0.5f);
         }
+
+        public AnimatedSprite Clone()
+        {
+            return (AnimatedSprite)MemberwiseClone();
+        }
     }
 }

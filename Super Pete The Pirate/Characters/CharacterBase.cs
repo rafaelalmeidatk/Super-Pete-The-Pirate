@@ -92,6 +92,14 @@ namespace Super_Pete_The_Pirate
             _firstGroudLand = false;
         }
 
+        public T Clone<T>() where T : CharacterBase
+        {
+            var characterSprite = CharacterSprite.Clone();
+            var clone = (T)MemberwiseClone();
+            clone.CharacterSprite = characterSprite;
+            return clone;
+        }
+
         public virtual void RequestAttack(int type)
         {
             if (_attackCooldownTick <= 0f)
@@ -128,7 +136,7 @@ namespace Super_Pete_The_Pirate
             return _hp;
         }
 
-        public void ReceiveAttackWithPoint(int damage, Rectangle subjectRect)
+        public void ReceiveAttackWithRect(int damage, Rectangle subjectRect)
         {
             var position = new Vector2(subjectRect.Center.X, subjectRect.Center.Y);
             ReceiveAttack(damage, position);
@@ -136,7 +144,7 @@ namespace Super_Pete_The_Pirate
 
         public virtual void ReceiveAttackWithCollider(int damage, Rectangle subjectRect, SpriteCollider colider)
         {
-            ReceiveAttackWithPoint(damage, subjectRect);
+            ReceiveAttackWithRect(damage, subjectRect);
         }
 
         public virtual void OnDie()

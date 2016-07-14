@@ -349,5 +349,10 @@ namespace Super_Pete_The_Pirate
             spriteBatch.Draw(TextureRegion.Texture, position, GetCurrentFrameRectangle(),
                 Color * Alpha, Rotation, Origin, Scale, Effect, 0);
         }
+
+        public CharacterSprite Clone()
+        {
+            return (CharacterSprite)MemberwiseClone();
+        }
     }
 }

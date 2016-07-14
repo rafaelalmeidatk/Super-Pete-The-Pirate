@@ -224,7 +224,10 @@ namespace Super_Pete_The_Pirate.Scenes
             }
 
             if (InputManager.Instace.KeyPressed(Keys.X))
+            {
+                PlayerManager.Instance.CreateNewGame();
                 SceneManager.Instance.ChangeScene("SceneMap"); // Restart the stage
+            }
 
             if (_phase == 0)
             {

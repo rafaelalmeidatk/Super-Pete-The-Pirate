@@ -20,16 +20,23 @@ namespace Super_Pete_The_Pirate
         private static readonly object _padlock = new object();
 
         //--------------------------------------------------
+        // Map Size
+
+        public int MapWidth { get { return _tiledMap == null ? 0 : _tiledMap.WidthInPixels; } }
+        public int MapHeight { get { return _tiledMap == null ? 0 : _tiledMap.HeightInPixels; } }
+
+        //--------------------------------------------------
         // Colliders
 
         private List<Rectangle> _tileColliderBoxes;
         private Texture2D _colliderTexture;
 
         //--------------------------------------------------
-        // Map Size
+        // Spikes
 
-        public int MapWidth { get { return _tiledMap == null ? 0 : _tiledMap.WidthInPixels; } }
-        public int MapHeight { get { return _tiledMap == null ? 0 : _tiledMap.HeightInPixels; } }
+        private List<Rectangle> _spikes;
+        public List<Rectangle> Spikes => _spikes;
+        private Texture2D _spikesTexture;
 
         //--------------------------------------------------
         // Tiles stuff
@@ -67,9 +74,12 @@ namespace Super_Pete_The_Pirate
 
         private GameMap()
         {
+            _spikes = new List<Rectangle>();
             _tileColliderBoxes = new List<Rectangle>();
             _colliderTexture = new Texture2D(SceneManager.Instance.GraphicsDevice, 1, 1, false, SurfaceFormat.Color);
             _colliderTexture.SetData<Color>(new Color[] { Color.Red });
+            _spikesTexture = new Texture2D(SceneManager.Instance.GraphicsDevice, 1, 1, false, SurfaceFormat.Color);
+            _spikesTexture.SetData<Color>(new Color[] { Color.Cyan });
             _currentMapId = 0;
         }
 
@@ -77,21 +87,34 @@ namespace Super_Pete_The_Pirate
         {
             _tiledMap = contentManager.Load<TiledMap>(String.Format("maps/map{0}", id));
             _currentMapId = id;
-            var blockedLayer = (TiledTileLayer)_tiledMap.GetLayer("Block");
-            if (blockedLayer == null) return;
             var tsx = (int)TileSize.X;
             var tsy = (int)TileSize.Y;
-            foreach (var tile in blockedLayer.Tiles)
+            _tileColliderBoxes = new List<Rectangle>();
+            var blockedLayer = _tiledMap.GetLayer< TiledTileLayer>("Block");
+            if (blockedLayer != null)
             {
-                if (tile.Id != 0)
+                foreach (var tile in blockedLayer.Tiles)
                 {
-                    _tileColliderBoxes.Add(new Rectangle(tile.X * tsx, tile.Y * tsy, tsx, tsy));
+                    if (tile.Id != 0)
+                        _tileColliderBoxes.Add(new Rectangle(tile.X * tsx, tile.Y * tsy, tsx, tsy));
+                }
+            }
+            
+            _spikes = new List<Rectangle>();
+            var spikesLayer = _tiledMap.GetLayer<TiledTileLayer>("Spikes");
+            if (spikesLayer != null)
+            {
+                foreach (var tile in spikesLayer.Tiles)
+                {
+                    if (tile.Id != 0)
+                        _spikes.Add(new Rectangle(tile.X * tsx, tile.Y * tsy, tsx, tsy));
                 }
             }
         }
 
         public void UnloadMap()
         {
+            _tiledMap.Dispose();
             _tileColliderBoxes.Clear();
         }
 
@@ -163,20 +186,21 @@ namespace Super_Pete_The_Pirate
             return depth.Y != 0 || depth.X != 0;
         }
 
-        private void DrawTileColliders(SpriteBatch spriteBatch)
+        private void DrawColliders(SpriteBatch spriteBatch)
         {
             foreach (var collider in _tileColliderBoxes)
-            {
                 spriteBatch.Draw(_colliderTexture, collider, Color.White * 0.1f);
-            }
+
+            foreach (var collider in _spikes)
+                spriteBatch.Draw(_spikesTexture, collider, Color.White * 0.1f);
         }
 
         public void Draw(Camera2D camera, SpriteBatch spriteBatch)
         {
             spriteBatch.Begin(transformMatrix: camera.GetViewMatrix(), samplerState: SamplerState.PointClamp);
-            _tiledMap.Draw(spriteBatch, camera);
+            _tiledMap.Draw(camera);
             if (SceneManager.Instance.DebugMode)
-                DrawTileColliders(spriteBatch);
+                DrawColliders(spriteBatch);
             spriteBatch.End();
         }
     }

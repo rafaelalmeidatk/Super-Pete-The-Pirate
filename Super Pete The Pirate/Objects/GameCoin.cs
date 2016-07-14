@@ -63,5 +63,13 @@ namespace Super_Pete_The_Pirate.Objects
             CoinSprite.Position = Position;
             CoinSprite.Update(gameTime);
         }
+
+        public GameCoin Clone()
+        {
+            var animatedSprite = CoinSprite.Clone();
+            var clone = (GameCoin)MemberwiseClone();
+            clone.CoinSprite = animatedSprite;
+            return clone;
+        }
     }
 }

@@ -58,7 +58,10 @@ namespace Super_Pete_The_Pirate.Scenes
         {
             public bool Activated;
             public GameCheckpoint Checkpoint;
-            public List<Enemy> Enemies;
+            public bool UsePosition;
+            public Vector2 Position;
+            public List<Enemy> MapEnemies;
+            public List<GameCoin> MapCoins;
             public int Ammo;
             public int Coins;
         }
@@ -89,7 +92,6 @@ namespace Super_Pete_The_Pirate.Scenes
         // End stage
 
         private bool _endStageCalled;
-        private bool _drawEndStage;
         private Texture2D _endBackground;
         private bool _stageFinished;
         private SceneMapSCHelper _stageCompletedHelper;
@@ -204,8 +206,8 @@ namespace Super_Pete_The_Pirate.Scenes
             SpawnShops();
             SpawnEnemies();
             SpawnCheckpoints();
-            SpawnPlayerInitial();
             SpawnCoins();
+            SpawnPlayer();
         }
 
         private void SpawnCoins()
@@ -263,10 +265,23 @@ namespace Super_Pete_The_Pirate.Scenes
             return checkpoint;
         }
 
-        private void SpawnPlayerInitial()
+        private void SpawnPlayer()
         {
-            var spawnPoint = new Vector2(GameMap.Instance.GetPlayerSpawn().X, GameMap.Instance.GetPlayerSpawn().Y);
-            _player.Position = new Vector2(spawnPoint.X, spawnPoint.Y - _player.CharacterSprite.GetColliderHeight());
+            var spawnPoint = new Vector2(GameMap.Instance.GetPlayerSpawn().X, GameMap.Instance.GetPlayerSpawn().Y - _player.CharacterSprite.GetColliderHeight());
+            _player.Position = new Vector2(spawnPoint.X, spawnPoint.Y);
+
+            var checkpointData = new CheckpointData()
+            {
+                Activated = true,
+                UsePosition = true,
+                Position = spawnPoint,
+                MapEnemies = new List<Enemy>(_enemies.Select(enemy => enemy.Clone<Enemy>())),
+                MapCoins = new List<GameCoin>(_coins.Select(coin => coin.Clone())),
+                Ammo = PlayerManager.Instance.Ammo,
+                Coins = PlayerManager.Instance.Coins
+            };
+
+            _lastCheckpoint = checkpointData;
         }
 
         private void SpawnEnemies()
@@ -381,7 +396,7 @@ namespace Super_Pete_The_Pirate.Scenes
 
                 if (!_enemies[i].Dying && _enemies[i].ContactDamageEnabled && _enemies[i].BoundingRectangle.Intersects(_player.BoundingRectangle))
                 {
-                    _player.ReceiveAttackWithPoint(1, _enemies[i].BoundingRectangle);
+                    _player.ReceiveAttackWithRect(1, _enemies[i].BoundingRectangle);
                 }
 
                 for (var j = 0; j < _projectiles.Count; j++)
@@ -415,6 +430,13 @@ namespace Super_Pete_The_Pirate.Scenes
 
                 if (_enemies[i].RequestErase)
                     _enemies.Remove(_enemies[i]);
+            }
+
+            for (var i = 0; i < GameMap.Instance.Spikes.Count; i++)
+            {
+                var spike = GameMap.Instance.Spikes[i];
+                if (_player.BoundingRectangle.Intersects(spike))
+                    _player.ReceiveAttackWithRect(999, spike);
             }
 
             for (var i = 0; i < _coins.Count; i++)
@@ -461,15 +483,18 @@ namespace Super_Pete_The_Pirate.Scenes
                 if (!_checkpoints[i].IsChecked && _player.BoundingRectangle.Intersects(_checkpoints[i].BoundingBox))
                 {
                     _checkpoints[i].OnPlayerCheck();
+                    /*
                     var checkpointData = new CheckpointData()
                     {
                         Activated = true,
                         Checkpoint = _checkpoints[i],
-                        Enemies = _enemies,
+                        MapEnemies = _enemies.AsReadOnly(),
+                        MapCoins = _coins.AsReadOnly(),
                         Ammo = PlayerManager.Instance.Ammo,
                         Coins = PlayerManager.Instance.Coins
                     };
                     _lastCheckpoint = checkpointData;
+                    */
                 }
                 _checkpoints[i].Update(gameTime);
             }
@@ -513,21 +538,21 @@ namespace Super_Pete_The_Pirate.Scenes
             {
                 PlayerManager.Instance.HandleRespawn();
                 _player = new Player(ImageManager.loadCharacter("Player"));
-                if (_lastCheckpoint.Activated)
+                if (_lastCheckpoint.UsePosition)
                 {
-                    var position = _lastCheckpoint.Checkpoint.Position;
-                    _player.Position = new Vector2(position.X, position.Y + _player.CharacterSprite.GetColliderHeight());
-                    _enemies = _lastCheckpoint.Enemies;
-                    PlayerManager.Instance.SetAmmo(_lastCheckpoint.Ammo);
-                    PlayerManager.Instance.SetCoins(_lastCheckpoint.Coins);
+                    var position = _lastCheckpoint.Position;
+                    _player.Position = new Vector2(position.X, position.Y);
                 }
                 else
                 {
-                    SpawnPlayerInitial();
-                    SpawnEnemies();
-                    PlayerManager.Instance.SetAmmo(PlayerManager.InitialAmmo);
-                    PlayerManager.Instance.SetCoins(0);
+                    var position = _lastCheckpoint.Checkpoint.Position;
+                    _player.Position = new Vector2(position.X, position.Y + _player.CharacterSprite.GetColliderHeight());
                 }
+                _enemies.Clear();
+                _enemies = new List<Enemy>(_lastCheckpoint.MapEnemies);
+                _coins = new List<GameCoin>(_lastCheckpoint.MapCoins);
+                PlayerManager.Instance.SetAmmo(_lastCheckpoint.Ammo);
+                PlayerManager.Instance.SetCoins(_lastCheckpoint.Coins);
             }
             else
             {
