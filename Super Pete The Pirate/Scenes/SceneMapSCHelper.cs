@@ -29,12 +29,34 @@ namespace Super_Pete_The_Pirate.Scenes
         private const float RankShowMaxTick = 250.0f;
 
         //--------------------------------------------------
+        // Data Class
+
+        public struct StageCompletedData
+        {
+            public int CoinsCollected;
+            public int MaxCoins;
+            public int HeartsLost;
+            public int EnemiesDefeated;
+            public int MaxEnemies;
+            public TimeSpan Time;
+            public TimeSpan MaxTime;
+            public bool Failed;
+        }
+
+        private StageCompletedData _data;
+
+        //--------------------------------------------------
+        // Background
+
+        private Texture2D _background;
+
+        //--------------------------------------------------
         // Positions
 
         private float _initialRightX;
 
         private float[,] _rowsInnerPositionsLeft;
-        private float[,] _rowsInnerPositionsRight;
+        private float[] _rowsInnerPositionsRight;
         private int _rowIndex;
 
         private Vector2 _titlePosition;
@@ -108,12 +130,23 @@ namespace Super_Pete_The_Pirate.Scenes
 
             _buttonsAlpha = 0.0f;
             _numberSe = SoundManager.loadSe("Numbers");
+            
+            _background = new Texture2D(SceneManager.Instance.GraphicsDevice, 1, 1, false, SurfaceFormat.Color);
+            _background.SetData<Color>(new Color[] { Color.Black });
         }
 
-        public void Initialize(int coins, int hearts, int enemies, TimeSpan time, bool failed)
+        public void Initialize(StageCompletedData data)
         {
+            _data = data;
             var screenSize = SceneManager.Instance.VirtualSize;
             var font = SceneManager.Instance.GameFont;
+            var format = "{0}/{1}";
+
+            var coins = data.CoinsCollected;
+            var hearts = data.HeartsLost;
+            var enemies = data.EnemiesDefeated;
+            var time = data.Time;
+            var failed = data.Failed;
 
             var titleMesured = font.MeasureString(failed ? TitleCompleted : TitleFailed);
             _titlePosition = new Vector2((screenSize.X - titleMesured.X) / 2, -titleMesured.Y);
@@ -124,12 +157,12 @@ namespace Super_Pete_The_Pirate.Scenes
             var l4 = font.MeasureString(Time);
 
             // 0: current, 1: initial, 2: final
-            _rowsInnerPositionsRight = new float[,]
+            _rowsInnerPositionsRight = new float[]
             {
-                { screenSize.X + 20, screenSize.X + 20, screenSize.X - font.MeasureString(coins.ToString()).X - 20 },
-                { screenSize.X + 20, screenSize.X + 20, screenSize.X - font.MeasureString(hearts.ToString()).X - 20 },
-                { screenSize.X + 20, screenSize.X + 20, screenSize.X - font.MeasureString(enemies.ToString()).X - 20 },
-                { screenSize.X + 20, screenSize.X + 20, screenSize.X - font.MeasureString(FormatTime(time)).X - 20 },
+                -font.MeasureString(String.Format(format, 0, data.MaxCoins)).X,
+                -font.MeasureString(String.Format(format, 0, data.HeartsLost)).X,
+                -font.MeasureString(String.Format(format, 0, data.MaxEnemies)).X,
+                -font.MeasureString(FormatTime(data.Time)).X
             };
 
             // 0: current, 1: initial
@@ -157,7 +190,7 @@ namespace Super_Pete_The_Pirate.Scenes
             else
             {
                 _completed = true;
-                _rank = "S";
+                CalculateRank(data);
             }
             
             if (_rank == "S")
@@ -184,6 +217,21 @@ namespace Super_Pete_The_Pirate.Scenes
             _rankSentencePosition = new Vector2(270 - rm.X, 199 - rm.Y / 2);
         }
 
+        private void CalculateRank(StageCompletedData data)
+        {
+            var count = 0;
+            if (data.CoinsCollected >= data.MaxCoins)
+                count++;
+            if (data.HeartsLost == 0)
+                count++;
+            if (data.EnemiesDefeated >= data.MaxEnemies)
+                count++;
+            if (data.Time <= data.MaxTime)
+                count++;
+            var ranks = new string[] { "D", "C", "B", "A", "S" };
+
+        }
+
         public void Update(GameTime gameTime)
         {
             if (InputManager.Instace.KeyPressed(Keys.Enter, Keys.Z))
@@ -192,7 +240,7 @@ namespace Super_Pete_The_Pirate.Scenes
                 {
                     if (_rowsInnerPositionsLeft[_rowIndex, 0] < 20.0f)
                     {
-                        _rowsInnerPositionsRight[_rowIndex, 0] = _rowsInnerPositionsRight[_rowIndex, 2];
+                        _rowsInnerPositionsRight[_rowIndex] = 20;
                         _rowsInnerPositionsLeft[_rowIndex, 0] = 20.0f;
                         _rowShowTick = 0.0f;
                         _numbersTime = true;
@@ -240,7 +288,7 @@ namespace Super_Pete_The_Pirate.Scenes
 
                 if (_rowsInnerPositionsLeft[i, 0] < 20.0f && !_numbersTime)
                 {
-                    _rowsInnerPositionsRight[i, 0] = MathHelper.Lerp(_rowsInnerPositionsRight[i, 1], _rowsInnerPositionsRight[i, 2], delta);
+                    _rowsInnerPositionsRight[i] = MathHelper.Lerp(-20, 20, delta);
                     _rowsInnerPositionsLeft[i, 0] = MathHelper.Lerp(_rowsInnerPositionsLeft[i, 1], 20.0f, delta);
                     if (_rowsInnerPositionsLeft[i, 0] >= 20.0f)
                     {
@@ -308,32 +356,37 @@ namespace Super_Pete_The_Pirate.Scenes
             var screenSize = SceneManager.Instance.VirtualSize;
             var fontBig = SceneManager.Instance.GameFontBig;
             var font = SceneManager.Instance.GameFont;
+            var format = "{0}/{1}";
+
+            spriteBatch.Draw(_background, new Rectangle(0, 0, (int)screenSize.X, (int)screenSize.Y), Color.White * 0.5f);
             
             var coinsLPos = new Vector2(_rowsInnerPositionsLeft[0, 0], 60);
-            var coinsRPos = new Vector2(_rowsInnerPositionsRight[0, 0], 60);
+            var coinsRPos = new Vector2(_rowsInnerPositionsRight[0], 60);
 
             var heartsLPos = new Vector2(_rowsInnerPositionsLeft[1, 0], 85);
-            var heartsRPos = new Vector2(_rowsInnerPositionsRight[1, 0], 85);
+            var heartsRPos = new Vector2(_rowsInnerPositionsRight[1], 85);
 
             var enemiesLPos = new Vector2(_rowsInnerPositionsLeft[2, 0], 110);
-            var enemiesRPos = new Vector2(_rowsInnerPositionsRight[2, 0], 110);
+            var enemiesRPos = new Vector2(_rowsInnerPositionsRight[2], 110);
 
             var timeLPos = new Vector2(_rowsInnerPositionsLeft[3, 0], 135);
-            var timeRPos = new Vector2(_rowsInnerPositionsRight[3, 0], 135);
+            var timeRPos = new Vector2(_rowsInnerPositionsRight[3], 135);
 
             spriteBatch.DrawTextWithShadow(fontBig, _completed ? TitleCompleted : TitleFailed, _titlePosition, Color.White);
 
+            var coinsStr = String.Format(format, _values[0, 0], _data.MaxCoins);
             spriteBatch.DrawTextWithShadow(font, CoinsEarned, coinsLPos, Color.White);
-            spriteBatch.DrawTextWithShadow(font, _values[0, 0].ToString(), coinsRPos, Color.White);
-
+            spriteBatch.DrawRightText(font, coinsStr, coinsRPos, Color.White, Color.Black);
+            
             spriteBatch.DrawTextWithShadow(font, HeartsLost, heartsLPos, Color.White);
-            spriteBatch.DrawTextWithShadow(font, _values[1, 0].ToString(), heartsRPos, Color.White);
+            spriteBatch.DrawRightText(font, _values[1, 0].ToString(), heartsRPos, Color.White, Color.Black);
 
+            var enemiesStr = String.Format(format, _values[2, 0], _data.MaxEnemies);
             spriteBatch.DrawTextWithShadow(font, EnemiesDefeated, enemiesLPos, Color.White);
-            spriteBatch.DrawTextWithShadow(font, _values[2, 0].ToString(), enemiesRPos, Color.White);
+            spriteBatch.DrawRightText(font, enemiesStr, enemiesRPos, Color.White, Color.Black);
 
             spriteBatch.DrawTextWithShadow(font, Time, timeLPos, Color.White);
-            spriteBatch.DrawTextWithShadow(font, FormatTime(_timeValues[0]), timeRPos, Color.White);
+            spriteBatch.DrawRightText(font, FormatTime(_timeValues[0]), timeRPos, Color.White, Color.Black);
 
             if (_phase >= 1)
             {

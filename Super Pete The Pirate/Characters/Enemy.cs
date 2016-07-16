@@ -52,6 +52,7 @@ namespace Super_Pete_The_Pirate.Characters
         // Coin value
 
         protected int _coins;
+        public int Coins => _coins;
 
         //--------------------------------------------------
         // Textures

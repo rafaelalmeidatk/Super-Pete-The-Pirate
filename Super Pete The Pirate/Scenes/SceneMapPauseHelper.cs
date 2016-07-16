@@ -72,7 +72,12 @@ namespace Super_Pete_The_Pirate.Scenes
 
         public void Update(GameTime gameTime)
         {
-            if (!_paused) return;
+            if (!_paused)
+            {
+                if (InputManager.Instace.KeyPressed(Keys.Escape, Keys.P))
+                    _paused = true;
+                return;
+            }
 
             if (InputManager.Instace.KeyPressed(Keys.Up, Keys.W))
                 _index = _index - 1 < 0 ? _menu.Length - 1 : _index - 1;
@@ -93,6 +98,9 @@ namespace Super_Pete_The_Pirate.Scenes
                         break;
                 }
             }
+
+            if (InputManager.Instace.KeyPressed(Keys.Escape, Keys.P))
+                _paused = false;
         }
 
         private void returnToMenu()
@@ -106,12 +114,12 @@ namespace Super_Pete_The_Pirate.Scenes
 
             spriteBatch.Draw(_backgroundTexture, _backgroundDrawArea, Color.White * 0.5f);
 
-            spriteBatch.DrawString(SceneManager.Instance.GameFontBig, Title, _pausePosition, Color.White);
+            spriteBatch.DrawTextWithShadow(SceneManager.Instance.GameFontBig, Title, _pausePosition, Color.White);
 
             for (var i = 0; i < _menu.Length; i++)
             {
                 var position = new Vector2(_menuItemsX[i], _menuY + (i * SceneManager.Instance.GameFont.LineHeight));
-                spriteBatch.DrawString(SceneManager.Instance.GameFont, _menu[i], position, Color.White);
+                spriteBatch.DrawTextWithShadow(SceneManager.Instance.GameFont, _menu[i], position, Color.White);
             }
 
             spriteBatch.Draw(_cursor, new Vector2(_menuItemsX[_index] - 16, _menuY + (_index * SceneManager.Instance.GameFont.LineHeight) - 1), Color.White);

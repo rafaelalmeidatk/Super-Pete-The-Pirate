@@ -89,11 +89,10 @@ namespace Super_Pete_The_Pirate.Scenes
         private Random _rand;
 
         //--------------------------------------------------
-        // End stage
+        // Stage Completed Helper
 
-        private bool _endStageCalled;
-        private Texture2D _endBackground;
-        private bool _stageFinished;
+        private bool _finishStageCalled;
+        private bool _stageCompleted;
         private SceneMapSCHelper _stageCompletedHelper;
 
         //--------------------------------------------------
@@ -109,9 +108,11 @@ namespace Super_Pete_The_Pirate.Scenes
         //--------------------------------------------------
         // Track variables
 
-        private int _coinsEarned;
+        private int _coinsCollected;
+        private int _maxCoins;
         private int _heartsLost;
         private int _enemiesDefeated;
+        private int _maxEnemies;
         private TimeSpan _time;
 
         //----------------------//------------------------//
@@ -162,12 +163,6 @@ namespace Super_Pete_The_Pirate.Scenes
             // Background init
             _backgroundHelper = new SceneMapBackgroundHelper();
 
-            // Track variables init
-            _coinsEarned = 0;
-            _heartsLost = 0;
-            _enemiesDefeated = 0;
-            _time = new TimeSpan();
-
             // Load the map
             LoadMap(SceneManager.Instance.MapToLoad);
 
@@ -183,14 +178,15 @@ namespace Super_Pete_The_Pirate.Scenes
 
         private void InitializeEndStage()
         {
-            var screenSize = SceneManager.Instance.VirtualSize;
-            var font = SceneManager.Instance.GameFontBig;
-            _stageFinished = false;
-
-            _endBackground = new Texture2D(SceneManager.Instance.GraphicsDevice, 1, 1, false, SurfaceFormat.Color);
-            _endBackground.SetData<Color>(new Color[] { Color.Black });
-
             _stageCompletedHelper = new SceneMapSCHelper();
+        }
+
+        private void InitializeTrackVariables()
+        {
+            _time = new TimeSpan();
+            _maxCoins = _coins.Count;
+            _enemies.ForEach(enemy => _maxCoins += enemy.Coins);
+            _maxEnemies = _enemies.Count;
         }
 
         private void CreateHud()
@@ -203,11 +199,14 @@ namespace Super_Pete_The_Pirate.Scenes
         private void LoadMap(int mapId)
         {
             GameMap.Instance.LoadMap(Content, mapId);
+
             SpawnShops();
             SpawnEnemies();
             SpawnCheckpoints();
             SpawnCoins();
             SpawnPlayer();
+
+            InitializeTrackVariables();
         }
 
         private void SpawnCoins()
@@ -359,17 +358,18 @@ namespace Super_Pete_The_Pirate.Scenes
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
+
+            // Helpers
+            if (_stageCompleted)
+                _stageCompletedHelper.Update(gameTime);
             _backgroundHelper.Update(_camera);
             _pauseHelper.Update(gameTime);
 
-            if (_pauseHelper.Paused && InputManager.Instace.KeyPressed(Keys.Escape))
-                _pauseHelper.SetPaused(false);
-            else if (!_pauseHelper.Paused && InputManager.Instace.KeyPressed(Keys.Escape, Keys.P))
-                _pauseHelper.SetPaused(true);
-
             if (_pauseHelper.Paused) return;
 
-            _player.Update(gameTime, _stageFinished);
+            _time += gameTime.ElapsedGameTime.Duration();
+
+            _player.Update(gameTime, _stageCompleted);
 
             if (_player.RequestRespawn)
                 HandlePlayerRespawn();
@@ -388,7 +388,9 @@ namespace Super_Pete_The_Pirate.Scenes
             {
                 _enemies[i].Update(gameTime);
 
-                if (_enemies[i].HasViewRange && _enemies[i].ViewRangeCooldown <= 0f && _camera.Contains(_enemies[i].BoundingRectangle) != ContainmentType.Disjoint &&
+                if (_enemies[i].HasViewRange &&
+                    _enemies[i].ViewRangeCooldown <= 0f &&
+                    _camera.Contains(_enemies[i].BoundingRectangle) != ContainmentType.Disjoint &&
                     _enemies[i].ViewRange.Intersects(_player.BoundingRectangle))
                 {
                     _enemies[i].PlayerOnSight(_player.Position);
@@ -429,7 +431,10 @@ namespace Super_Pete_The_Pirate.Scenes
                 }
 
                 if (_enemies[i].RequestErase)
+                {
                     _enemies.Remove(_enemies[i]);
+                    _enemiesDefeated++;
+                }
             }
 
             for (var i = 0; i < GameMap.Instance.Spikes.Count; i++)
@@ -449,7 +454,7 @@ namespace Super_Pete_The_Pirate.Scenes
                 }
                 else if (sprite.TextureRegion.Name.IndexOf("CoinSparkle") < 0 && _player.BoundingRectangle.Intersects(sprite.BoundingBox))
                 {
-                    _coinsEarned += 1;
+                    _coinsCollected += 1;
                     PlayerManager.Instance.AddCoins(1);
                     sprite.SetTexture(ImageManager.loadMisc("CoinSparkle"), false);
                     sprite.SetDelay(80);
@@ -483,18 +488,16 @@ namespace Super_Pete_The_Pirate.Scenes
                 if (!_checkpoints[i].IsChecked && _player.BoundingRectangle.Intersects(_checkpoints[i].BoundingBox))
                 {
                     _checkpoints[i].OnPlayerCheck();
-                    /*
                     var checkpointData = new CheckpointData()
                     {
                         Activated = true,
                         Checkpoint = _checkpoints[i],
-                        MapEnemies = _enemies.AsReadOnly(),
-                        MapCoins = _coins.AsReadOnly(),
+                        MapEnemies = new List<Enemy>(_enemies.Select(enemy => enemy.Clone<Enemy>())),
+                        MapCoins = new List<GameCoin>(_coins.Select(coin => coin.Clone())),
                         Ammo = PlayerManager.Instance.Ammo,
                         Coins = PlayerManager.Instance.Coins
                     };
                     _lastCheckpoint = checkpointData;
-                    */
                 }
                 _checkpoints[i].Update(gameTime);
             }
@@ -508,12 +511,7 @@ namespace Super_Pete_The_Pirate.Scenes
 
             if (InputManager.Instace.KeyPressed(Keys.Q))
             {
-                FinishStage(true);
-            }
-
-            if (_stageFinished)
-            {
-                _stageCompletedHelper.Update(gameTime);
+                FinishStage(false);
             }
         }
 
@@ -533,7 +531,7 @@ namespace Super_Pete_The_Pirate.Scenes
 
         private void HandlePlayerRespawn()
         {
-            if (_endStageCalled) return;
+            if (_finishStageCalled) return;
             if (PlayerManager.Instance.Lives > 1)
             {
                 PlayerManager.Instance.HandleRespawn();
@@ -553,12 +551,14 @@ namespace Super_Pete_The_Pirate.Scenes
                 _coins = new List<GameCoin>(_lastCheckpoint.MapCoins);
                 PlayerManager.Instance.SetAmmo(_lastCheckpoint.Ammo);
                 PlayerManager.Instance.SetCoins(_lastCheckpoint.Coins);
+                _coinsCollected = _lastCheckpoint.Coins;
+                _enemiesDefeated = _maxEnemies - _lastCheckpoint.MapEnemies.Count;
             }
             else
             {
                 PlayerManager.Instance.AddLives(-1);
-                FinishStage(true);
-                _endStageCalled = true;
+                FinishStage(false);
+                _finishStageCalled = true;
             }
         }
 
@@ -610,8 +610,19 @@ namespace Super_Pete_The_Pirate.Scenes
 
         private void FinishStage(bool failed)
         {
-            _stageFinished = true;
-            _stageCompletedHelper.Initialize(240, 3, 12, new TimeSpan(0, 7, 32), failed);
+            _stageCompleted = true;
+            var data = new SceneMapSCHelper.StageCompletedData
+            {
+                CoinsCollected = _coinsCollected,
+                MaxCoins = _maxCoins,
+                HeartsLost = _heartsLost,
+                EnemiesDefeated = _enemiesDefeated,
+                MaxEnemies = _maxEnemies,
+                Time = _time,
+                MaxTime = GameMap.Instance.GetCompletationTime(),
+                Failed = failed
+            };
+            _stageCompletedHelper.Initialize(data);
         }
 
         private void CallSavesSceneToSave()
@@ -678,17 +689,8 @@ namespace Super_Pete_The_Pirate.Scenes
             // Draw the Hud
             _gameHud.Draw(spriteBatch);
 
-            if (_stageFinished)
-            {
-                // Draw the end stage
-
-                var screenSize = SceneManager.Instance.VirtualSize;
-                var font = SceneManager.Instance.GameFontBig;
-
-                spriteBatch.Draw(_endBackground, new Rectangle(0, 0, (int)screenSize.X, (int)screenSize.Y), Color.White * 0.5f);
-
+            if (_stageCompleted)
                 _stageCompletedHelper.Draw(spriteBatch);
-            }
 
             _pauseHelper.Draw(spriteBatch);
 

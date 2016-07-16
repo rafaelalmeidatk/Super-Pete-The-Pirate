@@ -74,7 +74,7 @@ namespace Super_Pete_The_Pirate.Characters
             };
 
             // Combat system init
-            _hp = 4;
+            _hp = 2;
             _viewRangeSize = new Vector2(300, 20);
             _alertAnimation = false;
             _shot = false;
