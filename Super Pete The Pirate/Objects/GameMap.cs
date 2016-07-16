@@ -148,11 +148,11 @@ namespace Super_Pete_The_Pirate
             return GetObjectGroup("Player Spawn").Objects[0];
         }
 
-        public TimeSpan GetCompletationTime()
+        public TimeSpan GetCompletionTime()
         {
             if (_tiledMap == null)
                 return TimeSpan.Zero;
-            return TimeSpan.Parse(_tiledMap.Properties["Completation Time"]);
+            return TimeSpan.Parse(_tiledMap.Properties["Completion Time"]);
         }
 
         public bool IsTileBlocked(int x, int y)

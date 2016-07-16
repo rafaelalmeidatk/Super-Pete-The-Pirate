@@ -27,7 +27,6 @@ namespace Super_Pete_The_Pirate.Scenes
         // Player
 
         private Player _player;
-
         public Player Player { get { return _player; } }
 
         //--------------------------------------------------
@@ -268,19 +267,7 @@ namespace Super_Pete_The_Pirate.Scenes
         {
             var spawnPoint = new Vector2(GameMap.Instance.GetPlayerSpawn().X, GameMap.Instance.GetPlayerSpawn().Y - _player.CharacterSprite.GetColliderHeight());
             _player.Position = new Vector2(spawnPoint.X, spawnPoint.Y);
-
-            var checkpointData = new CheckpointData()
-            {
-                Activated = true,
-                UsePosition = true,
-                Position = spawnPoint,
-                MapEnemies = new List<Enemy>(_enemies.Select(enemy => enemy.Clone<Enemy>())),
-                MapCoins = new List<GameCoin>(_coins.Select(coin => coin.Clone())),
-                Ammo = PlayerManager.Instance.Ammo,
-                Coins = PlayerManager.Instance.Coins
-            };
-
-            _lastCheckpoint = checkpointData;
+            CreatePositionCheckpoint(spawnPoint);
         }
 
         private void SpawnEnemies()
@@ -355,10 +342,25 @@ namespace Super_Pete_The_Pirate.Scenes
             _projectiles.Add(new GameProjectile(_projectilesTextures[name], position, dx, dy, damage, subject));
         }
 
+        private void CreatePositionCheckpoint(Vector2 position)
+        {
+            var checkpointData = new CheckpointData()
+            {
+                Activated = true,
+                UsePosition = true,
+                Position = position,
+                MapEnemies = new List<Enemy>(_enemies.Select(enemy => enemy.Clone<Enemy>())),
+                MapCoins = new List<GameCoin>(_coins.Select(coin => coin.Clone())),
+                Ammo = PlayerManager.Instance.Ammo,
+                Coins = PlayerManager.Instance.Coins
+            };
+            _lastCheckpoint = checkpointData;
+        }
+
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
-
+            
             // Helpers
             if (_stageCompleted)
                 _stageCompletedHelper.Update(gameTime);
@@ -368,6 +370,7 @@ namespace Super_Pete_The_Pirate.Scenes
             if (_pauseHelper.Paused) return;
 
             _time += gameTime.ElapsedGameTime.Duration();
+            DebugValues["Timer"] = _time.ToString();
 
             _player.Update(gameTime, _stageCompleted);
 
@@ -398,7 +401,10 @@ namespace Super_Pete_The_Pirate.Scenes
 
                 if (!_enemies[i].Dying && _enemies[i].ContactDamageEnabled && _enemies[i].BoundingRectangle.Intersects(_player.BoundingRectangle))
                 {
+                    var lastHearts = _player.HP;
                     _player.ReceiveAttackWithRect(1, _enemies[i].BoundingRectangle);
+                    if (lastHearts - _player.HP > 0)
+                        _heartsLost += lastHearts - _player.HP;
                 }
 
                 for (var j = 0; j < _projectiles.Count; j++)
@@ -440,8 +446,12 @@ namespace Super_Pete_The_Pirate.Scenes
             for (var i = 0; i < GameMap.Instance.Spikes.Count; i++)
             {
                 var spike = GameMap.Instance.Spikes[i];
-                if (_player.BoundingRectangle.Intersects(spike))
+                if (_player.BoundingRectangle.Intersects(spike) && !_player.TouchedSpikes)
+                {
+                    _heartsLost += _player.HP;
                     _player.ReceiveAttackWithRect(999, spike);
+                    _player.TouchedSpikes = true;
+                }
             }
 
             for (var i = 0; i < _coins.Count; i++)
@@ -547,8 +557,8 @@ namespace Super_Pete_The_Pirate.Scenes
                     _player.Position = new Vector2(position.X, position.Y + _player.CharacterSprite.GetColliderHeight());
                 }
                 _enemies.Clear();
-                _enemies = new List<Enemy>(_lastCheckpoint.MapEnemies);
-                _coins = new List<GameCoin>(_lastCheckpoint.MapCoins);
+                _enemies = new List<Enemy>(_lastCheckpoint.MapEnemies.Select(x => x.Clone<Enemy>()));
+                _coins = new List<GameCoin>(_lastCheckpoint.MapCoins.Select(x => x.Clone()));
                 PlayerManager.Instance.SetAmmo(_lastCheckpoint.Ammo);
                 PlayerManager.Instance.SetCoins(_lastCheckpoint.Coins);
                 _coinsCollected = _lastCheckpoint.Coins;
@@ -557,7 +567,7 @@ namespace Super_Pete_The_Pirate.Scenes
             else
             {
                 PlayerManager.Instance.AddLives(-1);
-                FinishStage(false);
+                FinishStage(true);
                 _finishStageCalled = true;
             }
         }
@@ -619,7 +629,7 @@ namespace Super_Pete_The_Pirate.Scenes
                 EnemiesDefeated = _enemiesDefeated,
                 MaxEnemies = _maxEnemies,
                 Time = _time,
-                MaxTime = GameMap.Instance.GetCompletationTime(),
+                MaxTime = GameMap.Instance.GetCompletionTime(),
                 Failed = failed
             };
             _stageCompletedHelper.Initialize(data);

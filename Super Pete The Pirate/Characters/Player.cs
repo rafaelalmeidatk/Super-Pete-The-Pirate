@@ -60,7 +60,12 @@ namespace Super_Pete_The_Pirate
         private bool _keysLocked;
 
         //--------------------------------------------------
-        // Keys locked (no movement)
+        // Touched spikes
+        
+        public bool TouchedSpikes { get; set; }
+
+        //--------------------------------------------------
+        // Active
 
         private bool _active;
         public bool Active => _active;

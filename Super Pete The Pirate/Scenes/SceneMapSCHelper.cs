@@ -53,8 +53,10 @@ namespace Super_Pete_The_Pirate.Scenes
         //--------------------------------------------------
         // Positions
 
-        private float _initialRightX;
+        private const int Current = 0;
+        private const int Initial = 1;
 
+        private float _initialRightX;
         private float[,] _rowsInnerPositionsLeft;
         private float[] _rowsInnerPositionsRight;
         private int _rowIndex;
@@ -98,6 +100,12 @@ namespace Super_Pete_The_Pirate.Scenes
         private SoundEffect _numberSe;
 
         //--------------------------------------------------
+        // Colors
+
+        private readonly Color _greenColor;
+        private readonly Color _redColor;
+
+        //--------------------------------------------------
         // Completed
 
         private bool _completed;
@@ -110,6 +118,9 @@ namespace Super_Pete_The_Pirate.Scenes
 
             var screenSize = SceneManager.Instance.VirtualSize;
             var font = SceneManager.Instance.GameFontBig;
+
+            _greenColor = new Color(29, 184, 127);
+            _redColor = new Color(221, 13, 82);
 
             _initialRightX = screenSize.X + 20;
 
@@ -155,17 +166,16 @@ namespace Super_Pete_The_Pirate.Scenes
             var l2 = font.MeasureString(HeartsLost);
             var l3 = font.MeasureString(EnemiesDefeated);
             var l4 = font.MeasureString(Time);
-
-            // 0: current, 1: initial, 2: final
+            
             _rowsInnerPositionsRight = new float[]
             {
-                -font.MeasureString(String.Format(format, 0, data.MaxCoins)).X,
-                -font.MeasureString(String.Format(format, 0, data.HeartsLost)).X,
-                -font.MeasureString(String.Format(format, 0, data.MaxEnemies)).X,
-                -font.MeasureString(FormatTime(data.Time)).X
+                -font.MeasureString(String.Format(format, 0, data.MaxCoins)).X - 10,
+                -font.MeasureString(String.Format(format, 0, data.HeartsLost)).X - 10,
+                -font.MeasureString(String.Format(format, 0, data.MaxEnemies)).X - 10,
+                -font.MeasureString(FormatTime(data.Time)).X - 10
             };
 
-            // 0: current, 1: initial
+            // Current, Initial
             _rowsInnerPositionsLeft = new float[,]
             {
                 { -l1.X, -l1.X },
@@ -219,6 +229,7 @@ namespace Super_Pete_The_Pirate.Scenes
 
         private void CalculateRank(StageCompletedData data)
         {
+            var ranks = new string[] { "D", "C", "B", "A", "S" };
             var count = 0;
             if (data.CoinsCollected >= data.MaxCoins)
                 count++;
@@ -228,8 +239,7 @@ namespace Super_Pete_The_Pirate.Scenes
                 count++;
             if (data.Time <= data.MaxTime)
                 count++;
-            var ranks = new string[] { "D", "C", "B", "A", "S" };
-
+            _rank = ranks[count];
         }
 
         public void Update(GameTime gameTime)
@@ -238,10 +248,10 @@ namespace Super_Pete_The_Pirate.Scenes
             {
                 if (_phase == 0)
                 {
-                    if (_rowsInnerPositionsLeft[_rowIndex, 0] < 20.0f)
+                    if (_rowsInnerPositionsLeft[_rowIndex, Current] < 20.0f)
                     {
                         _rowsInnerPositionsRight[_rowIndex] = 20;
-                        _rowsInnerPositionsLeft[_rowIndex, 0] = 20.0f;
+                        _rowsInnerPositionsLeft[_rowIndex, Current] = 20.0f;
                         _rowShowTick = 0.0f;
                         _numbersTime = true;
                     }
@@ -286,11 +296,11 @@ namespace Super_Pete_The_Pirate.Scenes
                 var delta = _rowShowTick / RowShowMaxTick;
                 var i = _rowIndex;
 
-                if (_rowsInnerPositionsLeft[i, 0] < 20.0f && !_numbersTime)
+                if (_rowsInnerPositionsLeft[i, Current] < 20.0f && !_numbersTime)
                 {
                     _rowsInnerPositionsRight[i] = MathHelper.Lerp(-20, 20, delta);
-                    _rowsInnerPositionsLeft[i, 0] = MathHelper.Lerp(_rowsInnerPositionsLeft[i, 1], 20.0f, delta);
-                    if (_rowsInnerPositionsLeft[i, 0] >= 20.0f)
+                    _rowsInnerPositionsLeft[i, Current] = MathHelper.Lerp(_rowsInnerPositionsLeft[i, Initial], 20.0f, delta);
+                    if (_rowsInnerPositionsLeft[i, Current] >= 20.0f)
                     {
                         _rowShowTick = 0.0f;
                         _numbersTime = true;
@@ -360,33 +370,37 @@ namespace Super_Pete_The_Pirate.Scenes
 
             spriteBatch.Draw(_background, new Rectangle(0, 0, (int)screenSize.X, (int)screenSize.Y), Color.White * 0.5f);
             
-            var coinsLPos = new Vector2(_rowsInnerPositionsLeft[0, 0], 60);
+            var coinsLPos = new Vector2(_rowsInnerPositionsLeft[0, Current], 60);
             var coinsRPos = new Vector2(_rowsInnerPositionsRight[0], 60);
 
-            var heartsLPos = new Vector2(_rowsInnerPositionsLeft[1, 0], 85);
+            var heartsLPos = new Vector2(_rowsInnerPositionsLeft[1, Current], 85);
             var heartsRPos = new Vector2(_rowsInnerPositionsRight[1], 85);
 
-            var enemiesLPos = new Vector2(_rowsInnerPositionsLeft[2, 0], 110);
+            var enemiesLPos = new Vector2(_rowsInnerPositionsLeft[2, Current], 110);
             var enemiesRPos = new Vector2(_rowsInnerPositionsRight[2], 110);
 
-            var timeLPos = new Vector2(_rowsInnerPositionsLeft[3, 0], 135);
+            var timeLPos = new Vector2(_rowsInnerPositionsLeft[3, Current], 135);
             var timeRPos = new Vector2(_rowsInnerPositionsRight[3], 135);
 
             spriteBatch.DrawTextWithShadow(fontBig, _completed ? TitleCompleted : TitleFailed, _titlePosition, Color.White);
 
             var coinsStr = String.Format(format, _values[0, 0], _data.MaxCoins);
+            var coinsColor = CalculateColor(_values[0, 0], _data.MaxCoins);
             spriteBatch.DrawTextWithShadow(font, CoinsEarned, coinsLPos, Color.White);
-            spriteBatch.DrawRightText(font, coinsStr, coinsRPos, Color.White, Color.Black);
-            
+            spriteBatch.DrawRightText(font, coinsStr, coinsRPos, coinsColor, Color.Black);
+
+            var heartsColor = CalculateColor(_values[1, 0], 0);
             spriteBatch.DrawTextWithShadow(font, HeartsLost, heartsLPos, Color.White);
-            spriteBatch.DrawRightText(font, _values[1, 0].ToString(), heartsRPos, Color.White, Color.Black);
+            spriteBatch.DrawRightText(font, _values[1, 0].ToString(), heartsRPos, heartsColor, Color.Black);
 
             var enemiesStr = String.Format(format, _values[2, 0], _data.MaxEnemies);
+            var enemiesColor = CalculateColor(_values[2, 0], _data.MaxEnemies);
             spriteBatch.DrawTextWithShadow(font, EnemiesDefeated, enemiesLPos, Color.White);
-            spriteBatch.DrawRightText(font, enemiesStr, enemiesRPos, Color.White, Color.Black);
+            spriteBatch.DrawRightText(font, enemiesStr, enemiesRPos, enemiesColor, Color.Black);
 
+            var timeColor = CalculateColor(_timeValues[0], _data.MaxTime);
             spriteBatch.DrawTextWithShadow(font, Time, timeLPos, Color.White);
-            spriteBatch.DrawRightText(font, FormatTime(_timeValues[0]), timeRPos, Color.White, Color.Black);
+            spriteBatch.DrawRightText(font, FormatTime(_timeValues[0]), timeRPos, timeColor, Color.Black);
 
             if (_phase >= 1)
             {
@@ -400,6 +414,39 @@ namespace Super_Pete_The_Pirate.Scenes
 
             IconsManager.Instance.DrawActionButton(spriteBatch, new Vector2(5, screenSize.Y - 40), false, "Continue", _buttonsAlpha, true);
             IconsManager.Instance.DrawCancelButton(spriteBatch, new Vector2(5, screenSize.Y - 20), false, "Restart", _buttonsAlpha, true);
+        }
+
+        private Color CalculateColor(int value, int maxValue)
+        {
+            if (maxValue == 0)
+            {
+                if (value == 0)
+                    return _greenColor;
+                if (value <= 5)
+                    return Color.White;
+                else
+                    return _redColor;
+            }
+
+            var percent = (float)value / maxValue;
+            if (percent == 1)
+                return _greenColor;
+            else if (percent >= 0.5f)
+                return Color.White;
+            else
+                return _redColor;
+        }
+
+        private Color CalculateColor(TimeSpan time, TimeSpan maxTime)
+        {
+            var value = time.TotalMilliseconds;
+            var maxValue = maxTime.TotalMilliseconds;
+            if (value <= maxValue)
+                return _greenColor;
+            else if (value <= maxValue * 1.5)
+                return Color.White;
+            else
+                return _redColor;
         }
 
         private string FormatTime(TimeSpan time)
