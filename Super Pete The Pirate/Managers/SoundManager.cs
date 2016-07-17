@@ -7,7 +7,7 @@ using System.Diagnostics;
 
 namespace Super_Pete_The_Pirate.Managers
 {
-    public class SoundManager
+    public static class SoundManager
     {
         //--------------------------------------------------
         // Content Manager
@@ -15,14 +15,28 @@ namespace Super_Pete_The_Pirate.Managers
         private static Dictionary<string, SoundEffect> _seCache = new Dictionary<string, SoundEffect>();
         private static ContentManager _contentManager = new ContentManager(SceneManager.Instance.Content.ServiceProvider, "Content");
 
+        //--------------------------------------------------
+        // SEs
+
+        private static SoundEffect _cancelSe;
+        private static SoundEffect _confirmSe;
+        private static SoundEffect _selectSe;
+
         //----------------------//------------------------//
 
-        public static Song loadBgm(string filename)
+        public static void Initialize()
+        {
+            _cancelSe = LoadSe("Cancel");
+            _confirmSe = LoadSe("Confirm");
+            _selectSe = LoadSe("Select");
+        }
+
+        public static Song LoadBgm(string filename)
         {
             return _contentManager.Load<Song>("sounds/bgm/" + filename);
         }
 
-        public static SoundEffect loadSe(string filename)
+        public static SoundEffect LoadSe(string filename)
         {
             if (!_seCache.ContainsKey(filename))
             {
@@ -37,6 +51,27 @@ namespace Super_Pete_The_Pirate.Managers
                 }
             }
             return _seCache[filename];
+        }
+
+        public static void PlaySafe(this SoundEffect se)
+        {
+            if (se != null)
+                se.Play();
+        }
+
+        public static void PlayCancelSe()
+        {
+            _cancelSe.PlaySafe();
+        }
+
+        public static void PlayConfirmSe()
+        {
+            _confirmSe.PlaySafe();
+        }
+
+        public static void PlaySelectSe()
+        {
+            _selectSe.PlaySafe();
         }
     }
 }

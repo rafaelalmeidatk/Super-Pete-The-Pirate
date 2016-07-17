@@ -21,6 +21,8 @@ namespace Super_Pete_The_Pirate.Scenes
 
         private Dictionary<SceneManager.SceneSavesType, string> _titleStrings;
         private const string EmptySlotText = "Empty";
+        private const string ConfirmButtonLabel = "Confirm";
+        private const string CancelButtonLabel = "Return";
 
         //--------------------------------------------------
         // Textures
@@ -207,6 +209,7 @@ namespace Super_Pete_The_Pirate.Scenes
             {
                 if (InputManager.Instace.KeyPressed(Keys.Down, Keys.Right))
                 {
+                    var lastIndex = _slotIndex;
                     if (SceneManager.Instance.TypeOfSceneSaves == SceneManager.SceneSavesType.Load)
                     {
                         for (var i = 0; i < 3; i++)
@@ -220,11 +223,16 @@ namespace Super_Pete_The_Pirate.Scenes
                     {
                         _slotIndex = _slotIndex >= 2 ? 0 : _slotIndex + 1;
                     }
-                    UpdateArrowPosition();
+                    if (lastIndex != _slotIndex)
+                    {
+                        UpdateArrowPosition();
+                        SoundManager.PlaySelectSe();
+                    }
                 }
 
                 if (InputManager.Instace.KeyPressed(Keys.Up, Keys.Left))
                 {
+                    var lastIndex = _slotIndex;
                     if (SceneManager.Instance.TypeOfSceneSaves == SceneManager.SceneSavesType.Load)
                     {
                         for (var i = 0; i < 3; i++)
@@ -238,14 +246,24 @@ namespace Super_Pete_The_Pirate.Scenes
                     {
                         _slotIndex = _slotIndex <= 0 ? 2 : _slotIndex - 1;
                     }
-                    UpdateArrowPosition();
+                    if (lastIndex != _slotIndex)
+                    {
+                        UpdateArrowPosition();
+                        SoundManager.PlaySelectSe();
+                    }
                 }
 
                 if (InputManager.Instace.KeyPressed(Keys.Z, Keys.Enter))
+                {
+                    SoundManager.PlayConfirmSe();
                     HandleConfirm();
+                }
 
                 if (InputManager.Instace.KeyPressed(Keys.X, Keys.Escape))
+                {
+                    SoundManager.PlayCancelSe();
                     HandleExit();
+                }
             }
 
             _peteAnimatedSprite.Update(gameTime);
@@ -305,6 +323,9 @@ namespace Super_Pete_The_Pirate.Scenes
         {
             base.Draw(spriteBatch, viewportAdapter);
 
+            var screenSize = SceneManager.Instance.VirtualSize;
+            var gameFont = SceneManager.Instance.GameFont;
+
             spriteBatch.Begin(samplerState: SamplerState.PointClamp, transformMatrix: viewportAdapter.GetScaleMatrix());
 
             // Background
@@ -313,14 +334,12 @@ namespace Super_Pete_The_Pirate.Scenes
             // Title
             var titleString = _titleStrings[SceneManager.Instance.TypeOfSceneSaves];
             var titleX = (SceneManager.Instance.VirtualSize.X - SceneManager.Instance.GameFontBig.MeasureString(titleString).X) / 2;
-            //spriteBatch.DrawTextWithShadow(SceneManager.Instance.GameFontBig, titleString, new Vector2(titleX, 10), _secFontColor);
-            spriteBatch.DrawString(SceneManager.Instance.GameFontBig, titleString, new Vector2(titleX, 10), _fontColor);
+            spriteBatch.DrawTextWithShadow(SceneManager.Instance.GameFontBig, titleString, new Vector2(titleX, 10), Color.White);
 
             // Slots
             for (var i = 0; i < 3; i++)
             {
                 var slotPosition = _slotsPosition[i].Location.ToVector2();
-                var gameFont = SceneManager.Instance.GameFont;
 
                 // Check if the slot isn't empty
                 if (_gameSaves[i].StagesCompleted > 0)
@@ -393,10 +412,13 @@ namespace Super_Pete_The_Pirate.Scenes
 
             IconsManager.Instance.DrawRightArrow(spriteBatch, _arrowPosition + _arrowPositionInc * Vector2.UnitY, false);
 
+            var xOffset = SceneManager.Instance.GameFontSmall.MeasureString(ConfirmButtonLabel).X + 30;
+            IconsManager.Instance.DrawActionButton(spriteBatch, new Vector2(5, screenSize.Y - 18), false, ConfirmButtonLabel, 1.0f, true);
+            IconsManager.Instance.DrawCancelButton(spriteBatch, new Vector2(xOffset, screenSize.Y - 18), false, CancelButtonLabel, 1.0f, true);
+
             if (_loadingVisible)
             {
-                var screenSize = SceneManager.Instance.GraphicsDevice.Viewport.Bounds;
-                spriteBatch.Draw(_loadingBackgroundTexture, new Rectangle(0, 0, screenSize.Width, screenSize.Height),
+                spriteBatch.Draw(_loadingBackgroundTexture, new Rectangle(0, 0, (int)screenSize.X, (int)screenSize.Y),
                     Color.White * 0.5f);
                 _loadingAnimatedSprite.Draw(spriteBatch);
             }

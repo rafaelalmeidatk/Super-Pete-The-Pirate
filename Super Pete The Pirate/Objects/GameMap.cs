@@ -150,7 +150,7 @@ namespace Super_Pete_The_Pirate
 
         public TimeSpan GetCompletionTime()
         {
-            if (_tiledMap == null)
+            if (_tiledMap == null || (_tiledMap != null && !_tiledMap.Properties.ContainsKey("Completion Time")))
                 return TimeSpan.Zero;
             return TimeSpan.Parse(_tiledMap.Properties["Completion Time"]);
         }

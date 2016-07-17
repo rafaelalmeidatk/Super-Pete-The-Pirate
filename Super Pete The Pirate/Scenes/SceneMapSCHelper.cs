@@ -140,7 +140,7 @@ namespace Super_Pete_The_Pirate.Scenes
             _rankSentenceAlpha = 0.0f;
 
             _buttonsAlpha = 0.0f;
-            _numberSe = SoundManager.loadSe("Numbers");
+            _numberSe = SoundManager.LoadSe("Numbers");
             
             _background = new Texture2D(SceneManager.Instance.GraphicsDevice, 1, 1, false, SurfaceFormat.Color);
             _background.SetData<Color>(new Color[] { Color.Black });
@@ -159,7 +159,7 @@ namespace Super_Pete_The_Pirate.Scenes
             var time = data.Time;
             var failed = data.Failed;
 
-            var titleMesured = font.MeasureString(failed ? TitleCompleted : TitleFailed);
+            var titleMesured = SceneManager.Instance.GameFontBig.MeasureString(failed ? TitleFailed : TitleCompleted);
             _titlePosition = new Vector2((screenSize.X - titleMesured.X) / 2, -titleMesured.Y);
 
             var l1 = font.MeasureString(CoinsEarned);
@@ -175,9 +175,9 @@ namespace Super_Pete_The_Pirate.Scenes
                 -font.MeasureString(FormatTime(data.Time)).X - 10
             };
 
-            // Current, Initial
             _rowsInnerPositionsLeft = new float[,]
             {
+                // Current, Initial
                 { -l1.X, -l1.X },
                 { -l2.X, -l2.X },
                 { -l3.X, -l3.X },

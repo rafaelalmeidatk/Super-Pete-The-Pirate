@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Super_Pete_The_Pirate.Extensions;
+using Super_Pete_The_Pirate.Managers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -82,6 +83,8 @@ namespace Super_Pete_The_Pirate.Characters
                 _dyingAcceleration = Math.Sign(Position.X - subjectPosition.X) * 0.7f;
                 OnDie();
             }
+
+            _hitSe.PlaySafe();
         }
 
         public override void Update(GameTime gameTime)

@@ -120,7 +120,10 @@ namespace Super_Pete_The_Pirate.Scenes
             if (_phase == PressAnyButtonPhase)
             {
                 if (InputManager.Instace.CurrentKeyState.GetPressedKeys().Length > 0)
+                {
                     _phase = MenuPhase;
+                    SoundManager.PlayConfirmSe();
+                }
 
                 var delta = (float)gameTime.TotalGameTime.TotalMilliseconds / 10;
                 _pressAnyButtonPosition.Y = (float)MathUtils.SinInterpolation(_pressAnyButtonInitialY, _pressAnyButtonInitialY + 5, delta);
@@ -130,10 +133,16 @@ namespace Super_Pete_The_Pirate.Scenes
         private void HandleInput()
         {
             if (InputManager.Instace.KeyPressed(Keys.Up) || InputManager.Instace.KeyPressed(Keys.Left))
+            {
                 _index = _index - 1 < 0 ? _menuOptions.Length - 1 : _index - 1;
+                SoundManager.PlaySelectSe();
+            }
 
             if (InputManager.Instace.KeyPressed(Keys.Down) || InputManager.Instace.KeyPressed(Keys.Right))
+            {
                 _index = _index + 1 > _menuOptions.Length - 1 ? 0 : _index + 1;
+                SoundManager.PlaySelectSe();
+            }
 
             if (_phase == MenuPhase && InputManager.Instace.KeyPressed(Keys.Z, Keys.Enter))
             {
@@ -141,14 +150,17 @@ namespace Super_Pete_The_Pirate.Scenes
                 {
                     case NewGame:
                         CommandNewGame();
+                        SoundManager.PlayConfirmSe();
                         break;
 
                     case LoadGame:
                         CommandLoadGame();
+                        SoundManager.PlayConfirmSe();
                         break;
 
                     case Exit:
                         SceneManager.Instance.RequestExit();
+                        SoundManager.PlayConfirmSe();
                         break;
                 }
             }

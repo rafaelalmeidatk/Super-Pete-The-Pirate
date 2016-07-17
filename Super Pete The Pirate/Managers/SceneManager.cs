@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended.BitmapFonts;
 using MonoGame.Extended.Sprites;
 using MonoGame.Extended.ViewportAdapters;
+using Super_Pete_The_Pirate.Managers;
 using Super_Pete_The_Pirate.Scenes;
 using System;
 using System.Collections.Generic;
@@ -99,7 +100,7 @@ namespace Super_Pete_The_Pirate
         private SceneManager()
         {
             TypeOfSceneSaves = SceneSavesType.Save;
-            _currentScene = new SceneMap();
+            _currentScene = new SceneTitle();
         }
 
         public void RequestExit()
@@ -125,6 +126,7 @@ namespace Super_Pete_The_Pirate
             _gameFontSmall = Content.Load<BitmapFont>("fonts/AlagardSmall");
             _gameFontBig = Content.Load<BitmapFont>("fonts/AlagardBig");
             ParticleManager = new ParticleManager<ParticleState>(1024 * 20, ParticleState.UpdateParticle);
+            SoundManager.Initialize();
             _currentScene.LoadContent();
         }
 
@@ -138,7 +140,7 @@ namespace Super_Pete_The_Pirate
             if (_isTransitioning)
                 UpdateTransition(gameTime);
             else if (InputManager.Instace.KeyPressed(Keys.F5))
-                    DebugMode = !DebugMode;
+                DebugMode = !DebugMode;
 
             ParticleManager.Update(gameTime);
 

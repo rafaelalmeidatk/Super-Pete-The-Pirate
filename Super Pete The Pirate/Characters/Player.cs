@@ -9,6 +9,7 @@ using System.Diagnostics;
 using Super_Pete_The_Pirate.Scenes;
 using Super_Pete_The_Pirate.Objects;
 using Super_Pete_The_Pirate.Managers;
+using Microsoft.Xna.Framework.Audio;
 
 namespace Super_Pete_The_Pirate
 {
@@ -69,6 +70,16 @@ namespace Super_Pete_The_Pirate
 
         private bool _active;
         public bool Active => _active;
+
+        //--------------------------------------------------
+        // SEs
+
+        private SoundEffect _aerialAttackSe;
+        private SoundEffect _normalAttackSe;
+        private SoundEffect _footstepSe;
+
+        private float _footstepCooldown;
+        private float _footstepTick;
 
         //----------------------//------------------------//
 
@@ -200,6 +211,10 @@ namespace Super_Pete_The_Pirate
             _requestRespawn = false;
             _active = true;
             _keysLocked = false;
+
+            _aerialAttackSe = SoundManager.LoadSe("Aerial");
+            _normalAttackSe = SoundManager.LoadSe("Sword");
+            _footstepSe = SoundManager.LoadSe("Footstep");
         }
 
         public override void GainHP(int amount)
@@ -216,17 +231,30 @@ namespace Super_Pete_The_Pirate
         {
             if (!_active) return;
 
+            var deltaTime = (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+
             _keysLocked = keyLock;
             if (!keyLock)
                 CheckKeys(gameTime);
 
             if (_dying)
             {
-                _deathTick += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+                _deathTick += deltaTime;
                 if (_deathTick >= DeathMaxTick)
                 {
                     _requestRespawn = true;
                     _active = false;
+                }
+            }
+
+            if (_movement != 0 && _isOnGround)
+            {
+                _footstepTick += deltaTime;
+                if (_footstepTick >= _footstepCooldown)
+                {
+                    _footstepSe.PlaySafe();
+                    _footstepCooldown = _rand.NextFloat(400.0f, 600.0f);
+                    _footstepTick = 0.0f;
                 }
             }
 
@@ -270,29 +298,36 @@ namespace Super_Pete_The_Pirate
                 _movement = 1.0f;
             }
 
-            if (InputManager.Instace.KeyPressed(Keys.G))
-                _knockbackAcceleration = 5000f;
-
             _isJumping = InputManager.Instace.KeyDown(Keys.C);
 
             if (InputManager.Instace.KeyPressed(Keys.C) && _isOnGround)
                 CreateJumpParticles();
 
             // Attack
-            if (!_isAttacking &&
-                ((_isOnGround && InputManager.Instace.KeyPressed(Keys.S)) || (!_isOnGround && InputManager.Instace.KeyDown(Keys.S))))
-                StartNormalAttack();
-
-            if (InputManager.Instace.KeyPressed(Keys.A) && !_isAttacking)
-                RequestAttack(ShotAttack);
+            if (!_isAttacking && !_dying)
+            {
+                if (!_isAttacking &&
+                    ((_isOnGround && InputManager.Instace.KeyPressed(Keys.S)) || (!_isOnGround && InputManager.Instace.KeyDown(Keys.S))))
+                    StartNormalAttack();
+                
+                if (InputManager.Instace.KeyPressed(Keys.A) && !_isAttacking && !_dying)
+                    RequestAttack(ShotAttack);
+            }
         }
 
         private void StartNormalAttack()
         {
             if (_isOnGround)
+            {
                 RequestAttack(NormalAttack);
+                _normalAttackSe.PlaySafe();
+            }
             else
+            {
+                if (_attackType != AerialAttack)
+                    _aerialAttackSe.PlaySafe();
                 RequestAttack(AerialAttack);
+            }
         }
 
         public override void UpdateAttack(GameTime gameTime)
@@ -368,6 +403,13 @@ namespace Super_Pete_The_Pirate
 
             ((SceneMap)SceneManager.Instance.GetCurrentScene()).CreateProjectile("common", position, dx, 0, damage, ProjectileSubject.FromPlayer);
             PlayerManager.Instance.AddAmmo(-1);
+        }
+
+        protected override void OnGroundLand()
+        {
+            base.OnGroundLand();
+            _footstepSe.PlaySafe();
+            _footstepTick = 0.0f;
         }
 
         private void CreateConfettiParticles(Vector2 position, int signal)

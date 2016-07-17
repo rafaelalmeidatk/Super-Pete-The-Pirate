@@ -1,12 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using MonoGame.Extended.BitmapFonts;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Super_Pete_The_Pirate.Managers;
 
 namespace Super_Pete_The_Pirate.Scenes
 {
@@ -80,10 +75,20 @@ namespace Super_Pete_The_Pirate.Scenes
             }
 
             if (InputManager.Instace.KeyPressed(Keys.Up, Keys.W))
+            {
+                var lastIndex = _index;
                 _index = _index - 1 < 0 ? _menu.Length - 1 : _index - 1;
+                if (lastIndex != _index)
+                    SoundManager.PlaySelectSe();
+            }
 
             if (InputManager.Instace.KeyPressed(Keys.Down, Keys.S))
+            {
+                var lastIndex = _index;
                 _index = (_index + 1) % _menu.Length;
+                if (lastIndex != _index)
+                    SoundManager.PlaySelectSe();
+            }
 
             if (InputManager.Instace.KeyPressed(Keys.Z, Keys.Enter))
             {
@@ -94,16 +99,20 @@ namespace Super_Pete_The_Pirate.Scenes
                         break;
 
                     case 1:
-                        returnToMenu();
+                        ReturnToMenu();
                         break;
                 }
+                SoundManager.PlayConfirmSe();
             }
 
             if (InputManager.Instace.KeyPressed(Keys.Escape, Keys.P))
+            {
                 _paused = false;
+                SoundManager.PlayCancelSe();
+            }
         }
 
-        private void returnToMenu()
+        private void ReturnToMenu()
         {
             SceneManager.Instance.ChangeScene("SceneTitle");
         }

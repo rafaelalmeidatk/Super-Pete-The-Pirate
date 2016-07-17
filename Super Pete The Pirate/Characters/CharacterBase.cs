@@ -3,6 +3,8 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Super_Pete_The_Pirate.Sprites;
+using Microsoft.Xna.Framework.Audio;
+using Super_Pete_The_Pirate.Managers;
 
 namespace Super_Pete_The_Pirate
 {
@@ -50,6 +52,11 @@ namespace Super_Pete_The_Pirate
         private bool _firstGroudLand;
 
         //--------------------------------------------------
+        // Hit Se
+
+        protected SoundEffect _hitSe;
+
+        //--------------------------------------------------
         // Bounding Rectangle
 
         public override Rectangle BoundingRectangle
@@ -90,6 +97,10 @@ namespace Super_Pete_The_Pirate
             _rand = new Random();
 
             _firstGroudLand = false;
+
+            // SE init
+
+            _hitSe = SoundManager.LoadSe("Hit");
         }
 
         public T Clone<T>() where T : CharacterBase
@@ -124,6 +135,8 @@ namespace Super_Pete_The_Pirate
                 _dyingAcceleration = Math.Sign(Position.X - subjectPosition.X) * 0.7f;
                 OnDie();
             }
+
+            _hitSe.PlaySafe();
         }
 
         public virtual void GainHP(int amount)

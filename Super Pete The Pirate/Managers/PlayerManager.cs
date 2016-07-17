@@ -73,6 +73,7 @@ namespace Super_Pete_The_Pirate.Managers
             _ammo = ammo;
             _lives = lives;
             _hearts = hearts;
+            _coins = coins;
             _stagesCompleted = stagesCompleted;
         }
 

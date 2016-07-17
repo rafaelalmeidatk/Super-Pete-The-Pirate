@@ -172,22 +172,41 @@ namespace Super_Pete_The_Pirate.Scenes
 
             if (InputManager.Instace.KeyPressed(Keys.Right, Keys.Up))
             {
+                var lastIndex = _selectedIndex;
                 var limit = PlayerManager.Instance.StagesCompleted == 5 ? 4 : PlayerManager.Instance.StagesCompleted;
                 _selectedIndex = _selectedIndex + 1 > limit ? 0 : _selectedIndex + 1;
-                UpdatePeteHeadPosition();
+                if (lastIndex != _selectedIndex)
+                {
+                    UpdatePeteHeadPosition();
+                    SoundManager.PlaySelectSe();
+                }
             }
+
             if (InputManager.Instace.KeyPressed(Keys.Left, Keys.Down))
             {
+                var lastIndex = _selectedIndex;
                 var limit = PlayerManager.Instance.StagesCompleted == 5 ? 4 : PlayerManager.Instance.StagesCompleted;
                 _selectedIndex = _selectedIndex - 1 < 0 ? limit : _selectedIndex - 1;
-                UpdatePeteHeadPosition();
+                if (lastIndex != _selectedIndex)
+                {
+                    UpdatePeteHeadPosition();
+                    SoundManager.PlaySelectSe();
+                }
             }
+
             if (InputManager.Instace.KeyPressed(Keys.Enter, Keys.Z))
             {
+                SoundManager.PlayConfirmSe();
                 LoadMap();
             }
 
-            _stageSelectionSprite.Update(gameTime);
+            if (InputManager.Instace.KeyPressed(Keys.Escape, Keys.X))
+            {
+                SoundManager.PlayCancelSe();
+                SceneManager.Instance.ChangeScene("SceneTitle");
+            }
+
+                _stageSelectionSprite.Update(gameTime);
             _stageSelectionPeteSprite.Update(gameTime);
             if (_pressZTextPosition.Y <= _pressZTextInitY + 7 && _pressZTextSide)
             {
