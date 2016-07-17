@@ -31,13 +31,19 @@ namespace Super_Pete_The_Pirate.Objects
         private Rectangle[] _checkedFrames;
 
         //--------------------------------------------------
+        // End Flag
+
+        private bool _endFlag;
+        public bool IsEndFlag => _endFlag;
+
+        //--------------------------------------------------
         // Random
 
         protected Random _rand;
 
         //----------------------//------------------------//
 
-        public GameCheckpoint(Texture2D texture, Rectangle[] frames, int delay, int x, int y)
+        public GameCheckpoint(Texture2D texture, Rectangle[] frames, int delay, int x, int y, bool endFlag)
             : base(texture, frames, delay, x, y, true)
         {
             // Mechanics init
@@ -60,6 +66,7 @@ namespace Super_Pete_The_Pirate.Objects
             };
 
             _runningUp = false;
+            _endFlag = endFlag;
 
             _rand = new Random();
         }

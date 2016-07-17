@@ -243,21 +243,23 @@ namespace Super_Pete_The_Pirate.Scenes
 
             foreach (var checkpointObj in checkpointGroup.Objects)
             {
-                CreateCheckpoints(Convert.ToInt32(checkpointObj.X), Convert.ToInt32(checkpointObj.Y - 96));
+                var endFlag = checkpointObj.Properties.ContainsKey("EndFlag") && checkpointObj.Properties["EndFlag"] == "true";
+                CreateCheckpoints(Convert.ToInt32(checkpointObj.X), Convert.ToInt32(checkpointObj.Y - 96), endFlag);
             }
         }
 
-        private GameCheckpoint CreateCheckpoints(int x, int y)
+        private GameCheckpoint CreateCheckpoints(int x, int y, bool endFlag)
         {
             var checkpointTexture = ImageManager.loadMisc("checkPointSpritesheet");
+            var yInc = endFlag ? 192 : 0;
             var checkpointFrames = new Rectangle[]
             {
-                new Rectangle(0, 0, 64, 96),
-                new Rectangle(64, 0, 64, 96),
-                new Rectangle(128, 0, 64, 96)
+                new Rectangle(0, yInc, 64, 96),
+                new Rectangle(64, yInc, 64, 96),
+                new Rectangle(128, yInc, 64, 96)
             };
             var checkpointBoundingBox = new Rectangle(0, 24, 37, 72);
-            var checkpoint = new GameCheckpoint(checkpointTexture, checkpointFrames, 130, x, y);
+            var checkpoint = new GameCheckpoint(checkpointTexture, checkpointFrames, 130, x, y, endFlag);
             checkpoint.SetBoundingBox(checkpointBoundingBox);
             _checkpoints.Add(checkpoint);
             return checkpoint;
@@ -497,17 +499,24 @@ namespace Super_Pete_The_Pirate.Scenes
             {
                 if (!_checkpoints[i].IsChecked && _player.BoundingRectangle.Intersects(_checkpoints[i].BoundingBox))
                 {
-                    _checkpoints[i].OnPlayerCheck();
-                    var checkpointData = new CheckpointData()
+                    if (_checkpoints[i].IsEndFlag)
                     {
-                        Activated = true,
-                        Checkpoint = _checkpoints[i],
-                        MapEnemies = new List<Enemy>(_enemies.Select(enemy => enemy.Clone<Enemy>())),
-                        MapCoins = new List<GameCoin>(_coins.Select(coin => coin.Clone())),
-                        Ammo = PlayerManager.Instance.Ammo,
-                        Coins = PlayerManager.Instance.Coins
-                    };
-                    _lastCheckpoint = checkpointData;
+                        FinishStage(false);
+                    }
+                    else
+                    {
+                        _checkpoints[i].OnPlayerCheck();
+                        var checkpointData = new CheckpointData()
+                        {
+                            Activated = true,
+                            Checkpoint = _checkpoints[i],
+                            MapEnemies = new List<Enemy>(_enemies.Select(enemy => enemy.Clone<Enemy>())),
+                            MapCoins = new List<GameCoin>(_coins.Select(coin => coin.Clone())),
+                            Ammo = PlayerManager.Instance.Ammo,
+                            Coins = PlayerManager.Instance.Coins
+                        };
+                        _lastCheckpoint = checkpointData;
+                    }
                 }
                 _checkpoints[i].Update(gameTime);
             }
@@ -620,6 +629,7 @@ namespace Super_Pete_The_Pirate.Scenes
 
         private void FinishStage(bool failed)
         {
+            if (_stageCompleted) return;
             _stageCompleted = true;
             var data = new SceneMapSCHelper.StageCompletedData
             {

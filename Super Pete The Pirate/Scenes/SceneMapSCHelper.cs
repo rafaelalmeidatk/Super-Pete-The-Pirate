@@ -327,7 +327,7 @@ namespace Super_Pete_The_Pirate.Scenes
                     else
                     {
                         var newValue = TimeSpan.FromTicks((long)MathHelper.Lerp(0.0f, _timeValues[1].Ticks, delta));
-                        if (!_timeValues[0].Equals(newValue))
+                        if ((int)_timeValues[0].TotalSeconds != (int)newValue.TotalSeconds)
                         {
                             _numberSe.Play();
                         }
