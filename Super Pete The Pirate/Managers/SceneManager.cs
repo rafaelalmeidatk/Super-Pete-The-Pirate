@@ -133,6 +133,7 @@ namespace Super_Pete_The_Pirate
         public void UnloadContent()
         {
             _currentScene.UnloadContent();
+            SoundManager.Dispose();
         }
 
         public void Update(GameTime gameTime)

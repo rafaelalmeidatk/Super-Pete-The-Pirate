@@ -77,6 +77,12 @@ namespace Super_Pete_The_Pirate.Managers
             _stagesCompleted = stagesCompleted;
         }
 
+        public void ResetHeartsAndLives()
+        {
+            _hearts = InitialHearts;
+            _lives = InitialLives;
+        }
+
         public void HandleRespawn()
         {
             _lives--;

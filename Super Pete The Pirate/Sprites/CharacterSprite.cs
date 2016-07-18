@@ -209,6 +209,13 @@ namespace Super_Pete_The_Pirate
                 Effect = SpriteEffects.None;
         }
 
+        public void RemoveImmunity()
+        {
+            _immunityAnimation = false;
+            _immunityTick = 0;
+            _immunityTimeElapsed = 0;
+        }
+
         public void RequestImmunityAnimation()
         {
             _immunityAnimation = true;

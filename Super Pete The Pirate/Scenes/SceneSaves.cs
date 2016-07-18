@@ -354,27 +354,37 @@ namespace Super_Pete_The_Pirate.Scenes
                     {
                         spriteBatch.Draw(_peteSpritesheet, slotPosition + _peteHeadPosition, _peteDefaultFrame, Color.White);
                     }
+
                     // Save Name
                     spriteBatch.DrawString(gameFont, "SAVE NAME", slotPosition + _namePosition, _fontColor);
+
                     // Stages
                     var divisorPosition = Vector2.Zero;
                     for (var j = 0; j < _gameSaves[i].StagesCompleted; j++)
                     {
                         var markPosition = slotPosition + _stagesPosition + ((_stagePeteMarkFrame.Width + 4) * j * Vector2.UnitX);
                         spriteBatch.Draw(_stageSpritesheet, markPosition, _stagePeteMarkFrame, Color.White);
-                        divisorPosition = markPosition + (_stagePeteMarkFrame.Width + 1) * Vector2.UnitX + (9 * Vector2.UnitY);
-                        spriteBatch.Draw(_stageSpritesheet, divisorPosition, _stageDivisorFrame, Color.White);
+                        if (j < 4)
+                        {
+                            divisorPosition = markPosition + (_stagePeteMarkFrame.Width + 1) * Vector2.UnitX + (9 * Vector2.UnitY);
+                            spriteBatch.Draw(_stageSpritesheet, divisorPosition, _stageDivisorFrame, Color.White);
+                        }
                     }
-                    var nextMarkPos = (divisorPosition == Vector2.Zero) ? (slotPosition + _stagesPosition) : (divisorPosition - (9 * Vector2.UnitY) + (3 * Vector2.UnitX));
-                    if (_slotIndex == i)
+
+                    if (_gameSaves[i].StagesCompleted < 5)
                     {
-                        _nextStageMarkAnimatedSprite.Position = nextMarkPos;
-                        _nextStageMarkAnimatedSprite.Draw(spriteBatch);
+                        var nextMarkPos = (divisorPosition == Vector2.Zero) ? (slotPosition + _stagesPosition) : (divisorPosition - (9 * Vector2.UnitY) + (3 * Vector2.UnitX));
+                        if (_slotIndex == i)
+                        {
+                            _nextStageMarkAnimatedSprite.Position = nextMarkPos;
+                            _nextStageMarkAnimatedSprite.Draw(spriteBatch);
+                        }
+                        else
+                        {
+                            spriteBatch.Draw(_stageSpritesheet, nextMarkPos, _stageNextMarkFrame, Color.White);
+                        }
                     }
-                    else
-                    {
-                        spriteBatch.Draw(_stageSpritesheet, nextMarkPos, _stageNextMarkFrame, Color.White);
-                    }
+
                     // Lives
                     var lives = _gameSaves[i].Lives;
                     var livesWidth = (lives * _lifeFrame.Width) + (lives - 1);
@@ -384,6 +394,7 @@ namespace Super_Pete_The_Pirate.Scenes
                         var lifePosition = livesPosition + ((_lifeFrame.Width + 1) * j * Vector2.UnitX);
                         spriteBatch.Draw(_iconsSpritesheet, lifePosition, _lifeFrame, Color.White);
                     }
+
                     // Hearts
                     var hearts = _gameSaves[i].Hearts;
                     var heartsWidth = (hearts * _heartFrame.Width) + (hearts - 1) * 5;
@@ -393,9 +404,11 @@ namespace Super_Pete_The_Pirate.Scenes
                         var heartPosition = heartsPosition + ((_heartFrame.Width + 5) * j * Vector2.UnitX);
                         spriteBatch.Draw(_iconsSpritesheet, heartPosition, _heartFrame, Color.White);
                     }
+
                     // Ammo
                     spriteBatch.Draw(_iconsSpritesheet, slotPosition + _ammoPosition, _ammoFrame, Color.White);
                     spriteBatch.DrawString(gameFont, _gameSaves[i].Ammo.ToString(), slotPosition + _ammoTextPosition, _fontColor);
+
                     // Coins
                     spriteBatch.Draw(_iconsSpritesheet, slotPosition + _coinsPosition, _coinFrame, Color.White);
                     spriteBatch.DrawString(gameFont, _gameSaves[i].Coins.ToString(), slotPosition + _coinsTextPosition, _fontColor);

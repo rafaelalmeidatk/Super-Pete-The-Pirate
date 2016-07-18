@@ -39,14 +39,12 @@ namespace Super_Pete_The_Pirate.Scenes
         // Projectiles
 
         private Dictionary<string, Texture2D> _projectilesTextures;
-
         private List<GameProjectile> _projectiles;
 
         //--------------------------------------------------
         // Shops
 
         private List<GameShop> _shops;
-        public List<GameShop> Shops { get { return _shops; } }
 
         //--------------------------------------------------
         // Checkpoints
@@ -116,11 +114,6 @@ namespace Super_Pete_The_Pirate.Scenes
 
         //----------------------//------------------------//
 
-        public Camera2D GetCamera()
-        {
-            return _camera;
-        }
-
         public override void LoadContent()
         {
             base.LoadContent();
@@ -153,8 +146,8 @@ namespace Super_Pete_The_Pirate.Scenes
             // Random init
             _rand = new Random();
 
-            // End stage init
-            InitializeEndStage();
+            // Stage Complete Helper init
+            _stageCompletedHelper = new SceneMapSCHelper();
 
             // Pause helper init
             _pauseHelper = new SceneMapPauseHelper();
@@ -175,11 +168,6 @@ namespace Super_Pete_The_Pirate.Scenes
             base.UnloadContent();
         }
 
-        private void InitializeEndStage()
-        {
-            _stageCompletedHelper = new SceneMapSCHelper();
-        }
-
         private void InitializeTrackVariables()
         {
             _time = new TimeSpan();
@@ -191,7 +179,7 @@ namespace Super_Pete_The_Pirate.Scenes
         private void CreateHud()
         {
             _gameHud = new GameHud(ImageManager.loadSystem("IconsSpritesheet"));
-            _gameHud.SetPosition(new Vector2(50, 5),
+            _gameHud.SetPosition(new Vector2(5, 5),
                 new Vector2(SceneManager.Instance.VirtualSize.X - 45, 5));
         }
 
@@ -430,7 +418,10 @@ namespace Super_Pete_The_Pirate.Scenes
                     }
                     else if (_projectiles[j].BoundingBox.Intersects(_player.BoundingRectangle))
                     {
+                        var lastHearts = _player.HP;
                         _player.ReceiveAttack(_projectiles[j].Damage, _projectiles[j].LastPosition);
+                        if (lastHearts - _player.HP > 0)
+                            _heartsLost += lastHearts - _player.HP;
                         _projectiles[j].Destroy();
                     }
 
@@ -451,6 +442,7 @@ namespace Super_Pete_The_Pirate.Scenes
                 if (_player.BoundingRectangle.Intersects(spike) && !_player.TouchedSpikes)
                 {
                     _heartsLost += _player.HP;
+                    _player.CharacterSprite.RemoveImmunity();
                     _player.ReceiveAttackWithRect(999, spike);
                     _player.TouchedSpikes = true;
                 }
@@ -658,7 +650,7 @@ namespace Super_Pete_The_Pirate.Scenes
 
             _backgroundHelper.Draw(_camera, spriteBatch);
 
-            // Draw the camera (with the map)
+            // Draw the map
             GameMap.Instance.Draw(_camera, spriteBatch);
 
             spriteBatch.Begin(transformMatrix: _camera.GetViewMatrix(), samplerState: SamplerState.PointClamp);

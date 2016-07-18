@@ -79,7 +79,6 @@ namespace Super_Pete_The_Pirate.Scenes
             base.LoadContent();
 
             // Positions init
-
             _ammoPosition = new Vector2(33, 166);
             _coinsPosition = new Vector2(33, 217);
             _shadowPositionIncrease = new Vector2(1, 1);
@@ -94,28 +93,24 @@ namespace Super_Pete_The_Pirate.Scenes
             _lifeSpritePosition = new Vector2(0, 11);
 
             // Sprites init
-
             _heartSprite = new Rectangle(1, 16, 13, 11);
             _lifeSprite = new Rectangle(0, 0, 15, 14);
 
             // Font color init
-
             _fontColor = new Color(8, 11, 24);
             _fontShadowColor = new Color(169, 113, 82);
 
             // Textures init
-
             _backgroundTexture = ImageManager.loadScene(ScenePathName, "IslandMapBackground");
             _iconsTexture = ImageManager.loadScene(ScenePathName, "IconMap");
 
             // Index init
+            _selectedIndex = GetCurrentStage() >= 5 ? 4 : GetCurrentStage();
 
-            _selectedIndex = PlayerManager.Instance.StagesCompleted >= 5 ? 4 : PlayerManager.Instance.StagesCompleted;
-
-            setupMap();
+            SetupMap();
         }
 
-        private void setupMap()
+        private void SetupMap()
         {
             _stageSelectionPositions = new Vector2[]
             {
@@ -137,7 +132,9 @@ namespace Super_Pete_The_Pirate.Scenes
             };
             _stageSelectionSprite = new AnimatedSprite(_stageSelectionSpritesheet, stageSelectionFrames, 130, 
                 (int)stageSelectionPosition.X, (int)stageSelectionPosition.Y);
+
             _stageSelectionSprite.Origin = new Vector2(9, 9);
+
             if (GetCurrentStage() == 5)
                 _stageSelectionSprite.IsVisible = false;
 
@@ -164,6 +161,8 @@ namespace Super_Pete_The_Pirate.Scenes
             );
             _pressZTextInitY = _pressZTextPosition.Y;
             _pressZTextSide = true;
+
+            UpdatePeteHeadPosition();
         }
 
         public override void Update(GameTime gameTime)
@@ -173,7 +172,7 @@ namespace Super_Pete_The_Pirate.Scenes
             if (InputManager.Instace.KeyPressed(Keys.Right, Keys.Up))
             {
                 var lastIndex = _selectedIndex;
-                var limit = PlayerManager.Instance.StagesCompleted == 5 ? 4 : PlayerManager.Instance.StagesCompleted;
+                var limit = GetCurrentStage() == 5 ? 4 : GetCurrentStage();
                 _selectedIndex = _selectedIndex + 1 > limit ? 0 : _selectedIndex + 1;
                 if (lastIndex != _selectedIndex)
                 {
@@ -185,7 +184,7 @@ namespace Super_Pete_The_Pirate.Scenes
             if (InputManager.Instace.KeyPressed(Keys.Left, Keys.Down))
             {
                 var lastIndex = _selectedIndex;
-                var limit = PlayerManager.Instance.StagesCompleted == 5 ? 4 : PlayerManager.Instance.StagesCompleted;
+                var limit = GetCurrentStage() == 5 ? 4 : GetCurrentStage();
                 _selectedIndex = _selectedIndex - 1 < 0 ? limit : _selectedIndex - 1;
                 if (lastIndex != _selectedIndex)
                 {
@@ -206,8 +205,9 @@ namespace Super_Pete_The_Pirate.Scenes
                 SceneManager.Instance.ChangeScene("SceneTitle");
             }
 
-                _stageSelectionSprite.Update(gameTime);
+            _stageSelectionSprite.Update(gameTime);
             _stageSelectionPeteSprite.Update(gameTime);
+
             if (_pressZTextPosition.Y <= _pressZTextInitY + 7 && _pressZTextSide)
             {
                 _pressZTextPosition.Y += 10 * (float)gameTime.ElapsedGameTime.TotalSeconds;
@@ -215,7 +215,8 @@ namespace Super_Pete_The_Pirate.Scenes
                 {
                     _pressZTextSide = false;
                 }
-            } else if (_pressZTextPosition.Y >= _pressZTextInitY && !_pressZTextSide)
+            }
+            else if (_pressZTextPosition.Y >= _pressZTextInitY && !_pressZTextSide)
             {
                 _pressZTextPosition.Y -= 10 * (float)gameTime.ElapsedGameTime.TotalSeconds;
                 if (_pressZTextPosition.Y <= _pressZTextInitY)

@@ -73,5 +73,12 @@ namespace Super_Pete_The_Pirate.Managers
         {
             _selectSe.PlaySafe();
         }
+
+        public static void Dispose()
+        {
+            _cancelSe.Dispose();
+            _confirmSe.Dispose();
+            _selectSe.Dispose();
+        }
     }
 }

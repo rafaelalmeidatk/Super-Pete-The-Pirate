@@ -275,15 +275,23 @@ namespace Super_Pete_The_Pirate.Scenes
 
             if (InputManager.Instace.KeyPressed(Keys.Z, Keys.Enter) && _phase >= 2)
             {
-                if (PlayerManager.Instance.StagesCompleted < GameMap.Instance.CurrentMapId)
-                    PlayerManager.Instance.CompleteStage();
-                SceneManager.Instance.TypeOfSceneSaves = SceneManager.SceneSavesType.Save;
-                SceneManager.Instance.ChangeScene("SceneSaves");
+                if (PlayerManager.Instance.Lives > 0)
+                {
+                    if (PlayerManager.Instance.StagesCompleted < GameMap.Instance.CurrentMapId)
+                        PlayerManager.Instance.CompleteStage();
+                    SceneManager.Instance.TypeOfSceneSaves = SceneManager.SceneSavesType.Save;
+                    SceneManager.Instance.ChangeScene("SceneSaves");
+                }
+                else
+                {
+                    PlayerManager.Instance.ResetHeartsAndLives();
+                    SceneManager.Instance.ChangeScene("SceneStageSelect");
+                }
             }
 
             if (InputManager.Instace.KeyPressed(Keys.X))
             {
-                PlayerManager.Instance.CreateNewGame();
+                PlayerManager.Instance.ResetHeartsAndLives();
                 SceneManager.Instance.ChangeScene("SceneMap"); // Restart the stage
             }
 

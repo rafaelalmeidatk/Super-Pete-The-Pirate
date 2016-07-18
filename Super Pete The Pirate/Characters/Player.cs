@@ -324,9 +324,10 @@ namespace Super_Pete_The_Pirate
             }
             else
             {
-                if (_attackType != AerialAttack)
-                    _aerialAttackSe.PlaySafe();
+                var oldAttackType = _attackType;
                 RequestAttack(AerialAttack);
+                if (_attackType == AerialAttack && oldAttackType != AerialAttack)
+                    _aerialAttackSe.PlaySafe();
             }
         }
 
