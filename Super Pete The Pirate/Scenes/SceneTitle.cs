@@ -102,6 +102,9 @@ namespace Super_Pete_The_Pirate.Scenes
             _menuIconBaseY = _menuY + SceneManager.Instance.GameFont.LineHeight / 2;
             _menuIcon = new Sprite(ImageManager.loadScene(ScenePathName, "indexIcon"));
             _menuIcon.Position = new Vector2(13, _menuIconBaseY);
+
+            // Start BGM
+            SoundManager.StartBgm(SoundManager.BGMType.NonMap);
         }
 
         public override void UnloadContent()

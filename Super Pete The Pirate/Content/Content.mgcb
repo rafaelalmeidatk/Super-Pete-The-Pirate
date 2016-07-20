@@ -725,3 +725,33 @@
 /processorParam:Quality=Best
 /build:sounds/se/Select.ogg
 
+#begin sounds/se/Coins.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sounds/se/Coins.ogg
+
+#begin sounds/se/ShotPeteEmpty.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sounds/se/ShotPeteEmpty.ogg
+
+#begin sounds/se/Shot.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sounds/se/Shot.ogg
+
+#begin sounds/bgm/AchaidhCheide.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:sounds/bgm/AchaidhCheide.mp3
+
+#begin sounds/bgm/AngevinB.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:sounds/bgm/AngevinB.mp3
+

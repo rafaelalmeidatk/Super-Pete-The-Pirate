@@ -18,6 +18,7 @@ using System.Diagnostics;
 using Super_Pete_The_Pirate.Sprites;
 using Super_Pete_The_Pirate.Managers;
 using Super_Pete_The_Pirate.Extensions;
+using Microsoft.Xna.Framework.Audio;
 
 namespace Super_Pete_The_Pirate.Scenes
 {
@@ -40,6 +41,7 @@ namespace Super_Pete_The_Pirate.Scenes
 
         private Dictionary<string, Texture2D> _projectilesTextures;
         private List<GameProjectile> _projectiles;
+        private SoundEffect _shotSe;
 
         //--------------------------------------------------
         // Shops
@@ -61,12 +63,14 @@ namespace Super_Pete_The_Pirate.Scenes
             public List<GameCoin> MapCoins;
             public int Ammo;
             public int Coins;
+            public int CoinsCollected;
         }
 
         //--------------------------------------------------
         // Coins
 
         private List<GameCoin> _coins;
+        private SoundEffect _coinsSe;
 
         //--------------------------------------------------
         // Camera stuff
@@ -133,6 +137,7 @@ namespace Super_Pete_The_Pirate.Scenes
                 {"common", ImageManager.loadProjectile("Common")}
             };
             _projectiles = new List<GameProjectile>();
+            _shotSe = SoundManager.LoadSe("Shot");
 
             // Shops init
             _shops = new List<GameShop>();
@@ -142,6 +147,7 @@ namespace Super_Pete_The_Pirate.Scenes
 
             // Coins init
             _coins = new List<GameCoin>();
+            _coinsSe = SoundManager.LoadSe("Coins");
 
             // Random init
             _rand = new Random();
@@ -160,6 +166,9 @@ namespace Super_Pete_The_Pirate.Scenes
 
             // Create the HUD
             CreateHud();
+
+            // Start BGM
+            SoundManager.StartBgm(SoundManager.BGMType.Map);
         }
 
         public override void UnloadContent()
@@ -329,6 +338,8 @@ namespace Super_Pete_The_Pirate.Scenes
 
         public void CreateProjectile(string name, Vector2 position, int dx, int dy, int damage, ProjectileSubject subject)
         {
+            if (name == "common")
+                SoundManager.PlaySafe(_shotSe);
             _projectiles.Add(new GameProjectile(_projectilesTextures[name], position, dx, dy, damage, subject));
         }
 
@@ -342,7 +353,8 @@ namespace Super_Pete_The_Pirate.Scenes
                 MapEnemies = new List<Enemy>(_enemies.Select(enemy => enemy.Clone<Enemy>())),
                 MapCoins = new List<GameCoin>(_coins.Select(coin => coin.Clone())),
                 Ammo = PlayerManager.Instance.Ammo,
-                Coins = PlayerManager.Instance.Coins
+                Coins = PlayerManager.Instance.Coins,
+                CoinsCollected = _coinsCollected
             };
             _lastCheckpoint = checkpointData;
         }
@@ -462,6 +474,7 @@ namespace Super_Pete_The_Pirate.Scenes
                     PlayerManager.Instance.AddCoins(1);
                     sprite.SetTexture(ImageManager.loadMisc("CoinSparkle"), false);
                     sprite.SetDelay(80);
+                    SoundManager.PlaySafe(_coinsSe);
                 }
             }
 
@@ -505,7 +518,8 @@ namespace Super_Pete_The_Pirate.Scenes
                             MapEnemies = new List<Enemy>(_enemies.Select(enemy => enemy.Clone<Enemy>())),
                             MapCoins = new List<GameCoin>(_coins.Select(coin => coin.Clone())),
                             Ammo = PlayerManager.Instance.Ammo,
-                            Coins = PlayerManager.Instance.Coins
+                            Coins = PlayerManager.Instance.Coins,
+                            CoinsCollected = _coinsCollected
                         };
                         _lastCheckpoint = checkpointData;
                     }
@@ -562,7 +576,7 @@ namespace Super_Pete_The_Pirate.Scenes
                 _coins = new List<GameCoin>(_lastCheckpoint.MapCoins.Select(x => x.Clone()));
                 PlayerManager.Instance.SetAmmo(_lastCheckpoint.Ammo);
                 PlayerManager.Instance.SetCoins(_lastCheckpoint.Coins);
-                _coinsCollected = _lastCheckpoint.Coins;
+                _coinsCollected = _lastCheckpoint.CoinsCollected;
                 _enemiesDefeated = _maxEnemies - _lastCheckpoint.MapEnemies.Count;
             }
             else

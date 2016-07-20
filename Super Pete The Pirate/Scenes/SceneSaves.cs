@@ -87,7 +87,6 @@ namespace Super_Pete_The_Pirate.Scenes
             base.LoadContent();
 
             // Strings init
-
             _titleStrings = new Dictionary<SceneManager.SceneSavesType, string>()
             {
                 { SceneManager.SceneSavesType.Save, "Save Game"},
@@ -95,7 +94,6 @@ namespace Super_Pete_The_Pirate.Scenes
             };
 
             // Textures init
-
             _loadingBackgroundTexture = new Texture2D(SceneManager.Instance.GraphicsDevice, 1, 1, false, SurfaceFormat.Color);
             _loadingBackgroundTexture.SetData<Color>(new Color[] { Color.Black });
 
@@ -145,12 +143,10 @@ namespace Super_Pete_The_Pirate.Scenes
             _coinFrame = new Rectangle(0, 33, 20, 14);
 
             // Font color init
-
             _fontColor = new Color(31, 29, 28);
             _secFontColor = new Color(222, 196, 158);
 
             // Slots init
-
             _slotsPosition = new Rectangle[]
             {
                 new Rectangle(41, 46, 279, 45),
@@ -161,7 +157,6 @@ namespace Super_Pete_The_Pirate.Scenes
             _slotIndex = 0;
 
             // Positions init
-
             _peteHeadPosition = new Vector2(0, 5);
             _namePosition = new Vector2(40, 1);
             _stagesPosition = new Vector2(39, 18);
@@ -176,9 +171,11 @@ namespace Super_Pete_The_Pirate.Scenes
             _arrowPosition = new Vector2(10, _slotsPosition[_slotIndex].Y + (_slotsPosition[_slotIndex].Height - 15) / 2);
 
             // General variables
-            
             _loadingVisible = true;
             _loadResponses = 0;
+
+            // Play BGM
+            SoundManager.StartBgm(SoundManager.BGMType.NonMap);
 
             ReadSaves();
         }
@@ -364,14 +361,14 @@ namespace Super_Pete_The_Pirate.Scenes
                     {
                         var markPosition = slotPosition + _stagesPosition + ((_stagePeteMarkFrame.Width + 4) * j * Vector2.UnitX);
                         spriteBatch.Draw(_stageSpritesheet, markPosition, _stagePeteMarkFrame, Color.White);
-                        if (j < 4)
+                        if (j < SceneManager.MaxLevels - 1)
                         {
                             divisorPosition = markPosition + (_stagePeteMarkFrame.Width + 1) * Vector2.UnitX + (9 * Vector2.UnitY);
                             spriteBatch.Draw(_stageSpritesheet, divisorPosition, _stageDivisorFrame, Color.White);
                         }
                     }
 
-                    if (_gameSaves[i].StagesCompleted < 5)
+                    if (_gameSaves[i].StagesCompleted < SceneManager.MaxLevels)
                     {
                         var nextMarkPos = (divisorPosition == Vector2.Zero) ? (slotPosition + _stagesPosition) : (divisorPosition - (9 * Vector2.UnitY) + (3 * Vector2.UnitX));
                         if (_slotIndex == i)

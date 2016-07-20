@@ -76,6 +76,7 @@ namespace Super_Pete_The_Pirate
 
         private SoundEffect _aerialAttackSe;
         private SoundEffect _normalAttackSe;
+        private SoundEffect _shotEmptyAttackSe;
         private SoundEffect _footstepSe;
 
         private float _footstepCooldown;
@@ -212,8 +213,10 @@ namespace Super_Pete_The_Pirate
             _active = true;
             _keysLocked = false;
 
+            // SEs init
             _aerialAttackSe = SoundManager.LoadSe("Aerial");
             _normalAttackSe = SoundManager.LoadSe("Sword");
+            _shotEmptyAttackSe = SoundManager.LoadSe("ShotPeteEmpty");
             _footstepSe = SoundManager.LoadSe("Footstep");
         }
 
@@ -286,32 +289,35 @@ namespace Super_Pete_The_Pirate
 
         private void CheckKeys(GameTime gameTime)
         {
-            // Movement
-            if (InputManager.Instace.KeyDown(Keys.Left) && Math.Abs(_knockbackAcceleration) < 1200f)
+            if (!_dying)
             {
-                CharacterSprite.SetDirection(SpriteDirection.Left);
-                _movement = -1.0f; 
-            }
-            else if (InputManager.Instace.KeyDown(Keys.Right) && Math.Abs(_knockbackAcceleration) < 1200f)
-            {
-                CharacterSprite.SetDirection(SpriteDirection.Right);
-                _movement = 1.0f;
-            }
+                // Movement
+                if (InputManager.Instace.KeyDown(Keys.Left) && Math.Abs(_knockbackAcceleration) < 1200f)
+                {
+                    CharacterSprite.SetDirection(SpriteDirection.Left);
+                    _movement = -1.0f;
+                }
+                else if (InputManager.Instace.KeyDown(Keys.Right) && Math.Abs(_knockbackAcceleration) < 1200f)
+                {
+                    CharacterSprite.SetDirection(SpriteDirection.Right);
+                    _movement = 1.0f;
+                }
 
-            _isJumping = InputManager.Instace.KeyDown(Keys.C);
+                _isJumping = InputManager.Instace.KeyDown(Keys.C);
 
-            if (InputManager.Instace.KeyPressed(Keys.C) && _isOnGround)
-                CreateJumpParticles();
+                if (InputManager.Instace.KeyPressed(Keys.C) && _isOnGround)
+                    CreateJumpParticles();
 
-            // Attack
-            if (!_isAttacking && !_dying)
-            {
-                if (!_isAttacking &&
-                    ((_isOnGround && InputManager.Instace.KeyPressed(Keys.S)) || (!_isOnGround && InputManager.Instace.KeyDown(Keys.S))))
-                    StartNormalAttack();
-                
-                if (InputManager.Instace.KeyPressed(Keys.A) && !_isAttacking && !_dying)
-                    RequestAttack(ShotAttack);
+                // Attack
+                if (!_isAttacking)
+                {
+                    if (!_isAttacking &&
+                        ((_isOnGround && InputManager.Instace.KeyPressed(Keys.S)) || (!_isOnGround && InputManager.Instace.KeyDown(Keys.S))))
+                        StartNormalAttack();
+
+                    if (InputManager.Instace.KeyPressed(Keys.A) && !_isAttacking && !_dying)
+                        RequestAttack(ShotAttack);
+                }
             }
         }
 
@@ -399,6 +405,7 @@ namespace Super_Pete_The_Pirate
                 if (CharacterSprite.Effect == SpriteEffects.FlipHorizontally)
                     position -= new Vector2(23, 0);
                 CreateConfettiParticles(position, Math.Sign(dx));
+                SoundManager.PlaySafe(_shotEmptyAttackSe);
                 return;
             }
 

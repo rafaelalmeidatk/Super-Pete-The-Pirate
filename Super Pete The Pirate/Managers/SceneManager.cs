@@ -78,9 +78,10 @@ namespace Super_Pete_The_Pirate
         public SceneSavesType TypeOfSceneSaves = SceneSavesType.Load;
 
         //--------------------------------------------------
-        // Map To Load
+        // Maps info
 
         public int MapToLoad = 1;
+        public const int MaxLevels = 2;
 
         //----------------------//------------------------//
 

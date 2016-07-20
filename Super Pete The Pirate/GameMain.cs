@@ -33,7 +33,7 @@ namespace Super_Pete_The_Pirate
 
             DisplayMode displayMode = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode;
             this.Window.Position = new Point((displayMode.Width - (int)windowSize.X) / 2, (displayMode.Height - (int)windowSize.Y) / 2);
-            this.Window.AllowUserResizing = true;
+            this.Window.AllowUserResizing = false;
 
             GameWindow = this.Window;
         }

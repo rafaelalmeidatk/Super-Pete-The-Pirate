@@ -20,6 +20,7 @@ namespace Super_Pete_The_Pirate.Scenes
 
         private const string ScenePathName = "stageSelect";
         private const string MapPressMessage = "Press Z to start!";
+        private const string DemoCompletedMessage = "Thanks for playing the demo!\nThe complete game is comming soon,\nkeep alert little pirate!";
 
         //--------------------------------------------------
         // Positions
@@ -54,6 +55,8 @@ namespace Super_Pete_The_Pirate.Scenes
         private Vector2 _pressZTextPosition;
         private float _pressZTextInitY;
         private bool _pressZTextSide;
+
+        private Vector2 _demoCompletedMessagePosition;
 
         //--------------------------------------------------
         // Font color
@@ -105,13 +108,17 @@ namespace Super_Pete_The_Pirate.Scenes
             _iconsTexture = ImageManager.loadScene(ScenePathName, "IconMap");
 
             // Index init
-            _selectedIndex = GetCurrentStage() >= 5 ? 4 : GetCurrentStage();
+            _selectedIndex = GetCurrentStage() >= SceneManager.MaxLevels ? SceneManager.MaxLevels - 1 : GetCurrentStage();
+
+            // Start BGM
+            SoundManager.StartBgm(SoundManager.BGMType.NonMap);
 
             SetupMap();
         }
 
         private void SetupMap()
         {
+            var maxLevels = SceneManager.MaxLevels;
             _stageSelectionPositions = new Vector2[]
             {
                 new Vector2(111, 130),
@@ -120,7 +127,10 @@ namespace Super_Pete_The_Pirate.Scenes
                 new Vector2(231, 126),
                 new Vector2(278, 134)
             };
-            var stageSelectionPosition = GetCurrentStage() == 5 ? Vector2.Zero : _stageSelectionPositions[GetCurrentStage()];
+            var a = GetCurrentStage();
+            var nextLevelPos = _stageSelectionPositions[GetCurrentStage()];
+            var currentLevelPos = _stageSelectionPositions[Math.Max(GetCurrentStage() - 1, 0)];
+            var stageSelectionPosition = GetCurrentStage() > maxLevels ? _stageSelectionPositions[0] : GetCurrentStage() >= maxLevels ? currentLevelPos : nextLevelPos;
 
             _stageSelectionSpritesheet = ImageManager.loadScene(ScenePathName, "StageSelectionSpritesheet");
             var stageSelectionFrames = new Rectangle[]
@@ -135,7 +145,7 @@ namespace Super_Pete_The_Pirate.Scenes
 
             _stageSelectionSprite.Origin = new Vector2(9, 9);
 
-            if (GetCurrentStage() == 5)
+            if (GetCurrentStage() == maxLevels)
                 _stageSelectionSprite.IsVisible = false;
 
             var _stageSelectionPeteSpritesheet = ImageManager.loadScene(ScenePathName, "StageSelectionPeteSpritesheet");
@@ -162,6 +172,12 @@ namespace Super_Pete_The_Pirate.Scenes
             _pressZTextInitY = _pressZTextPosition.Y;
             _pressZTextSide = true;
 
+            var demoSize = SceneManager.Instance.GameFont.MeasureString(DemoCompletedMessage);
+            _demoCompletedMessagePosition = new Vector2(
+                65,
+                SceneManager.Instance.VirtualSize.Y - demoSize.Y * 3 - 1
+            );
+
             UpdatePeteHeadPosition();
         }
 
@@ -172,7 +188,7 @@ namespace Super_Pete_The_Pirate.Scenes
             if (InputManager.Instace.KeyPressed(Keys.Right, Keys.Up))
             {
                 var lastIndex = _selectedIndex;
-                var limit = GetCurrentStage() == 5 ? 4 : GetCurrentStage();
+                var limit = GetCurrentStage() == SceneManager.MaxLevels ? SceneManager.MaxLevels - 1 : GetCurrentStage();
                 _selectedIndex = _selectedIndex + 1 > limit ? 0 : _selectedIndex + 1;
                 if (lastIndex != _selectedIndex)
                 {
@@ -184,7 +200,7 @@ namespace Super_Pete_The_Pirate.Scenes
             if (InputManager.Instace.KeyPressed(Keys.Left, Keys.Down))
             {
                 var lastIndex = _selectedIndex;
-                var limit = GetCurrentStage() == 5 ? 4 : GetCurrentStage();
+                var limit = GetCurrentStage() == SceneManager.MaxLevels ? SceneManager.MaxLevels - 1 : GetCurrentStage();
                 _selectedIndex = _selectedIndex - 1 < 0 ? limit : _selectedIndex - 1;
                 if (lastIndex != _selectedIndex)
                 {
@@ -266,7 +282,10 @@ namespace Super_Pete_The_Pirate.Scenes
                     new Vector2(9, 9), SpriteEffects.None, 0f);
             }
 
-            spriteBatch.DrawString(SceneManager.Instance.GameFont, MapPressMessage, _pressZTextPosition, _fontColor);
+            if (GetCurrentStage() >= SceneManager.MaxLevels)
+                spriteBatch.DrawString(SceneManager.Instance.GameFont, DemoCompletedMessage, _demoCompletedMessagePosition, _fontColor);
+            else
+                spriteBatch.DrawString(SceneManager.Instance.GameFont, MapPressMessage, _pressZTextPosition, _fontColor);
             
             // Map sprites
             _stageSelectionSprite.Draw(spriteBatch);
