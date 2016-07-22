@@ -90,6 +90,11 @@ namespace Super_Pete_The_Pirate.Scenes
         private Random _rand;
 
         //--------------------------------------------------
+        // Ambience
+
+        private SoundEffectInstance _ambienceSe;
+
+        //--------------------------------------------------
         // Stage Completed Helper
 
         private bool _finishStageCalled;
@@ -161,14 +166,27 @@ namespace Super_Pete_The_Pirate.Scenes
             // Background init
             _backgroundHelper = new SceneMapBackgroundHelper();
 
+            // Ambience SE init
+            var ambienceSe = SoundManager.LoadSe("Ambience");
+            if (ambienceSe == null)
+            {
+                _ambienceSe = null;
+            }
+            else
+            {
+                _ambienceSe = ambienceSe.CreateInstance();
+                _ambienceSe.IsLooped = true;
+            }
+
             // Load the map
             LoadMap(SceneManager.Instance.MapToLoad);
 
             // Create the HUD
             CreateHud();
 
-            // Start BGM
+            // Start BGM and Ambience SE
             SoundManager.StartBgm(SoundManager.BGMType.Map);
+            _ambienceSe.PlaySafe();
         }
 
         public override void UnloadContent()
@@ -551,7 +569,7 @@ namespace Super_Pete_The_Pirate.Scenes
             x = MathHelper.Clamp(x, 0.0f, GameMap.Instance.MapWidth - viewport.VirtualWidth);
             var y = MathHelper.Lerp(_camera.Position.Y, newPosition.Y + playerOffsetY, CameraSmooth);
             y = MathHelper.Clamp(y, 0.0f, GameMap.Instance.MapHeight - viewport.VirtualHeight);
-            _camera.Position = new Vector2(x, y);
+            _camera.Position = new Vector2((int)x, (int)y);
         }
 
         private void HandlePlayerRespawn()

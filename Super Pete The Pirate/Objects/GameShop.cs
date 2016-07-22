@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Super_Pete_The_Pirate.Managers;
@@ -68,6 +69,11 @@ namespace Super_Pete_The_Pirate.Objects
         private Dictionary<GameShopType, int> _prices;
 
         //--------------------------------------------------
+        // Buy SE
+
+        private SoundEffect _buySe;
+
+        //--------------------------------------------------
         // Bounding Rectangle
 
         public Rectangle BoundingRectangle
@@ -109,6 +115,9 @@ namespace Super_Pete_The_Pirate.Objects
             // Mechanics init
             _isActive = false;
             _clickTimer = 0;
+
+            // SE init
+            _buySe = SoundManager.LoadSe("Coins");
         }
 
         public void SetActive(bool active)
@@ -174,6 +183,7 @@ namespace Super_Pete_The_Pirate.Objects
         {
             _arrowState = ArrowClick;
             _clickTimer = 5;
+            _buySe.PlaySafe();
         }
 
         public void Draw(SpriteBatch spriteBatch)

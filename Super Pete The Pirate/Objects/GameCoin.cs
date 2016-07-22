@@ -29,7 +29,7 @@ namespace Super_Pete_The_Pirate.Objects
 
         //--------------------------------------------------
         // Physics
-
+        
         private bool _applyPhysics;
         private float _xAcceleration;
 
@@ -56,7 +56,7 @@ namespace Super_Pete_The_Pirate.Objects
                 if (_xAcceleration != 0f)
                 {
                     _velocity.X += _xAcceleration;
-                    _xAcceleration *= 0.96f;
+                    _xAcceleration *= _isOnGround ? GroundDragFactor : 0.96f;
                 }
                 base.Update(gameTime);
             }

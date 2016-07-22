@@ -256,7 +256,7 @@ namespace Super_Pete_The_Pirate
                 if (_footstepTick >= _footstepCooldown)
                 {
                     _footstepSe.PlaySafe();
-                    _footstepCooldown = _rand.NextFloat(400.0f, 600.0f);
+                    _footstepCooldown = _rand.NextFloat(250.0f, 320.0f);
                     _footstepTick = 0.0f;
                 }
             }

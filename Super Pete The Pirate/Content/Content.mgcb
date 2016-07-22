@@ -755,3 +755,9 @@
 /processorParam:Quality=Best
 /build:sounds/bgm/AngevinB.mp3
 
+#begin sounds/se/Ambience.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sounds/se/Ambience.ogg
+
