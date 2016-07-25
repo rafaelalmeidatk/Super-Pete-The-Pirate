@@ -46,12 +46,12 @@ namespace Super_Pete_The_Pirate
         // Constants for controlling vertical movement
 
         protected const float MaxJumpTime = 0.35f;
-        protected const float JumpLaunchVelocity = -2500.0f;
+        protected const float JumpLaunchVelocity = -600.0f;
         protected const float GravityAcceleration = 3400.0f;
         protected const float DyingGravityAcceleration = 2500.0f;
         protected const float MaxFallSpeed = 550.0f;
-        protected const float JumpControlPower = 0.14f;
-        protected const float PlayerSpeed = 0.3f;
+        protected const float JumpControlPower = 1.05f;
+        protected const float PlayerSpeed = 0.25f;
 
         //--------------------------------------------------
         // Jumping states

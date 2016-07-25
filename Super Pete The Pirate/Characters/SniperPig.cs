@@ -5,6 +5,7 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Super_Pete_The_Pirate.Scenes;
+using Super_Pete_The_Pirate.Managers;
 
 namespace Super_Pete_The_Pirate.Characters
 {
@@ -79,6 +80,9 @@ namespace Super_Pete_The_Pirate.Characters
             _alertAnimation = false;
             _shot = false;
             _damage = 2;
+
+            // SE init
+            _hitSe = SoundManager.LoadSe("PigHit");
 
             CreateViewRange();
         }

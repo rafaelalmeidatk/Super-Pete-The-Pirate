@@ -100,12 +100,14 @@ namespace Super_Pete_The_Pirate.Managers
 
         public static void PlaySafe(this SoundEffect se)
         {
-            se?.Play();
+            if (_soundOn)
+                se?.Play();
         }
 
         public static void PlaySafe(this SoundEffectInstance seInstance)
         {
-            seInstance?.Play();
+            if (_soundOn)
+                seInstance?.Play();
         }
 
         public static void PlayCancelSe()

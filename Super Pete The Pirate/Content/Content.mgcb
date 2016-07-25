@@ -761,3 +761,33 @@
 /processorParam:Quality=Best
 /build:sounds/se/Ambience.ogg
 
+#begin sounds/se/Buy.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sounds/se/Buy.ogg
+
+#begin sounds/se/ParrotHit.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sounds/se/ParrotHit.ogg
+
+#begin sounds/se/PigHit.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sounds/se/PigHit.ogg
+
+#begin imgs/scenes/map/DemoPicture.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:imgs/scenes/map/DemoPicture.png
+

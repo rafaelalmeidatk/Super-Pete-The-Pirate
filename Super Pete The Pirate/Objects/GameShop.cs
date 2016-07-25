@@ -117,7 +117,7 @@ namespace Super_Pete_The_Pirate.Objects
             _clickTimer = 0;
 
             // SE init
-            _buySe = SoundManager.LoadSe("Coins");
+            _buySe = SoundManager.LoadSe("Buy");
         }
 
         public void SetActive(bool active)

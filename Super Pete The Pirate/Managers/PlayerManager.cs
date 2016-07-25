@@ -31,26 +31,34 @@ namespace Super_Pete_The_Pirate.Managers
         // Player info
 
         private int _ammo;
-        public int Ammo { get { return _ammo; } }
+        public int Ammo => _ammo;
 
         private int _lives;
-        public int Lives { get { return _lives; } }
+        public int Lives => _lives;
 
         private int _hearts;
-        public int Hearts { get { return _hearts; } }
+        public int Hearts => _hearts;
 
         private int _coins;
-        public int Coins { get { return _coins; } }
+        public int Coins => _coins;
+
+        //--------------------------------------------------
+        // Initial data
 
         public const int InitialAmmo = 5;
         public const int InitialLives = 3;
         public const int InitialHearts = 5;
 
         //--------------------------------------------------
+        // Demo picture
+
+        public bool DemoPicture { get; set; }
+
+        //--------------------------------------------------
         // Stages completed
 
         private int _stagesCompleted;
-        public int StagesCompleted { get { return _stagesCompleted; } }
+        public int StagesCompleted => _stagesCompleted;
 
         //----------------------//------------------------//
 
@@ -61,6 +69,7 @@ namespace Super_Pete_The_Pirate.Managers
             _hearts = InitialHearts;
             _coins = 0;
             _stagesCompleted = 0;
+            DemoPicture = false;
         }
 
         public void CreateNewGame()

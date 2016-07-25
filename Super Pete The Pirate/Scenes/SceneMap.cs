@@ -112,6 +112,13 @@ namespace Super_Pete_The_Pirate.Scenes
         private SceneMapBackgroundHelper _backgroundHelper;
 
         //--------------------------------------------------
+        // Demo picture
+
+        private Texture2D _demoPicture;
+        private bool _showingDemoPicture;
+        private float _demoPictureInterval;
+
+        //--------------------------------------------------
         // Track variables
 
         private int _coinsCollected;
@@ -177,6 +184,9 @@ namespace Super_Pete_The_Pirate.Scenes
                 _ambienceSe = ambienceSe.CreateInstance();
                 _ambienceSe.IsLooped = true;
             }
+
+            // Demo picure
+            _demoPicture = ImageManager.loadScene("map", "DemoPicture");
 
             // Load the map
             LoadMap(SceneManager.Instance.MapToLoad);
@@ -380,7 +390,19 @@ namespace Super_Pete_The_Pirate.Scenes
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
-            
+
+            if (_showingDemoPicture)
+            {
+                _demoPictureInterval -= (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+                if (InputManager.Instace.CurrentKeyState.GetPressedKeys().Length > 0 && _demoPictureInterval <= 0f)
+                {
+                    _showingDemoPicture = false;
+                    FinishStage(false);
+                    return;
+                }
+                return;
+            }
+
             // Helpers
             if (_stageCompleted)
                 _stageCompletedHelper.Update(gameTime);
@@ -524,7 +546,16 @@ namespace Super_Pete_The_Pirate.Scenes
                 {
                     if (_checkpoints[i].IsEndFlag)
                     {
-                        FinishStage(false);
+                        if (GameMap.Instance.CurrentMapId == 2 && !PlayerManager.Instance.DemoPicture)
+                        {
+                            _showingDemoPicture = true;
+                            PlayerManager.Instance.DemoPicture = true;
+                            _demoPictureInterval = 3000.0f;
+                        }
+                        else
+                        {
+                            FinishStage(false);
+                        }
                     }
                     else
                     {
@@ -546,16 +577,6 @@ namespace Super_Pete_The_Pirate.Scenes
             }
 
             UpdateCamera();
-
-            if (InputManager.Instace.KeyPressed(Keys.P))
-            {
-                CreateParticle();
-            }
-
-            if (InputManager.Instace.KeyPressed(Keys.Q))
-            {
-                FinishStage(false);
-            }
         }
 
         private void UpdateCamera()
@@ -732,6 +753,11 @@ namespace Super_Pete_The_Pirate.Scenes
 
             // Draw the Hud
             _gameHud.Draw(spriteBatch);
+
+            if (_showingDemoPicture)
+            {
+                spriteBatch.Draw(_demoPicture, Vector2.Zero, Color.White);
+            }
 
             if (_stageCompleted)
                 _stageCompletedHelper.Draw(spriteBatch);

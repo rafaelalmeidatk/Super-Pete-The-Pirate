@@ -57,6 +57,9 @@ namespace Super_Pete_The_Pirate.Characters
             _damage = 2;
             _flyDirection = Direction.Right;
 
+            // SE init
+            _hitSe = SoundManager.LoadSe("ParrotHit");
+
             IgnoreGravity = true;
         }
 

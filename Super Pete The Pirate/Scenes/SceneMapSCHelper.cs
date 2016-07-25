@@ -421,7 +421,7 @@ namespace Super_Pete_The_Pirate.Scenes
             }
 
             IconsManager.Instance.DrawActionButton(spriteBatch, new Vector2(5, screenSize.Y - 40), false, "Continue", _buttonsAlpha, true);
-            IconsManager.Instance.DrawCancelButton(spriteBatch, new Vector2(5, screenSize.Y - 20), false, "Restart", _buttonsAlpha, true);
+            IconsManager.Instance.DrawCancelButton(spriteBatch, new Vector2(5, screenSize.Y - 20), false, "Again", _buttonsAlpha, true);
         }
 
         private Color CalculateColor(int value, int maxValue)

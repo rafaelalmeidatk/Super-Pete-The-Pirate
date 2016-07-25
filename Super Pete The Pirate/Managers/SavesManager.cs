@@ -45,6 +45,7 @@ namespace Super_Pete_The_Pirate.Managers
             public int Hearts;
             public int Coins;
             public int StagesCompleted;
+            public bool DemoPicture;
         }
 
         //--------------------------------------------------
@@ -87,7 +88,8 @@ namespace Super_Pete_The_Pirate.Managers
                     Lives = player.Lives,
                     Hearts = player.Hearts,
                     Coins = player.Coins,
-                    StagesCompleted = player.StagesCompleted
+                    StagesCompleted = player.StagesCompleted,
+                    DemoPicture = player.DemoPicture
                 };
                 IAsyncResult r = _storageDevice.BeginOpenContainer(_storageContainerName, null, null);
                 result.AsyncWaitHandle.WaitOne();

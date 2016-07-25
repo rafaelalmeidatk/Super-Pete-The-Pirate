@@ -44,7 +44,7 @@ namespace Super_Pete_The_Pirate.Scenes
         private const int NewGame = 0;
         private const int LoadGame = 1;
         private const int Options = 2;
-        private const int Exit = 3;
+        private const int Exit = 2;
 
         //--------------------------------------------------
         // Menu icon
@@ -93,7 +93,6 @@ namespace Super_Pete_The_Pirate.Scenes
             {
                 "New Game",
                 "Load Game",
-                "Options",
                 "Exit"
             };
             _menuY = viewportHeight - (_menuOptions.Length * SceneManager.Instance.GameFont.LineHeight) - 7;
@@ -116,55 +115,59 @@ namespace Super_Pete_The_Pirate.Scenes
         {
             base.Update(gameTime);
 
-            HandleInput();
+            HandleInput(gameTime);
 
             _menuIcon.Position = new Vector2(_menuIcon.Position.X, _menuIconBaseY + (SceneManager.Instance.GameFont.LineHeight * _index));
+        }
 
+        private void HandleInput(GameTime gameTime)
+        {
             if (_phase == PressAnyButtonPhase)
             {
                 if (InputManager.Instace.CurrentKeyState.GetPressedKeys().Length > 0)
                 {
                     _phase = MenuPhase;
                     SoundManager.PlayConfirmSe();
+                    return;
                 }
 
                 var delta = (float)gameTime.TotalGameTime.TotalMilliseconds / 10;
                 _pressAnyButtonPosition.Y = (float)MathUtils.SinInterpolation(_pressAnyButtonInitialY, _pressAnyButtonInitialY + 5, delta);
             }
-        }
 
-        private void HandleInput()
-        {
-            if (InputManager.Instace.KeyPressed(Keys.Up) || InputManager.Instace.KeyPressed(Keys.Left))
+            if (_phase == MenuPhase)
             {
-                _index = _index - 1 < 0 ? _menuOptions.Length - 1 : _index - 1;
-                SoundManager.PlaySelectSe();
-            }
-
-            if (InputManager.Instace.KeyPressed(Keys.Down) || InputManager.Instace.KeyPressed(Keys.Right))
-            {
-                _index = _index + 1 > _menuOptions.Length - 1 ? 0 : _index + 1;
-                SoundManager.PlaySelectSe();
-            }
-
-            if (_phase == MenuPhase && InputManager.Instace.KeyPressed(Keys.Z, Keys.Enter))
-            {
-                switch (_index)
+                if (InputManager.Instace.KeyPressed(Keys.Up) || InputManager.Instace.KeyPressed(Keys.Left))
                 {
-                    case NewGame:
-                        CommandNewGame();
-                        SoundManager.PlayConfirmSe();
-                        break;
+                    _index = _index - 1 < 0 ? _menuOptions.Length - 1 : _index - 1;
+                    SoundManager.PlaySelectSe();
+                }
 
-                    case LoadGame:
-                        CommandLoadGame();
-                        SoundManager.PlayConfirmSe();
-                        break;
+                if (InputManager.Instace.KeyPressed(Keys.Down) || InputManager.Instace.KeyPressed(Keys.Right))
+                {
+                    _index = _index + 1 > _menuOptions.Length - 1 ? 0 : _index + 1;
+                    SoundManager.PlaySelectSe();
+                }
 
-                    case Exit:
-                        SceneManager.Instance.RequestExit();
-                        SoundManager.PlayConfirmSe();
-                        break;
+                if (InputManager.Instace.KeyPressed(Keys.Z, Keys.Enter))
+                {
+                    switch (_index)
+                    {
+                        case NewGame:
+                            CommandNewGame();
+                            SoundManager.PlayConfirmSe();
+                            break;
+
+                        case LoadGame:
+                            CommandLoadGame();
+                            SoundManager.PlayConfirmSe();
+                            break;
+
+                        case Exit:
+                            SceneManager.Instance.RequestExit();
+                            SoundManager.PlayConfirmSe();
+                            break;
+                    }
                 }
             }
         }

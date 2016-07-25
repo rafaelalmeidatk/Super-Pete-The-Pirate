@@ -252,7 +252,6 @@ namespace Super_Pete_The_Pirate.Scenes
 
                 if (InputManager.Instace.KeyPressed(Keys.Z, Keys.Enter))
                 {
-                    SoundManager.PlayConfirmSe();
                     HandleConfirm();
                 }
 
@@ -300,8 +299,17 @@ namespace Super_Pete_The_Pirate.Scenes
         private void Load()
         {
             var save = _gameSaves[_slotIndex];
-            PlayerManager.Instance.SetData(save.Ammo, save.Lives, save.Hearts, save.Coins, save.StagesCompleted);
-            SceneManager.Instance.ChangeScene("SceneStageSelect");
+            if (save.StagesCompleted > 0)
+            {
+                SoundManager.PlayConfirmSe();
+                PlayerManager.Instance.SetData(save.Ammo, save.Lives, save.Hearts, save.Coins, save.StagesCompleted);
+                PlayerManager.Instance.DemoPicture = save.DemoPicture;
+                SceneManager.Instance.ChangeScene("SceneStageSelect");
+            }
+            else
+            {
+                SoundManager.PlayCancelSe();
+            }
         }
 
         private void Save()
