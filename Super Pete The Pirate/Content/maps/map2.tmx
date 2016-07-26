@@ -495,11 +495,6 @@
     <property name="EndFlag" value="true"/>
    </properties>
   </object>
-  <object id="145" gid="71" x="160" y="704" width="32" height="32">
-   <properties>
-    <property name="EndFlag" value="true"/>
-   </properties>
-  </object>
  </objectgroup>
  <objectgroup name="Shops">
   <object id="56" gid="70" x="3129" y="608" width="32" height="32">

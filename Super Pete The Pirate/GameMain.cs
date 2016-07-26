@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended.ViewportAdapters;
+using System;
 
 namespace Super_Pete_The_Pirate
 {
@@ -81,6 +82,7 @@ namespace Super_Pete_The_Pirate
         {
             if (SceneManager.Instance.RequestingExit)
                 Exit();
+            
 
             SceneManager.Instance.Update(gameTime);
 

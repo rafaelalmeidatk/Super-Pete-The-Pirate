@@ -312,10 +312,10 @@ namespace Super_Pete_The_Pirate
                 if (!_isAttacking)
                 {
                     if (!_isAttacking &&
-                        ((_isOnGround && InputManager.Instace.KeyPressed(Keys.S)) || (!_isOnGround && InputManager.Instace.KeyDown(Keys.S))))
+                        ((_isOnGround && InputManager.Instace.KeyPressed(Keys.X)) || (!_isOnGround && InputManager.Instace.KeyDown(Keys.X))))
                         StartNormalAttack();
 
-                    if (InputManager.Instace.KeyPressed(Keys.A) && !_isAttacking && !_dying)
+                    if (InputManager.Instace.KeyPressed(Keys.Z) && !_isAttacking && !_dying)
                         RequestAttack(ShotAttack);
                 }
             }
