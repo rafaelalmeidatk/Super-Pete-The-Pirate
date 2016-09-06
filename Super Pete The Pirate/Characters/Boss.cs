@@ -1,5 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Super_Pete_The_Pirate.Objects;
+using Super_Pete_The_Pirate.Scenes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,6 +21,11 @@ namespace Super_Pete_The_Pirate.Characters
         private const int Cannonballs = 2;
 
         //--------------------------------------------------
+        // Max HP
+
+        private const int MaxHP = 50;
+
+        //--------------------------------------------------
         // Direction
 
         private Direction _direction;
@@ -26,18 +33,29 @@ namespace Super_Pete_The_Pirate.Characters
         //--------------------------------------------------
         // Dash
 
+        private const float DashSpeed = 1000.0f;
         private Direction _dashDirection;
         private float _dashDelayTick;
-        private const float DashDelayMaxTick = 1000.0f;
+        private float _dashDelayMaxTick;
         private int _dashCount;
         private bool _preparingDash;
         private bool _isDashing;
+        
+        //--------------------------------------------------
+        // Max velocity
+
+        private new float MaxMoveSpeed = 400.0f;
 
         //--------------------------------------------------
         // Requesting Shot
 
         private bool _requestingShot;
         public bool RequestingShot => _requestingShot;
+
+        //--------------------------------------------------
+        // Projectiles
+
+        private List<GameProjectile> _projectiles;
 
         //----------------------//------------------------//
 
@@ -121,10 +139,14 @@ namespace Super_Pete_The_Pirate.Characters
             _viewRangeSize = new Vector2(10, 74);
             _viewRangeOffset = new Vector2(0, -5);
             _damage = 2;
-            _dashDelayTick = DashDelayMaxTick;
+            _dashDelayMaxTick = 1000.0f;
+            _dashDelayTick = _dashDelayMaxTick;
 
             // Direction init
             _direction = CharacterSprite.Effect == SpriteEffects.None ? Direction.Left : Direction.Right;
+
+            // Projectiles init
+            _projectiles = new List<GameProjectile>();
 
             CreateViewRange();
         }
@@ -138,7 +160,33 @@ namespace Super_Pete_The_Pirate.Characters
             }
             else
             {
+                if (type == Cannonballs)
+                {
+                    CreateCannonballs();
+                }
                 base.RequestAttack(type);
+            }
+        }
+
+        private void CreateCannonballs()
+        {
+            var sceneMap = (SceneMap)SceneManager.Instance.GetCurrentScene();
+            var positions = new int[][]
+            {
+                new int[] { 0, 1 }, new int[] { 0, 2 }, new int[] { 0, 3 }, new int[] { 1, 2 }, new int[] { 2, 3 },
+                new int[] { 0, 1, 2 }, new int[] { 0, 2, 3 }
+            };
+            var positionsY = new int[] { 72, 108, 144, 180 };
+            var i = _rand.Next(HP < MaxHP * 0.5f ? 7 : 5);
+            var i2 = positions[i];
+            var y1 = positionsY[i2[0]];
+            var y2 = positionsY[i2[1]];
+            sceneMap.CreateProjectile("cannonball", new Vector2(360, y1), -7, 0, 1, ProjectileSubject.FromEnemy);
+            sceneMap.CreateProjectile("cannonball", new Vector2(360, y2), -7, 0, 1, ProjectileSubject.FromEnemy);
+            if (i > 4)
+            {
+                var y3 = positionsY[i2[2]];
+                sceneMap.CreateProjectile("cannonball", new Vector2(360, y3), -7, 0, 1, ProjectileSubject.FromEnemy);
             }
         }
 
@@ -150,11 +198,13 @@ namespace Super_Pete_The_Pirate.Characters
 
         public override void Update(GameTime gameTime)
         {
+            var deltaTime = (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+
             if (_dashDelayTick > 0f)
                 _dashDelayTick -= (float)gameTime.ElapsedGameTime.TotalMilliseconds;
 
             if (_isDashing)
-                _velocity.X = _dashDirection == Direction.Right ? 1000f : -1000f;
+                _velocity.X = _dashDirection == Direction.Right ? DashSpeed * deltaTime : -DashSpeed * deltaTime;
 
             base.Update(gameTime);
 
@@ -165,7 +215,7 @@ namespace Super_Pete_The_Pirate.Characters
                 _velocity.X = 0;
                 CharacterSprite.Effect = SpriteEffects.FlipHorizontally;
                 _direction = Direction.Right;
-                _dashDelayTick = DashDelayMaxTick;
+                _dashDelayTick = _dashDelayMaxTick;
             }
             else if (_isDashing && _dashDirection == Direction.Right && Position.X > 288)
             {
@@ -174,8 +224,11 @@ namespace Super_Pete_The_Pirate.Characters
                 _velocity.X = 0;
                 CharacterSprite.Effect = SpriteEffects.None;
                 _direction = Direction.Left;
-                _dashDelayTick = DashDelayMaxTick;
+                _dashDelayTick = _dashDelayMaxTick;
             }
+
+            if (HP < MaxHP * 0.5f)
+                _dashDelayMaxTick = 500.0f;
 
             UpdateSpriteEffect();
         }
@@ -190,7 +243,7 @@ namespace Super_Pete_The_Pirate.Characters
             else if (IsFreeToAttack() && _dashDelayTick <= 0)
             {
                 RequestAttack(Cannonballs);
-                _dashDelayTick = DashDelayMaxTick;
+                _dashDelayTick = _dashDelayMaxTick;
                 _dashCount = 0;
             }
 
@@ -207,9 +260,8 @@ namespace Super_Pete_The_Pirate.Characters
             if (_isAttacking && _attackType == Cannonballs && CharacterSprite.Looped)
             {
                 _requestingShot = true;
-                _dashDelayTick = DashDelayMaxTick * 2.0f;   
+                _dashDelayTick = _dashDelayMaxTick * 1.4f;
             }
-                
 
             if (!_preparingDash && !_isDashing)
                 base.UpdateAttack(gameTime);
@@ -219,14 +271,14 @@ namespace Super_Pete_The_Pirate.Characters
         {
             if (_dying)
                 CharacterSprite.SetIfFrameListExists("dying");
-            else if (CharacterSprite.ImmunityAnimationActive)
-                CharacterSprite.SetIfFrameListExists("damage");
             else if (_preparingDash)
                 CharacterSprite.SetFrameList("dash_preparation");
             else if (_isDashing)
                 CharacterSprite.SetFrameList("dash_attack");
             else if (_isAttacking)
                 CharacterSprite.SetFrameList(_attackFrameList[_attackType]);
+            else if (CharacterSprite.ImmunityAnimationActive)
+                CharacterSprite.SetIfFrameListExists("damage");
             else if (!_isOnGround)
                 CharacterSprite.SetIfFrameListExists("jumping");
             else
@@ -251,6 +303,11 @@ namespace Super_Pete_The_Pirate.Characters
         public bool IsFreeToAttack()
         {
             return !_isDashing && !_preparingDash && !_isAttacking && !_requestAttack && !_requestErase;
+        }
+
+        protected override float GetMaxMoveSpeed()
+        {
+            return MaxMoveSpeed;
         }
     }
 }

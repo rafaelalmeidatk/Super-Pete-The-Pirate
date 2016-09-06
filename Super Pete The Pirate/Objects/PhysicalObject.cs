@@ -30,6 +30,9 @@ namespace Super_Pete_The_Pirate
         public bool IsOnGround => _isOnGround;
         protected bool _isOnGround;
 
+        protected bool _running;
+        public bool Runnning => _running;
+
         protected float _movement;
         protected float _knockbackAcceleration;
         protected float _dyingAcceleration;
@@ -38,7 +41,9 @@ namespace Super_Pete_The_Pirate
         // Constants for controling horizontal movement
 
         protected const float MoveAcceleration = 11000.0f;
+        protected const float RunningMoveAcceleration = 15000.0f;
         protected const float MaxMoveSpeed = 250.0f;
+        protected const float RunningMaxMoveSpeed = 1750.0f;
         protected const float GroundDragFactor = 0.48f;
         protected const float AirDragFactor = 0.50f;
 
@@ -109,8 +114,8 @@ namespace Super_Pete_The_Pirate
 
             Vector2 previousPosition = Position;
 
-            if (_dying) _velocity.X = _dyingAcceleration * MoveAcceleration * elapsed;
-            else _velocity.X += _movement * MoveAcceleration * elapsed;
+            if (_dying) _velocity.X = _dyingAcceleration * GetMoveAcceleration() * elapsed;
+            else _velocity.X += _movement * GetMoveAcceleration() * elapsed;
 
             UpdateKnockback(elapsed);
 
@@ -130,7 +135,7 @@ namespace Super_Pete_The_Pirate
                 _velocity.X *= AirDragFactor;
 
             // Prevent the player from running faster than his top speed.            
-            _velocity.X = MathHelper.Clamp(_velocity.X, -MaxMoveSpeed, MaxMoveSpeed);
+            _velocity.X = MathHelper.Clamp(_velocity.X, -GetMaxMoveSpeed(), GetMaxMoveSpeed());
 
             // If the player is now colliding with the level, separate them.
             if (_velocity.X != 0f)
@@ -257,6 +262,16 @@ namespace Super_Pete_The_Pirate
             }
 
             previousBottom = bounds.Bottom;
+        }
+
+        private float GetMoveAcceleration()
+        {
+            return _running ? RunningMoveAcceleration : MoveAcceleration;
+        }
+
+        protected virtual float GetMaxMoveSpeed()
+        {
+            return _running ? RunningMaxMoveSpeed : MaxMoveSpeed;
         }
     }
 }

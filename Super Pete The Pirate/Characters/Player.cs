@@ -318,6 +318,9 @@ namespace Super_Pete_The_Pirate
                     if (InputManager.Instace.KeyPressed(Keys.Z) && !_isAttacking && !_dying)
                         RequestAttack(ShotAttack);
                 }
+
+                // Run
+                _running = InputManager.Instace.KeyDown(Keys.A);
             }
         }
 
@@ -392,12 +395,12 @@ namespace Super_Pete_The_Pirate
             // Initial position of the projectile
             if (CharacterSprite.Effect == SpriteEffects.FlipHorizontally)
             {
-                position += new Vector2(13, 14);
+                position += new Vector2(13, 10);
                 dx *= -1;
             }
             else
             {
-                position += new Vector2(45, 16);
+                position += new Vector2(45, 12);
             }
 
             if (PlayerManager.Instance.Ammo <= 0)

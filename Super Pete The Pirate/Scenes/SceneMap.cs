@@ -40,6 +40,7 @@ namespace Super_Pete_The_Pirate.Scenes
         // Projectiles
 
         private Dictionary<string, Texture2D> _projectilesTextures;
+        private Texture2D _projectilesColliderTexture;
         private List<GameProjectile> _projectiles;
         private SoundEffect _shotSe;
 
@@ -146,10 +147,13 @@ namespace Super_Pete_The_Pirate.Scenes
             // Projectiles init
             _projectilesTextures = new Dictionary<string, Texture2D>()
             {
-                {"common", ImageManager.loadProjectile("Common")}
+                {"common", ImageManager.loadProjectile("Common")},
+                {"cannonball", ImageManager.loadProjectile("Cannonball")}
             };
             _projectiles = new List<GameProjectile>();
             _shotSe = SoundManager.LoadSe("Shot");
+            _projectilesColliderTexture = new Texture2D(SceneManager.Instance.GraphicsDevice, 1, 1);
+            _projectilesColliderTexture.SetData<Color>(new Color[]{ Color.Orange });
 
             // Shops init
             _shops = new List<GameShop>();
@@ -741,7 +745,10 @@ namespace Super_Pete_The_Pirate.Scenes
 
             // Draw the projectiles
             foreach (var projectile in _projectiles)
+            {
                 spriteBatch.Draw(projectile.Sprite);
+                if (debugMode) spriteBatch.Draw(_projectilesColliderTexture, projectile.BoundingBox, Color.White * 0.5f);
+            }
 
             // Draw the particles
             SceneManager.Instance.ParticleManager.Draw(spriteBatch);

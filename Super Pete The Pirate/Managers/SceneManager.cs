@@ -80,7 +80,7 @@ namespace Super_Pete_The_Pirate
         //--------------------------------------------------
         // Maps info
 
-        public int MapToLoad = 1;
+        public int MapToLoad = 6;
         public const int MaxLevels = 2;
 
         //----------------------//------------------------//
@@ -141,10 +141,8 @@ namespace Super_Pete_The_Pirate
         {
             if (_isTransitioning)
                 UpdateTransition(gameTime);
-            /*
             else if (InputManager.Instace.KeyPressed(Keys.F5))
                 DebugMode = !DebugMode;
-                */
 
             ParticleManager.Update(gameTime);
 

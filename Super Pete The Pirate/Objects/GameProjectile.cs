@@ -90,6 +90,7 @@ namespace Super_Pete_The_Pirate.Objects
         public GameProjectile(Texture2D texture, Vector2 initialPosition, float dx, float dy, int damage, ProjectileSubject subject)
         {
             _sprite = new Sprite(texture);
+            _sprite.OriginNormalized = Vector2.Zero;
             _sprite.Position = initialPosition;
             _position = initialPosition;
             LastPosition = _position;
