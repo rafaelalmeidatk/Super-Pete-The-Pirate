@@ -1,15 +1,12 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using MonoGame.Extended.BitmapFonts;
-using System.Collections.Generic;
-using System;
-using Super_Pete_The_Pirate.Sprites;
-using System.Diagnostics;
-using Super_Pete_The_Pirate.Scenes;
-using Super_Pete_The_Pirate.Objects;
 using Super_Pete_The_Pirate.Managers;
-using Microsoft.Xna.Framework.Audio;
+using Super_Pete_The_Pirate.Objects;
+using Super_Pete_The_Pirate.Scenes;
+using System;
+using System.Collections.Generic;
 
 namespace Super_Pete_The_Pirate
 {

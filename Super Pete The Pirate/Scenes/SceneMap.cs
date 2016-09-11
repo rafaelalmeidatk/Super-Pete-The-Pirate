@@ -1,24 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
-using MonoGame.Extended.Sprites;
 using MonoGame.Extended.Maps.Tiled;
-using MonoGame.Extended.BitmapFonts;
+using MonoGame.Extended.Sprites;
 using MonoGame.Extended.ViewportAdapters;
-using Microsoft.Xna.Framework.Input;
 using Super_Pete_The_Pirate.Characters;
-using Super_Pete_The_Pirate.Objects;
-using System.Diagnostics;
-using Super_Pete_The_Pirate.Sprites;
 using Super_Pete_The_Pirate.Managers;
-using Super_Pete_The_Pirate.Extensions;
-using Microsoft.Xna.Framework.Audio;
+using Super_Pete_The_Pirate.Objects;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Super_Pete_The_Pirate.Scenes
 {
@@ -113,13 +105,6 @@ namespace Super_Pete_The_Pirate.Scenes
         private SceneMapBackgroundHelper _backgroundHelper;
 
         //--------------------------------------------------
-        // Demo picture
-
-        private Texture2D _demoPicture;
-        private bool _showingDemoPicture;
-        private float _demoPictureInterval;
-
-        //--------------------------------------------------
         // Track variables
 
         private int _coinsCollected;
@@ -188,9 +173,6 @@ namespace Super_Pete_The_Pirate.Scenes
                 _ambienceSe = ambienceSe.CreateInstance();
                 _ambienceSe.IsLooped = true;
             }
-
-            // Demo picure
-            _demoPicture = ImageManager.loadScene("map", "DemoPicture");
 
             // Load the map
             LoadMap(SceneManager.Instance.MapToLoad);
@@ -395,18 +377,6 @@ namespace Super_Pete_The_Pirate.Scenes
         {
             base.Update(gameTime);
 
-            if (_showingDemoPicture)
-            {
-                _demoPictureInterval -= (float)gameTime.ElapsedGameTime.TotalMilliseconds;
-                if (InputManager.Instace.CurrentKeyState.GetPressedKeys().Length > 0 && _demoPictureInterval <= 0f)
-                {
-                    _showingDemoPicture = false;
-                    FinishStage(false);
-                    return;
-                }
-                return;
-            }
-
             // Helpers
             if (_stageCompleted)
                 _stageCompletedHelper.Update(gameTime);
@@ -550,16 +520,7 @@ namespace Super_Pete_The_Pirate.Scenes
                 {
                     if (_checkpoints[i].IsEndFlag)
                     {
-                        if (GameMap.Instance.CurrentMapId == 2 && !PlayerManager.Instance.DemoPicture)
-                        {
-                            _showingDemoPicture = true;
-                            PlayerManager.Instance.DemoPicture = true;
-                            _demoPictureInterval = 3000.0f;
-                        }
-                        else
-                        {
-                            FinishStage(false);
-                        }
+                        FinishStage(false);
                     }
                     else
                     {
@@ -760,11 +721,6 @@ namespace Super_Pete_The_Pirate.Scenes
 
             // Draw the Hud
             _gameHud.Draw(spriteBatch);
-
-            if (_showingDemoPicture)
-            {
-                spriteBatch.Draw(_demoPicture, Vector2.Zero, Color.White);
-            }
 
             if (_stageCompleted)
                 _stageCompletedHelper.Draw(spriteBatch);

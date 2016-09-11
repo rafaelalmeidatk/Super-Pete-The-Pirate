@@ -1,15 +1,11 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Storage;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace Super_Pete_The_Pirate.Managers
 {
@@ -45,7 +41,6 @@ namespace Super_Pete_The_Pirate.Managers
             public int Hearts;
             public int Coins;
             public int StagesCompleted;
-            public bool DemoPicture;
         }
 
         //--------------------------------------------------
@@ -88,8 +83,7 @@ namespace Super_Pete_The_Pirate.Managers
                     Lives = player.Lives,
                     Hearts = player.Hearts,
                     Coins = player.Coins,
-                    StagesCompleted = player.StagesCompleted,
-                    DemoPicture = player.DemoPicture
+                    StagesCompleted = player.StagesCompleted
                 };
                 IAsyncResult r = _storageDevice.BeginOpenContainer(_storageContainerName, null, null);
                 result.AsyncWaitHandle.WaitOne();

@@ -1,15 +1,11 @@
-﻿using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using MonoGame.Extended.ViewportAdapters;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended.BitmapFonts;
-using Microsoft.Xna.Framework;
+using MonoGame.Extended.ViewportAdapters;
 using Super_Pete_The_Pirate.Managers;
 using Super_Pete_The_Pirate.Sprites;
-using Microsoft.Xna.Framework.Input;
+using System;
 
 namespace Super_Pete_The_Pirate.Scenes
 {

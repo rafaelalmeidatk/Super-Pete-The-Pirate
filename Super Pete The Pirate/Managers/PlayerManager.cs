@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Super_Pete_The_Pirate.Managers
+﻿namespace Super_Pete_The_Pirate.Managers
 {
     class PlayerManager
     {
@@ -50,11 +43,6 @@ namespace Super_Pete_The_Pirate.Managers
         public const int InitialHearts = 5;
 
         //--------------------------------------------------
-        // Demo picture
-
-        public bool DemoPicture { get; set; }
-
-        //--------------------------------------------------
         // Stages completed
 
         private int _stagesCompleted;
@@ -69,7 +57,6 @@ namespace Super_Pete_The_Pirate.Managers
             _hearts = InitialHearts;
             _coins = 0;
             _stagesCompleted = 0;
-            DemoPicture = false;
         }
 
         public void CreateNewGame()

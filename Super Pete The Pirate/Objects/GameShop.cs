@@ -3,12 +3,7 @@ using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Super_Pete_The_Pirate.Managers;
-using Super_Pete_The_Pirate.Scenes;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Super_Pete_The_Pirate.Objects
 {

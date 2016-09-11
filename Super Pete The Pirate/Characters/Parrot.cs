@@ -1,11 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Super_Pete_The_Pirate.Extensions;
 using Super_Pete_The_Pirate.Managers;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using static Super_Pete_The_Pirate.Extensions.Utils;
 
 namespace Super_Pete_The_Pirate.Characters

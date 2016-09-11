@@ -1,16 +1,12 @@
-﻿using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using MonoGame.Extended.ViewportAdapters;
-using MonoGame.Extended.BitmapFonts;
-using Microsoft.Xna.Framework;
-using Super_Pete_The_Pirate.Sprites;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Super_Pete_The_Pirate.Managers;
-using System.Diagnostics;
+using MonoGame.Extended.BitmapFonts;
+using MonoGame.Extended.ViewportAdapters;
 using Super_Pete_The_Pirate.Extensions;
+using Super_Pete_The_Pirate.Managers;
+using Super_Pete_The_Pirate.Sprites;
+using System.Collections.Generic;
 
 namespace Super_Pete_The_Pirate.Scenes
 {
@@ -303,7 +299,6 @@ namespace Super_Pete_The_Pirate.Scenes
             {
                 SoundManager.PlayConfirmSe();
                 PlayerManager.Instance.SetData(save.Ammo, save.Lives, save.Hearts, save.Coins, save.StagesCompleted);
-                PlayerManager.Instance.DemoPicture = save.DemoPicture;
                 SceneManager.Instance.ChangeScene("SceneStageSelect");
             }
             else

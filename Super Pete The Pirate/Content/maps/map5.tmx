@@ -1,11 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" renderorder="right-down" width="15" height="8" tilewidth="32" tileheight="32" nextobjectid="8">
- <tileset firstgid="1" name="map5" tilewidth="32" tileheight="32" tilecount="121" columns="11">
-  <image source="../imgs/tilesets/tile.png" width="352" height="352"/>
+ <tileset firstgid="1" name="map5" tilewidth="32" tileheight="32" tilecount="330" columns="11">
+  <image source="../imgs/tilesets/tile.png" width="352" height="972"/>
  </tileset>
- <imagelayer name="Camada de Imagem 1">
-  <image source="../imgs/tilesets/hills.png"/>
- </imagelayer>
  <layer name="Block" width="15" height="8" offsetx="0" offsety="-1">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,

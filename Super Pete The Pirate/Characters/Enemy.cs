@@ -1,10 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using System.Collections.Generic;
-using System;
-using Super_Pete_The_Pirate.Sprites;
-using System.Diagnostics;
 using Super_Pete_The_Pirate.Scenes;
 
 namespace Super_Pete_The_Pirate.Characters
