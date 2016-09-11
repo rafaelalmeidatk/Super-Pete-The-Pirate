@@ -159,9 +159,6 @@ namespace Super_Pete_The_Pirate.Scenes
             // Pause helper init
             _pauseHelper = new SceneMapPauseHelper();
 
-            // Background init
-            _backgroundHelper = new SceneMapBackgroundHelper();
-
             // Ambience SE init
             var ambienceSe = SoundManager.LoadSe("Ambience");
             if (ambienceSe == null)
@@ -179,6 +176,9 @@ namespace Super_Pete_The_Pirate.Scenes
 
             // Create the HUD
             CreateHud();
+
+            // Background init
+            _backgroundHelper = new SceneMapBackgroundHelper();
 
             // Start BGM and Ambience SE
             SoundManager.StartBgm(SoundManager.BGMType.Map);
@@ -721,6 +721,9 @@ namespace Super_Pete_The_Pirate.Scenes
 
             // Draw the Hud
             _gameHud.Draw(spriteBatch);
+
+            // Draw the Boss Hud (if exists)
+            ((Boss)_enemies.SingleOrDefault(enemy => enemy is Boss))?.Draw(spriteBatch);
 
             if (_stageCompleted)
                 _stageCompletedHelper.Draw(spriteBatch);

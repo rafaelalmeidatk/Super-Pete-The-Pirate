@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Super_Pete_The_Pirate.Objects;
 using Super_Pete_The_Pirate.Scenes;
+using System;
 using System.Collections.Generic;
 using static Super_Pete_The_Pirate.Extensions.Utils;
 
@@ -20,6 +21,16 @@ namespace Super_Pete_The_Pirate.Characters
         // Max HP
 
         private const int MaxHP = 50;
+
+        //--------------------------------------------------
+        // HP HUD
+
+        private Rectangle _hpBackRegion;
+        private Rectangle _hpFullRegion;
+        private Rectangle _hpHalfRegion;
+        private Texture2D _hpSpritesheetTexture;
+        private Vector2 _hpBackPosition;
+        private Vector2 _hpSpritesPosition;
 
         //--------------------------------------------------
         // Direction
@@ -143,6 +154,14 @@ namespace Super_Pete_The_Pirate.Characters
 
             // Projectiles init
             _projectiles = new List<GameProjectile>();
+
+            // HP HUD init
+            _hpBackRegion = new Rectangle(0, 0, 344, 18);
+            _hpFullRegion = new Rectangle(344, 0, 12, 13);
+            _hpHalfRegion = new Rectangle(356, 0, 12, 13);
+            _hpBackPosition = new Vector2(18, 217);
+            _hpSpritesPosition = _hpBackPosition + new Vector2(10, 3);
+            _hpSpritesheetTexture = ImageManager.loadMisc("BossHPSpritesheet");
 
             CreateViewRange();
         }
@@ -304,6 +323,18 @@ namespace Super_Pete_The_Pirate.Characters
         protected override float GetMaxMoveSpeed()
         {
             return MaxMoveSpeed;
+        }
+
+        public void Draw(SpriteBatch spriteBatch)
+        {
+            spriteBatch.Draw(_hpSpritesheetTexture, _hpBackPosition, _hpBackRegion, Color.White);
+            var halfHP = Math.Floor(HP / 2.0f);
+            for (var i = 0; i < Math.Ceiling(HP / 2.0f); i++)
+            {
+                var region = i == halfHP ? _hpHalfRegion : _hpFullRegion;
+                var position = _hpSpritesPosition + (region.Width * i + 1 * i) * Vector2.UnitX;
+                spriteBatch.Draw(_hpSpritesheetTexture, position, region, Color.White);
+            }
         }
     }
 }
