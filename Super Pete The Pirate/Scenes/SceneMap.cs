@@ -297,6 +297,7 @@ namespace Super_Pete_The_Pirate.Scenes
 
         public void CreateEnemy(TiledObject enemyObj, int x, int y)
         {
+            if (!enemyObj.Properties.ContainsKey("type")) return;
             var enemyName = enemyObj.Properties["type"];
             if (enemyName == null) return;
             var texture = ImageManager.loadCharacter(enemyName);
