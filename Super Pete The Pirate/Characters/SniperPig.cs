@@ -84,6 +84,12 @@ namespace Super_Pete_The_Pirate.Characters
             CreateViewRange();
         }
 
+        public override void ReceiveAttack(int damage, Vector2 subjectPosition)
+        {
+            base.ReceiveAttack(damage, subjectPosition);
+            _viewRangeCooldown = 1500f;
+        }
+
         public override void PlayerOnSight(Vector2 playerPosition)
         {
             if (Position.X - playerPosition.X > 0)
@@ -129,7 +135,10 @@ namespace Super_Pete_The_Pirate.Characters
                 position += new Vector2(-25, 16);
                 dx *= -1;
             }
-            else position += new Vector2(56, 16);
+            else
+            {
+                position += new Vector2(56, 16);
+            }
             ((SceneMap)SceneManager.Instance.GetCurrentScene()).CreateProjectile("common", position, dx, 0, _damage, Objects.ProjectileSubject.FromEnemy);
             _shot = true;
         }
