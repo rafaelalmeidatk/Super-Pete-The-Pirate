@@ -23,21 +23,9 @@ namespace Super_Pete_The_Pirate.Characters
         
         new const float GravityAcceleration = 1801f;
 
-        public override bool CanReceiveAttacks
-        {
-            get
-            {
-                return !_onHole;
-            }
-        }
+        public override bool CanReceiveAttacks => !_onHole;
 
-        public override bool ContactDamageEnabled
-        {
-            get
-            {
-                return !_onHole;
-            }
-        }
+        public override bool ContactDamageEnabled => !_onHole;
 
         //--------------------------------------------------
         // Hole Point Texture
@@ -268,7 +256,7 @@ namespace Super_Pete_The_Pirate.Characters
             for (var i = 0; i < num; i++)
             {
                 var holeX = _holePoint.X + 16;
-                var position = new Vector2(_rand.NextFloat(holeX - 5, holeX + 5), _holePoint.Y);
+                var position = new Vector2(_rand.NextFloat(holeX - 5, holeX + 5), _holePoint.Y - GameMap.Instance.TileSize.Y);
                 var velocity = new Vector2(_rand.NextFloat(-100f, 100f), _rand.NextFloat(-300f, -200f));
 
                 var scale = _rand.Next(0, 2) == 0 ? new Vector2(2, 2) : new Vector2(3, 3);

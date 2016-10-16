@@ -297,9 +297,19 @@ namespace Super_Pete_The_Pirate.Scenes
 
         public void CreateEnemy(TiledObject enemyObj, int x, int y)
         {
-            if (!enemyObj.Properties.ContainsKey("type")) return;
-            var enemyName = enemyObj.Properties["type"];
-            if (enemyName == null) return;
+            var enemyName = "";
+            if (enemyObj.Properties.ContainsKey("type"))
+            {
+                enemyName = enemyObj.Properties["type"];
+            }
+            else if (enemyObj.Properties.ContainsKey("Type"))
+            {
+                enemyName = enemyObj.Properties["Type"];
+            }
+            else
+            {
+                return;
+            }
             var texture = ImageManager.loadCharacter(enemyName);
             var newEnemy = (Enemy)Activator.CreateInstance(Type.GetType("Super_Pete_The_Pirate.Characters." + enemyName), texture);
             newEnemy.Position = new Vector2(x, y - 32);
