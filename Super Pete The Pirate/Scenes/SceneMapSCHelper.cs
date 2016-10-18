@@ -135,7 +135,7 @@ namespace Super_Pete_The_Pirate.Scenes
                 { "B", "Good" },
                 { "C", "Normal" },
                 { "D", "Bad" },
-                { "F", "F of fail" }
+                { "F", "F for fail" }
             };
             _rankSentenceAlpha = 0.0f;
 
