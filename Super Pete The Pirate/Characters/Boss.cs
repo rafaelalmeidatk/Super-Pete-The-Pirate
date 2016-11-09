@@ -82,7 +82,7 @@ namespace Super_Pete_The_Pirate.Characters
             }, new int[] { 0, 0, 0, 0 }, new int[] { -32, -32, -32, -32 });
 
             // Melee Attack
-            CharacterSprite.CreateFrameList("melee_attack", 120, false);
+            CharacterSprite.CreateFrameList("melee_attack", 130, false);
             CharacterSprite.AddCollider("melee_attack", new Rectangle(15, 0, 70, 64));
             CharacterSprite.AddFrames("melee_attack", new List<Rectangle>()
             {
@@ -94,7 +94,7 @@ namespace Super_Pete_The_Pirate.Characters
             }, new int[] { 0, -32, -32, -32, -32 }, new int[] { -29, -29, -29, -29, -29 });
 
             // Dash preparation
-            CharacterSprite.CreateFrameList("dash_preparation", 100, false);
+            CharacterSprite.CreateFrameList("dash_preparation", 120, false);
             CharacterSprite.AddCollider("dash_preparation", new Rectangle(15, 0, 70, 64));
             CharacterSprite.AddFrames("dash_preparation", new List<Rectangle>()
             {
@@ -114,7 +114,7 @@ namespace Super_Pete_The_Pirate.Characters
             }, new int[] { -16, -16, -16, -16 }, new int[] { -32, -32, -32, -32 });
 
             // Preparation of Cannons
-            CharacterSprite.CreateFrameList("cannonballs", 100, false);
+            CharacterSprite.CreateFrameList("cannonballs", 120, false);
             CharacterSprite.AddCollider("cannonballs", new Rectangle(15, 0, 70, 64));
             CharacterSprite.AddFrames("cannonballs", new List<Rectangle>()
             {
