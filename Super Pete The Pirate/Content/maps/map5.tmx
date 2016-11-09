@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="12" height="8" tilewidth="32" tileheight="32" nextobjectid="5">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="12" height="8" tilewidth="32" tileheight="32" nextobjectid="18">
  <tileset firstgid="1" name="Tile" tilewidth="32" tileheight="32" tilecount="408" columns="12">
   <image source="../imgs/tilesets/tile.png" width="384" height="1088"/>
  </tileset>
@@ -34,6 +34,23 @@
   <object id="4" gid="103" x="320" y="192" width="32" height="32">
    <properties>
     <property name="Type" value="Boss"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <objectgroup name="Cannon">
+  <object id="7" gid="102" x="352" y="128" width="32" height="32">
+   <properties>
+    <property name="Type" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="16" gid="102" x="352" y="160" width="32" height="32">
+   <properties>
+    <property name="Type" type="int" value="2"/>
+   </properties>
+  </object>
+  <object id="17" gid="102" x="352" y="192" width="32" height="32">
+   <properties>
+    <property name="Type" type="int" value="3"/>
    </properties>
   </object>
  </objectgroup>
