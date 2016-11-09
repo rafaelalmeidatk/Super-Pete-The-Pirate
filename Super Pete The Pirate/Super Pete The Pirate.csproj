@@ -66,6 +66,7 @@
     <Compile Include="Managers\SavesManager.cs" />
     <Compile Include="Managers\SceneManager.cs" />
     <Compile Include="Managers\SoundManager.cs" />
+    <Compile Include="Objects\GameCannon.cs" />
     <Compile Include="Objects\GameCheckpoint.cs" />
     <Compile Include="Objects\GameCoin.cs" />
     <Compile Include="Objects\GameHud.cs" />

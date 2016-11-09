@@ -60,9 +60,10 @@ namespace Super_Pete_The_Pirate.Characters
         public bool RequestingShot => _requestingShot;
 
         //--------------------------------------------------
-        // Projectiles
+        // Cannons
 
-        private List<GameProjectile> _projectiles;
+        private List<GameCannon> _cannons;
+        private List<GameCannon> _cannonsToDestroy;
 
         //----------------------//------------------------//
 
@@ -152,8 +153,9 @@ namespace Super_Pete_The_Pirate.Characters
             // Direction init
             _direction = CharacterSprite.Effect == SpriteEffects.None ? Direction.Left : Direction.Right;
 
-            // Projectiles init
-            _projectiles = new List<GameProjectile>();
+            // Cannons init
+            _cannons = new List<GameCannon>();
+            _cannonsToDestroy = new List<GameCannon>();
 
             // HP HUD init
             _hpBackRegion = new Rectangle(0, 0, 344, 18);
@@ -185,7 +187,21 @@ namespace Super_Pete_The_Pirate.Characters
 
         private void CreateCannonballs()
         {
-            var sceneMap = (SceneMap)SceneManager.Instance.GetCurrentScene();
+            var cannonTexture = ImageManager.loadScene("map", "Cannon");
+            var cannonFrames = new Rectangle[]
+            {
+                new Rectangle(0, 0, 64, 32),
+                new Rectangle(64, 0, 64, 32),
+                new Rectangle(128, 0, 64, 32),
+                new Rectangle(192, 0, 64, 32),
+                new Rectangle(256, 0, 64, 32),
+                new Rectangle(0, 32, 64, 32),
+                new Rectangle(64, 32, 64, 32),
+                new Rectangle(128, 32, 64, 32),
+                new Rectangle(192, 32, 64, 32),
+                new Rectangle(256, 32, 64, 32)
+            };
+
             var positions = new int[][]
             {
                 new int[] { 0, 1 }, new int[] { 0, 2 }, new int[] { 0, 3 }, new int[] { 1, 2 }, new int[] { 2, 3 },
@@ -194,14 +210,16 @@ namespace Super_Pete_The_Pirate.Characters
             var positionsY = new int[] { 72, 108, 144, 180 };
             var i = _rand.Next(HP < MaxHP * 0.5f ? 7 : 5);
             var i2 = positions[i];
+            var x = GameMap.Instance.MapWidth - 64;
             var y1 = positionsY[i2[0]];
             var y2 = positionsY[i2[1]];
-            sceneMap.CreateProjectile("cannonball", new Vector2(360, y1), -7, 0, 1, ProjectileSubject.FromEnemy);
-            sceneMap.CreateProjectile("cannonball", new Vector2(360, y2), -7, 0, 1, ProjectileSubject.FromEnemy);
+
+            _cannons.Add(new GameCannon(cannonTexture, cannonFrames, 130, x, y1));
+            _cannons.Add(new GameCannon(cannonTexture, cannonFrames, 130, x, y2));
             if (i > 4)
             {
                 var y3 = positionsY[i2[2]];
-                sceneMap.CreateProjectile("cannonball", new Vector2(360, y3), -7, 0, 1, ProjectileSubject.FromEnemy);
+                _cannons.Add(new GameCannon(cannonTexture, cannonFrames, 130, x, y3));
             }
         }
 
@@ -244,6 +262,20 @@ namespace Super_Pete_The_Pirate.Characters
 
             if (HP < MaxHP * 0.5f)
                 _dashDelayMaxTick = 500.0f;
+
+            // Update cannons
+            foreach (var cannon in _cannons)
+            {
+                cannon.Update(gameTime);
+                if (cannon.Complete)
+                    _cannonsToDestroy.Add(cannon);
+            }
+
+            if (_cannonsToDestroy.Count > 0)
+            {
+                _cannonsToDestroy.ForEach(x => _cannons.Remove(x));
+                _cannonsToDestroy.Clear();
+            }
 
             UpdateSpriteEffect();
         }
@@ -335,6 +367,11 @@ namespace Super_Pete_The_Pirate.Characters
                 var position = _hpSpritesPosition + (region.Width * i + 1 * i) * Vector2.UnitX;
                 spriteBatch.Draw(_hpSpritesheetTexture, position, region, Color.White);
             }
+        }
+
+        public void DrawCannons(SpriteBatch spriteBatch)
+        {
+            _cannons.ForEach(x => x.Draw(spriteBatch));
         }
     }
 }

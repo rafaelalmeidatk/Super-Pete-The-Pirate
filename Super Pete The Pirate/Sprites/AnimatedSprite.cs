@@ -11,11 +11,12 @@ namespace Super_Pete_The_Pirate.Sprites
         // Frames stuff
 
         private int _currentFrame;
+        public int CurrentFrame => _currentFrame;
         private Rectangle[] _frames;
         private int _delay;
         private int _delayTick;
         private bool _looped;
-        public bool Looped { get { return _looped; } }
+        public bool Looped => _looped;
         private bool _repeat;
 
         //--------------------------------------------------
