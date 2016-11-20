@@ -359,7 +359,7 @@ namespace Super_Pete_The_Pirate
 
         public override void DoAttack()
         {
-            var damage = _attackType == ShotAttack ? 2 : 1;
+            var damage = _attackType == ShotAttack ? 2 : 999;
 
             if (_attackType == ShotAttack)
             {

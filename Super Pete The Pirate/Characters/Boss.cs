@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Super_Pete_The_Pirate.Objects;
 using Super_Pete_The_Pirate.Scenes;
+using Super_Pete_The_Pirate.Sprites;
 using System;
 using System.Collections.Generic;
 using static Super_Pete_The_Pirate.Extensions.Utils;
@@ -64,6 +65,18 @@ namespace Super_Pete_The_Pirate.Characters
 
         private List<GameCannon> _cannons;
         private List<GameCannon> _cannonsToDestroy;
+
+        //--------------------------------------------------
+        // Collapse
+
+        private bool _collapsing;
+        private class CollapseExplosion
+        {
+            public Vector2 Position;
+            public float Delay;
+        }
+        private List<CollapseExplosion> _collapseExplosionsQueue;
+        private List<AnimatedSprite> _collapseExplosions;
 
         //----------------------//------------------------//
 
@@ -165,6 +178,10 @@ namespace Super_Pete_The_Pirate.Characters
             _hpSpritesPosition = _hpBackPosition + new Vector2(10, 3);
             _hpSpritesheetTexture = ImageManager.loadMisc("BossHPSpritesheet");
 
+            // Collapse init
+            _collapseExplosionsQueue = new List<CollapseExplosion>();
+            _collapseExplosions = new List<AnimatedSprite>();
+
             CreateViewRange();
         }
 
@@ -235,6 +252,12 @@ namespace Super_Pete_The_Pirate.Characters
         {
             var deltaTime = (float)gameTime.ElapsedGameTime.TotalMilliseconds;
 
+            if (_collapsing)
+            {
+                UpdateCollapse(gameTime);
+                return;
+            }
+
             if (_dashDelayTick > 0f)
                 _dashDelayTick -= (float)gameTime.ElapsedGameTime.TotalMilliseconds;
 
@@ -280,6 +303,59 @@ namespace Super_Pete_The_Pirate.Characters
             }
 
             UpdateSpriteEffect();
+        }
+
+        private void UpdateCollapse(GameTime gameTime)
+        {
+            var explosionsToRemove = new List<CollapseExplosion>();
+            for (var i = 0; i < _collapseExplosionsQueue.Count; i++)
+            {
+                var explosion = _collapseExplosionsQueue[i];
+                if (explosion.Delay <= 0)
+                {
+                    var texture = ImageManager.loadMisc("Explosion");
+                    var frames = new Rectangle[]
+                    {
+                        new Rectangle(0, 0, 96, 96),
+                        new Rectangle(96, 0, 96, 96),
+                        new Rectangle(192, 0, 96, 96),
+                        new Rectangle(288, 0, 96, 96),
+                        new Rectangle(384, 0, 96, 96),
+                        new Rectangle(480, 0, 96, 96),
+                        new Rectangle(576, 0, 96, 96)
+                    };
+                    var position = new Vector2(BoundingRectangle.Left - 48, BoundingRectangle.Top - 84) + explosion.Position;
+                    var sprite = new AnimatedSprite(texture, frames, 120, position, false);
+                    _collapseExplosions.Add(sprite);
+                    explosionsToRemove.Add(explosion);
+                }
+                else
+                {
+                    explosion.Delay -= (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+                }
+            }
+            explosionsToRemove.ForEach(x => _collapseExplosionsQueue.Remove(x));
+            _collapseExplosions.ForEach(x => x.Update(gameTime));
+        }
+
+        public override void OnDie()
+        {
+            _collapsing = true;
+            _contactDamageEnabled = false;
+            _collapseExplosionsQueue.AddRange(new List<CollapseExplosion>()
+            {
+                new CollapseExplosion() { Position = new Vector2(30, 40), Delay = 0 },
+                new CollapseExplosion() { Position = new Vector2(55, 50), Delay = 1000 },
+                new CollapseExplosion() { Position = new Vector2(45, 65), Delay = 1500 },
+                new CollapseExplosion() { Position = new Vector2(25, 80), Delay = 2000 },
+                new CollapseExplosion() { Position = new Vector2(48, 80), Delay = 2500 }
+            });
+        }
+
+        public override void ReceiveAttack(int damage, Vector2 subjectPosition)
+        {
+            if (_collapsing) return;
+            base.ReceiveAttack(damage, subjectPosition);
         }
 
         public override void UpdateAttack(GameTime gameTime)
@@ -374,6 +450,7 @@ namespace Super_Pete_The_Pirate.Characters
         public void DrawCannons(SpriteBatch spriteBatch)
         {
             _cannons.ForEach(x => x.Draw(spriteBatch));
+            _collapseExplosions.ForEach(x => x.Draw(spriteBatch));
         }
     }
 }
