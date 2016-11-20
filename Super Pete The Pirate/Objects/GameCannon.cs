@@ -46,7 +46,7 @@ namespace Super_Pete_The_Pirate.Objects
         {
             _shot = true;
             var sceneMap = (SceneMap)SceneManager.Instance.GetCurrentScene();
-            var position = new Vector2(360 - 26, Position.Y + 22);
+            var position = new Vector2(334, Position.Y + 6);
             sceneMap.CreateProjectile("cannonball", position, -7, 0, 1, ProjectileSubject.FromEnemy);
         }
     }

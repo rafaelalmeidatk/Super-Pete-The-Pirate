@@ -201,25 +201,27 @@ namespace Super_Pete_The_Pirate.Characters
                 new Rectangle(192, 32, 64, 32),
                 new Rectangle(256, 32, 64, 32)
             };
+            var positions = GameMap.Instance.GetCannonPositions();
+            var possiblePositionsIndex = new List<int>() { 0, 1, 2 };
+            var i = _rand.Next(3);
+            var pos1 = positions[possiblePositionsIndex[i]];
 
-            var positions = new int[][]
-            {
-                new int[] { 0, 1 }, new int[] { 0, 2 }, new int[] { 0, 3 }, new int[] { 1, 2 }, new int[] { 2, 3 },
-                new int[] { 0, 1, 2 }, new int[] { 0, 2, 3 }
-            };
-            var positionsY = new int[] { 72, 108, 144, 180 };
-            var i = _rand.Next(HP < MaxHP * 0.5f ? 7 : 5);
-            var i2 = positions[i];
-            var x = GameMap.Instance.MapWidth - 64;
-            var y1 = positionsY[i2[0]];
-            var y2 = positionsY[i2[1]];
+            _cannons.Add(new GameCannon(cannonTexture, cannonFrames, 130, (int)pos1.X - 32, (int)pos1.Y - 32));
 
-            _cannons.Add(new GameCannon(cannonTexture, cannonFrames, 130, x, y1));
-            _cannons.Add(new GameCannon(cannonTexture, cannonFrames, 130, x, y2));
-            if (i > 4)
+            possiblePositionsIndex.Remove(i);
+            var j = _rand.Next(2);
+
+            if (_rand.Next(2) > 0)
             {
-                var y3 = positionsY[i2[2]];
-                _cannons.Add(new GameCannon(cannonTexture, cannonFrames, 130, x, y3));
+                var pos2 = positions[possiblePositionsIndex[j]];
+                _cannons.Add(new GameCannon(cannonTexture, cannonFrames, 130, (int)pos2.X - 32, (int)pos2.Y - 32));
+            }
+
+            if (HP < MaxHP * 0.5)
+            {
+                possiblePositionsIndex.Remove(j);
+                var pos3 = positions[possiblePositionsIndex[0]];
+                _cannons.Add(new GameCannon(cannonTexture, cannonFrames, 130, (int)pos3.X - 32, (int)pos3.Y - 32));
             }
         }
 

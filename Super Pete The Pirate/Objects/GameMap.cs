@@ -145,6 +145,16 @@ namespace Super_Pete_The_Pirate
             return GetObjectGroup("Player Spawn").Objects[0];
         }
 
+        public Vector2[] GetCannonPositions()
+        {
+            var group = GetObjectGroup("Cannons");
+            var cannons = group.Objects;
+            var positions = new Vector2[group.Objects.Length];
+            for (var i = 0; i < cannons.Length; i++)
+                positions[i] = new Vector2(cannons[i].X, cannons[i].Y);
+            return positions;
+        }
+
         public TimeSpan GetCompletionTime()
         {
             if (_tiledMap == null || (_tiledMap != null && !_tiledMap.Properties.ContainsKey("Completion Time")))

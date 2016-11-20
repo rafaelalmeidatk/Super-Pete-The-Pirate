@@ -31,27 +31,15 @@
   <object id="2" gid="97" x="32" y="192" width="32" height="32"/>
  </objectgroup>
  <objectgroup name="Enemies">
-  <object id="4" gid="103" x="320" y="192" width="32" height="32">
+  <object id="4" gid="103" x="288" y="192" width="32" height="32">
    <properties>
     <property name="type" value="Boss"/>
    </properties>
   </object>
  </objectgroup>
- <objectgroup name="Cannon">
-  <object id="7" gid="102" x="352" y="128" width="32" height="32">
-   <properties>
-    <property name="Type" type="int" value="1"/>
-   </properties>
-  </object>
-  <object id="16" gid="102" x="352" y="160" width="32" height="32">
-   <properties>
-    <property name="Type" type="int" value="2"/>
-   </properties>
-  </object>
-  <object id="17" gid="102" x="352" y="192" width="32" height="32">
-   <properties>
-    <property name="Type" type="int" value="3"/>
-   </properties>
-  </object>
+ <objectgroup name="Cannons">
+  <object id="7" type="1" gid="102" x="352" y="128" width="32" height="32"/>
+  <object id="16" type="2" gid="102" x="352" y="160" width="32" height="32"/>
+  <object id="17" type="3" gid="102" x="352" y="192" width="32" height="32"/>
  </objectgroup>
 </map>
