@@ -77,6 +77,10 @@ namespace Super_Pete_The_Pirate.Characters
         }
         private List<CollapseExplosion> _collapseExplosionsQueue;
         private List<AnimatedSprite> _collapseExplosions;
+        private float _collapseOpacityTime;
+
+        private bool _requestingHatDrop;
+        public bool RequestingHatDrop => _requestingHatDrop;
 
         //----------------------//------------------------//
 
@@ -146,6 +150,14 @@ namespace Super_Pete_The_Pirate.Characters
                 new Rectangle(512, 0, 128, 96),
                 new Rectangle(384, 0, 128, 96),
             }, new int[] { 0, 0 }, new int[] { -32, -32 });
+
+            // Collapsing
+            CharacterSprite.CreateFrameList("collapsing", 0);
+            CharacterSprite.AddCollider("collapsing", new Rectangle(15, 0, 70, 64));
+            CharacterSprite.AddFrames("collapsing", new List<Rectangle>()
+            {
+                new Rectangle(512, 0, 128, 96),
+            }, new int[] { 0 }, new int[] { -32 });
 
             // Attacks setup
             _attackFrameList = new string[]
@@ -255,6 +267,7 @@ namespace Super_Pete_The_Pirate.Characters
             if (_collapsing)
             {
                 UpdateCollapse(gameTime);
+                UpdateSprite(gameTime);
                 return;
             }
 
@@ -307,7 +320,17 @@ namespace Super_Pete_The_Pirate.Characters
 
         private void UpdateCollapse(GameTime gameTime)
         {
+            if (CharacterSprite.Alpha > 0.0f)
+            {
+                CharacterSprite.Alpha -= (float)gameTime.ElapsedGameTime.TotalMilliseconds / _collapseOpacityTime;
+            }
+            else
+            {
+                _requestingHatDrop = true;
+            }
+
             var explosionsToRemove = new List<CollapseExplosion>();
+            var explosionsSpriteToRemove = new List<AnimatedSprite>();
             for (var i = 0; i < _collapseExplosionsQueue.Count; i++)
             {
                 var explosion = _collapseExplosionsQueue[i];
@@ -334,8 +357,19 @@ namespace Super_Pete_The_Pirate.Characters
                     explosion.Delay -= (float)gameTime.ElapsedGameTime.TotalMilliseconds;
                 }
             }
+
             explosionsToRemove.ForEach(x => _collapseExplosionsQueue.Remove(x));
-            _collapseExplosions.ForEach(x => x.Update(gameTime));
+            
+            foreach (var explosionSprite in _collapseExplosions)
+            {
+                explosionSprite.Update(gameTime);
+                if (explosionSprite.Looped)
+                {
+                    explosionsSpriteToRemove.Add(explosionSprite);
+                }
+            }
+
+            explosionsSpriteToRemove.ForEach(x => _collapseExplosions.Remove(x));
         }
 
         public override void OnDie()
@@ -350,6 +384,8 @@ namespace Super_Pete_The_Pirate.Characters
                 new CollapseExplosion() { Position = new Vector2(25, 80), Delay = 2000 },
                 new CollapseExplosion() { Position = new Vector2(48, 80), Delay = 2500 }
             });
+            _collapseOpacityTime = _collapseExplosionsQueue[_collapseExplosionsQueue.Count - 1].Delay +
+                CharacterSprite.ImmunityMaxTime;
         }
 
         public override void ReceiveAttack(int damage, Vector2 subjectPosition)
@@ -394,8 +430,8 @@ namespace Super_Pete_The_Pirate.Characters
 
         public override void UpdateFrameList()
         {
-            if (_dying)
-                CharacterSprite.SetIfFrameListExists("dying");
+            if (_collapsing)
+                CharacterSprite.SetFrameList("collapsing");
             else if (_preparingDash)
                 CharacterSprite.SetFrameList("dash_preparation");
             else if (_isDashing)
@@ -447,7 +483,7 @@ namespace Super_Pete_The_Pirate.Characters
             }
         }
 
-        public void DrawCannons(SpriteBatch spriteBatch)
+        public void DrawInnerSprites(SpriteBatch spriteBatch)
         {
             _cannons.ForEach(x => x.Draw(spriteBatch));
             _collapseExplosions.ForEach(x => x.Draw(spriteBatch));

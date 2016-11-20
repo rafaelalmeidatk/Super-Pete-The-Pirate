@@ -715,7 +715,7 @@ namespace Super_Pete_The_Pirate.Scenes
                 if (debugMode) enemy.DrawColliderBox(spriteBatch);
                 if (enemy is Boss)
                 {
-                    ((Boss)enemy).DrawCannons(spriteBatch);
+                    ((Boss)enemy).DrawInnerSprites(spriteBatch);
                 }
             }
 

@@ -44,12 +44,13 @@ namespace Super_Pete_The_Pirate
         private float _immunityMaxTime;
         private bool _immunityAnimation;
         private float _immunityAlphaStore;
-        public bool ImmunityAnimationActive { get { return _immunityAnimation; } }
+        public float ImmunityMaxTime => _immunityMaxTime;
+        public bool ImmunityAnimationActive => _immunityAnimation;
 
         private bool _dyingAnimation;
         private bool _skipDyingAnimationFrames;
         private bool _dyingAnimationEnded;
-        public bool DyingAnimationEnded { get { return _dyingAnimationEnded; } }
+        public bool DyingAnimationEnded => _dyingAnimationEnded;
 
         //--------------------------------------------------
         // Collider
