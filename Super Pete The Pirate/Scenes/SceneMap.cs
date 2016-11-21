@@ -465,7 +465,13 @@ namespace Super_Pete_The_Pirate.Scenes
                     if (_projectiles[j].RequestErase)
                         _projectiles.Remove(_projectiles[j]);
                 }
-
+                if (_enemies[i] is Boss)
+                {
+                    if (((Boss)_enemies[i]).RequestingHatDrop)
+                    {
+                        _player.PerformHatDrop();
+                    }
+                }
                 if (_enemies[i].RequestErase)
                 {
                     _enemies.Remove(_enemies[i]);
@@ -706,6 +712,7 @@ namespace Super_Pete_The_Pirate.Scenes
 
             // Draw the player
             _player.DrawCharacter(spriteBatch);
+            _player.DrawHat(spriteBatch);
             if (debugMode) _player.DrawColliderBox(spriteBatch);
 
             // Draw the enemies
@@ -733,6 +740,8 @@ namespace Super_Pete_The_Pirate.Scenes
 
             spriteBatch.Begin(transformMatrix: SceneManager.Instance.ViewportAdapter.GetScaleMatrix(),
                 samplerState: SamplerState.PointClamp);
+
+            _player.DrawScreenFlash(spriteBatch);
 
             // Draw the Hud
             _gameHud.Draw(spriteBatch);

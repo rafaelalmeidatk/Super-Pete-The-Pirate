@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Input;
 using Super_Pete_The_Pirate.Managers;
 using Super_Pete_The_Pirate.Objects;
 using Super_Pete_The_Pirate.Scenes;
+using Super_Pete_The_Pirate.Sprites;
 using System;
 using System.Collections.Generic;
 
@@ -69,6 +70,33 @@ namespace Super_Pete_The_Pirate
         public bool Active => _active;
 
         //--------------------------------------------------
+        // Hat Cut Scene
+
+        private bool _onHatCutScene;
+        private bool _hatDropping;
+        private AnimatedSprite _hatSprite;
+        private float _hatDroppingSpeed;
+        private const float HatDroppingMaxTime = 4800f;
+        private bool _withHat;
+
+        private bool _flashScreen;
+        private Texture2D _flashTexture;
+        private float _flashScreenAlpha;
+
+        private float _flashAfterDelay;
+        private const float FlashAfterDelayMax = 500f;
+
+        private bool _hatReceived;
+
+        private bool _thumbsUp;
+        private float _thumbsUpTick;
+        private const float ThumbsUpDelayMax = 1000.0f;
+
+        private bool _walkingWithHat;
+        private float _walkingWithHatTick;
+        private const float WalkingWithHatDelayMax = 3000f;
+
+        //--------------------------------------------------
         // SEs
 
         private SoundEffect _aerialAttackSe;
@@ -93,7 +121,18 @@ namespace Super_Pete_The_Pirate
                 new Rectangle(64, 0, 32, 32),
                 new Rectangle(96, 0, 32, 32),
             }, new int[] { 0, 0, 0, 0 }, new int[] { 0, 0, 0, 0 });
-            
+
+            // Stand with hat
+            CharacterSprite.CreateFrameList("stand_with_hat", 140);
+            CharacterSprite.AddCollider("stand_with_hat", new Rectangle(9, 2, 17, 30));
+            CharacterSprite.AddFrames("stand_with_hat", new List<Rectangle>()
+            {
+                new Rectangle(128, 192, 32, 64),
+                new Rectangle(160, 192, 32, 64),
+                new Rectangle(192, 192, 32, 64),
+                new Rectangle(224, 192, 32, 64),
+            }, new int[] { 0, 0, 0, 0 }, new int[] { -32, -32, -32, -32 });
+
             // Walking
             CharacterSprite.CreateFrameList("walking", 120);
             CharacterSprite.AddCollider("walking", new Rectangle(9, 2, 17, 30));
@@ -104,6 +143,17 @@ namespace Super_Pete_The_Pirate
                 new Rectangle(192, 0, 32, 32),
                 new Rectangle(224, 0, 32, 32),
             }, new int[] { 0, 0, 0, 0 }, new int[] { 0, 0, 0, 0 });
+
+            // Walking with hat
+            CharacterSprite.CreateFrameList("walking_with_hat", 120);
+            CharacterSprite.AddCollider("walking_with_hat", new Rectangle(9, 2, 17, 30));
+            CharacterSprite.AddFrames("walking_with_hat", new List<Rectangle>()
+            {
+                new Rectangle(32, 256, 32, 64),
+                new Rectangle(64, 256, 32, 64),
+                new Rectangle(96, 256, 32, 64),
+                new Rectangle(128, 256, 32, 64),
+            }, new int[] { 0, 0, 0, 0 }, new int[] { -32, -32, -32, -32 });
 
             // Jumping
             CharacterSprite.CreateFrameList("jumping", 0);
@@ -182,6 +232,7 @@ namespace Super_Pete_The_Pirate
                 new Rectangle(160, 128, 64, 32)
             }, new int[] { 0, 0, 0, 0 }, new int[] { 0, 0, 0, 0 });
 
+            // Shot Attack Jumping
             CharacterSprite.CreateFrameList("attack_shot_jumping", 50);
             CharacterSprite.AddCollider("attack_shot_jumping", new Rectangle(9, 2, 17, 30));
             CharacterSprite.AddFramesToAttack("attack_shot_jumping", 3);
@@ -192,6 +243,40 @@ namespace Super_Pete_The_Pirate
                 new Rectangle(96, 160, 64, 32),
                 new Rectangle(160, 160, 64, 32)
             }, new int[] { 0, 0, 0, 0 }, new int[] { 0, 0, 0, 0 });
+
+            // Hat Received
+            CharacterSprite.CreateFrameList("hat_received", 1000, false);
+            CharacterSprite.AddCollider("hat_received", new Rectangle(9, 2, 17, 30));
+            CharacterSprite.AddFrames("hat_received", new List<Rectangle>()
+            {
+                new Rectangle(0, 192, 32, 64),
+                new Rectangle(32, 192, 32, 64),
+            }, new int[] { 0, 0, 0, 0 }, new int[] { -32, -32, -32, -32 });
+
+            // Thumbs up
+            CharacterSprite.CreateFrameList("thumbs_up", 140, false);
+            CharacterSprite.AddCollider("thumbs_up", new Rectangle(9, 2, 17, 30));
+            CharacterSprite.AddFrames("thumbs_up", new List<Rectangle>()
+            {
+                new Rectangle(64, 192, 32, 64),
+                new Rectangle(96, 192, 32, 64),
+            }, new int[] { 0, 0, 0, 0 }, new int[] { -32, -32, -32, -32 });
+
+            // Looking up
+            CharacterSprite.CreateFrameList("looking_up", 140);
+            CharacterSprite.AddCollider("looking_up", new Rectangle(9, 2, 17, 30));
+            CharacterSprite.AddFrames("looking_up", new List<Rectangle>()
+            {
+                new Rectangle(0, 256, 32, 64),
+            }, new int[] { 0, 0, 0, 0 }, new int[] { -32, -32, -32, -32 });
+
+            // Looking up with hat
+            CharacterSprite.CreateFrameList("looking_up_with_hat", 140);
+            CharacterSprite.AddCollider("looking_up_with_hat", new Rectangle(9, 2, 17, 30));
+            CharacterSprite.AddFrames("looking_up_with_hat", new List<Rectangle>()
+            {
+                new Rectangle(0, 192, 32, 64),
+            }, new int[] { 0, 0, 0, 0 }, new int[] { -32, -32, -32, -32 });
 
             Position = new Vector2(32, 160);
 
@@ -209,6 +294,26 @@ namespace Super_Pete_The_Pirate
             _requestRespawn = false;
             _active = true;
             _keysLocked = false;
+
+            // Hat drop
+            var hatTexture = ImageManager.loadMisc("PeteHat");
+            _hatSprite = new AnimatedSprite(hatTexture, new Rectangle[] {
+                new Rectangle(0, 0, 96, 64),
+                new Rectangle(96, 0, 96, 64),
+                new Rectangle(192, 0, 96, 64),
+                new Rectangle(288, 0, 96, 64),
+                new Rectangle(384, 0, 96, 64),
+                new Rectangle(0, 64, 96, 64),
+                new Rectangle(96, 64, 96, 64),
+                new Rectangle(192, 64, 96, 64),
+                new Rectangle(288, 64, 96, 64),
+                new Rectangle(384, 64, 96, 64),
+            }, 100, Vector2.Zero);
+            _hatSprite.Origin = new Vector2(50, 37);
+
+            // Flash texture
+            _flashTexture = new Texture2D(SceneManager.Instance.GraphicsDevice, 1, 1, false, SurfaceFormat.Color);
+            _flashTexture.SetData(new Color[] { Color.White });
 
             // SEs init
             _aerialAttackSe = SoundManager.LoadSe("Aerial");
@@ -229,6 +334,18 @@ namespace Super_Pete_The_Pirate
 
         public void Update(GameTime gameTime, bool keyLock)
         {
+            if (_onHatCutScene)
+            {
+                if (_hatDropping)
+                {
+                    UpdateHatDrop(gameTime);
+                }
+                UpdateHatCutSceneEnd(gameTime);
+                UpdateSprite(gameTime);
+                base.Update(gameTime);
+                return;
+            }
+
             if (!_active) return;
 
             var deltaTime = (float)gameTime.ElapsedGameTime.TotalMilliseconds;
@@ -263,8 +380,30 @@ namespace Super_Pete_The_Pirate
 
         public override void UpdateFrameList()
         {
-            if (_dying)
+            if (_walkingWithHat)
+            {
+                CharacterSprite.SetFrameList("walking_with_hat");
+            }
+            else if (_thumbsUp)
+            {
+                CharacterSprite.SetFrameList("thumbs_up");
+            }
+            else if (_hatReceived)
+            {
+                CharacterSprite.SetFrameList("hat_received");
+            }
+            else if (_withHat)
+            {
+                CharacterSprite.SetFrameList("looking_up_with_hat");
+            }
+            else if (_onHatCutScene)
+            {
+                CharacterSprite.SetFrameList("looking_up");
+            }
+            else if (_dying)
+            {
                 CharacterSprite.SetIfFrameListExists("dying");
+            }
             else if (_isAttacking)
             {
                 if (_attackType == ShotAttack)
@@ -276,12 +415,19 @@ namespace Super_Pete_The_Pirate
                 }
                 else
                     CharacterSprite.SetFrameList(_attackFrameList[_attackType]);
-            } else if (!_isOnGround)
+            }
+            else if (!_isOnGround)
+            {
                 CharacterSprite.SetFrameList("jumping");
-            else if ((InputManager.Instace.KeyDown(Keys.Left) || InputManager.Instace.KeyDown(Keys.Right)) && !_keysLocked)
+            }
+            else if ((InputManager.Instace.KeyDown(Keys.Left) || InputManager.Instace.KeyDown(Keys.Right)) && !_keysLocked && !_onHatCutScene)
+            {
                 CharacterSprite.SetFrameList("walking");
+            }
             else
+            {
                 CharacterSprite.SetFrameList("stand");
+            }
         }
 
         private void CheckKeys(GameTime gameTime)
@@ -440,6 +586,98 @@ namespace Super_Pete_The_Pirate
 
                 SceneManager.Instance.ParticleManager.CreateParticle(texture, position, color, 800f, scale, state);
             }
+        }
+
+        public void PerformHatDrop()
+        {
+            _onHatCutScene = true;
+            _hatDropping = true;
+            CharacterSprite.Effect = SpriteEffects.None;
+            _hatSprite.Position = new Vector2(Position.X + CharacterSprite.GetFrameWidth() / 2, 0);
+            _hatDroppingSpeed = BoundingRectangle.Top / HatDroppingMaxTime;
+        }
+
+        private void UpdateHatDrop(GameTime gameTime)
+        {
+            _hatSprite.Update(gameTime);
+            if (_hatSprite.Position.Y >= BoundingRectangle.Top)
+            {
+                _flashScreen = true;
+                _hatSprite.Pause();
+            }
+            else
+            {
+                var newPositionY = _hatSprite.Position.Y + (float)gameTime.ElapsedGameTime.TotalMilliseconds * _hatDroppingSpeed;
+                _hatSprite.Position = new Vector2(_hatSprite.Position.X, newPositionY);
+            }
+        }
+
+        private void UpdateHatCutSceneEnd(GameTime gameTime)
+        {
+            if (_flashScreen)
+            {
+                if (_withHat)
+                {
+                    _flashScreenAlpha -= (float)gameTime.ElapsedGameTime.TotalSeconds * 2;
+                }
+                else
+                {
+                    _flashScreenAlpha += (float)gameTime.ElapsedGameTime.TotalSeconds * 5;
+                    if (_flashScreenAlpha >= 1.0f)
+                    {
+                        _hatDropping = false;
+                        _withHat = true;
+                        _normalAttackSe.PlaySafe();
+                    }
+                }
+            }
+
+            if (_withHat && !_hatDropping && !_walkingWithHat)
+            {
+                if (_thumbsUp && _hatReceived && CharacterSprite.Looped)
+                {
+                    _thumbsUpTick += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+                    if (_thumbsUpTick >= ThumbsUpDelayMax)
+                    {
+                        _walkingWithHat = true;
+                    }
+                }
+                else if (!_thumbsUp && _hatReceived && CharacterSprite.Looped)
+                {
+                    _thumbsUp = true;
+                }
+                else if (!_hatReceived)
+                {
+                    _flashAfterDelay += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+                    if (_flashAfterDelay >= FlashAfterDelayMax)
+                    {
+                        _hatReceived = true;
+                    }
+                }
+            }
+
+            if (_walkingWithHat)
+            {
+                _movement = 1.0f;
+                _walkingWithHatTick += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+                if (_walkingWithHatTick >= WalkingWithHatDelayMax)
+                {
+                    SceneManager.Instance.ChangeScene("SceneTitle");
+                }
+            }
+        }
+
+        public void DrawHat(SpriteBatch spriteBatch)
+        {
+            if (!_hatDropping) return;
+            _hatSprite.Draw(spriteBatch);
+        }
+
+        public void DrawScreenFlash(SpriteBatch spriteBatch)
+        {
+            if (!_flashScreen) return;
+            var screenSize = SceneManager.Instance.VirtualSize;
+            spriteBatch.Draw(_flashTexture, new Rectangle(0, 0, (int)screenSize.X, (int)screenSize.Y), Color.White * _flashScreenAlpha);
         }
     }
 }

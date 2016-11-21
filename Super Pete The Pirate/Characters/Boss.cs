@@ -327,6 +327,7 @@ namespace Super_Pete_The_Pirate.Characters
             else
             {
                 _requestingHatDrop = true;
+                _requestErase = true;
             }
 
             var explosionsToRemove = new List<CollapseExplosion>();

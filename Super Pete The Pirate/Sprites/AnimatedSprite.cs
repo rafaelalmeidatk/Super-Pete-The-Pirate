@@ -18,6 +18,7 @@ namespace Super_Pete_The_Pirate.Sprites
         private bool _looped;
         public bool Looped => _looped;
         private bool _repeat;
+        private bool _paused;
 
         //--------------------------------------------------
         // Collider
@@ -80,6 +81,11 @@ namespace Super_Pete_The_Pirate.Sprites
             _delay = delay;
         }
 
+        public void Pause()
+        {
+            _paused = true;
+        }
+
         public void SetBoundingBox(Rectangle boundingBox)
         {
             _boundingBox = boundingBox;
@@ -87,6 +93,7 @@ namespace Super_Pete_The_Pirate.Sprites
 
         public virtual void Update(GameTime gameTime)
         {
+            if (_paused) return;
             _delayTick += gameTime.ElapsedGameTime.Milliseconds;
             if (_delayTick > _delay)
             {
