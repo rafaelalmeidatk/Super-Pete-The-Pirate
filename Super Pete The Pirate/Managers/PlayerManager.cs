@@ -120,5 +120,10 @@
             if (_stagesCompleted < 5)
                 _stagesCompleted++;
         }
+
+        public void CompleteAllStages()
+        {
+            _stagesCompleted = 5;
+        }
     }
 }

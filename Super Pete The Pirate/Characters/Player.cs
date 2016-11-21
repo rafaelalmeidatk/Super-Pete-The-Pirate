@@ -93,8 +93,6 @@ namespace Super_Pete_The_Pirate
         private const float ThumbsUpDelayMax = 1000.0f;
 
         private bool _walkingWithHat;
-        private float _walkingWithHatTick;
-        private const float WalkingWithHatDelayMax = 3000f;
 
         //--------------------------------------------------
         // SEs
@@ -505,7 +503,7 @@ namespace Super_Pete_The_Pirate
 
         public override void DoAttack()
         {
-            var damage = _attackType == ShotAttack ? 2 : 999;
+            var damage = _attackType == ShotAttack ? 2 : 1;
 
             if (_attackType == ShotAttack)
             {
@@ -659,10 +657,10 @@ namespace Super_Pete_The_Pirate
             if (_walkingWithHat)
             {
                 _movement = 1.0f;
-                _walkingWithHatTick += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
-                if (_walkingWithHatTick >= WalkingWithHatDelayMax)
+                if (Position.X >= GameMap.Instance.MapWidth - 48)
                 {
-                    SceneManager.Instance.ChangeScene("SceneTitle");
+                    PlayerManager.Instance.CompleteAllStages();
+                    SceneManager.Instance.ChangeScene("SceneCredits");
                 }
             }
         }

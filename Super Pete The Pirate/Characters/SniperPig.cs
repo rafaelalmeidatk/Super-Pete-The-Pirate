@@ -65,6 +65,22 @@ namespace Super_Pete_The_Pirate.Characters
                 new Rectangle(0, 32, 32, 32)
             }, new int[] { 0, 0, 0, 0 }, new int[] { 0, 0, 0, 0 });
 
+            // Damage
+            CharacterSprite.CreateFrameList("damage", 0);
+            CharacterSprite.AddCollider("damage", new Rectangle(4, -2, 26, 34));
+            CharacterSprite.AddFrames("damage", new List<Rectangle>()
+            {
+                new Rectangle(0, 192, 32, 64)
+            }, new int[] { 0, 0, 0, 0 }, new int[] { -32, -32, -32, -32 });
+
+            // Damage
+            CharacterSprite.CreateFrameList("dying", 0);
+            CharacterSprite.AddCollider("dying", new Rectangle(4, -2, 26, 34));
+            CharacterSprite.AddFrames("dying", new List<Rectangle>()
+            {
+                new Rectangle(0, 192, 32, 64)
+            }, new int[] { 0, 0, 0, 0 }, new int[] { -32, -32, -32, -32 });
+
             // Attacks setup
             _attackFrameList = new string[]
             {

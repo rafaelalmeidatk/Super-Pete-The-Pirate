@@ -77,7 +77,7 @@ namespace Super_Pete_The_Pirate
         //--------------------------------------------------
         // Maps info
 
-        public int MapToLoad = 5;
+        public int MapToLoad = 1;
         public const int MaxLevels = 4;
 
         //----------------------//------------------------//
