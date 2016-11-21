@@ -791,3 +791,21 @@
 /processorParam:TextureFormat=Color
 /build:imgs/misc/PeteHat.png
 
+#begin sounds/se/Explosion2.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sounds/se/Explosion2.ogg
+
+#begin sounds/se/Explosion3.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sounds/se/Explosion3.ogg
+
+#begin sounds\se\Explosion1.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sounds\se\Explosion1.ogg
+

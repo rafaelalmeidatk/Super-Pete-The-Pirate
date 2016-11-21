@@ -145,7 +145,7 @@ namespace Super_Pete_The_Pirate
             }, new int[] { 0, 0, 0, 0 }, new int[] { 0, 0, 0, 0 });
 
             // Walking with hat
-            CharacterSprite.CreateFrameList("walking_with_hat", 120);
+            CharacterSprite.CreateFrameList("walking_with_hat", 220);
             CharacterSprite.AddCollider("walking_with_hat", new Rectangle(9, 2, 17, 30));
             CharacterSprite.AddFrames("walking_with_hat", new List<Rectangle>()
             {
@@ -678,6 +678,11 @@ namespace Super_Pete_The_Pirate
             if (!_flashScreen) return;
             var screenSize = SceneManager.Instance.VirtualSize;
             spriteBatch.Draw(_flashTexture, new Rectangle(0, 0, (int)screenSize.X, (int)screenSize.Y), Color.White * _flashScreenAlpha);
+        }
+
+        protected override float GetMoveAcceleration()
+        {
+            return _onHatCutScene ? 4000.0f : base.GetMoveAcceleration();
         }
     }
 }

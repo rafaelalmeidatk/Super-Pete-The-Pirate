@@ -43,7 +43,7 @@ namespace Super_Pete_The_Pirate.Managers
         //--------------------------------------------------
         // For debug purposes
 
-        private static bool _soundOn = false;
+        private static bool _soundOn = true;
 
         //----------------------//------------------------//
 

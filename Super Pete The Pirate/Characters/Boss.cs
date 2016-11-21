@@ -1,5 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
+using Super_Pete_The_Pirate.Managers;
 using Super_Pete_The_Pirate.Objects;
 using Super_Pete_The_Pirate.Scenes;
 using Super_Pete_The_Pirate.Sprites;
@@ -32,6 +34,7 @@ namespace Super_Pete_The_Pirate.Characters
         private Texture2D _hpSpritesheetTexture;
         private Vector2 _hpBackPosition;
         private Vector2 _hpSpritesPosition;
+        private float _hudAlpha;
 
         //--------------------------------------------------
         // Direction
@@ -78,9 +81,19 @@ namespace Super_Pete_The_Pirate.Characters
         private List<CollapseExplosion> _collapseExplosionsQueue;
         private List<AnimatedSprite> _collapseExplosions;
         private float _collapseOpacityTime;
+        private const float CollapseOpacityTimeMax = 200.0f;
+        
+        private Texture2D _flashTexture;
+        private float _flashScreenAlpha;
+        private float _flashScreenTime;
 
         private bool _requestingHatDrop;
         public bool RequestingHatDrop => _requestingHatDrop;
+
+        //--------------------------------------------------
+        // SEs
+
+        private SoundEffect[] _explosionsSes;
 
         //----------------------//------------------------//
 
@@ -189,10 +202,22 @@ namespace Super_Pete_The_Pirate.Characters
             _hpBackPosition = new Vector2(18, 217);
             _hpSpritesPosition = _hpBackPosition + new Vector2(10, 3);
             _hpSpritesheetTexture = ImageManager.loadMisc("BossHPSpritesheet");
+            _hudAlpha = 1.0f;
 
             // Collapse init
             _collapseExplosionsQueue = new List<CollapseExplosion>();
             _collapseExplosions = new List<AnimatedSprite>();
+
+            // Flash texture
+            _flashTexture = new Texture2D(SceneManager.Instance.GraphicsDevice, 1, 1, false, SurfaceFormat.Color);
+            _flashTexture.SetData(new Color[] { Color.White });
+
+            // SEs load
+            _explosionsSes = new SoundEffect[3];
+            for (var i = 0; i < 3; i++)
+            {
+                _explosionsSes[i] = SoundManager.LoadSe(String.Format("Explosion{0}", i + 1));
+            }
 
             CreateViewRange();
         }
@@ -320,11 +345,27 @@ namespace Super_Pete_The_Pirate.Characters
 
         private void UpdateCollapse(GameTime gameTime)
         {
-            if (CharacterSprite.Alpha > 0.0f)
+            if (_hudAlpha > 0.0f)
+            {
+                _hudAlpha -= (float)gameTime.ElapsedGameTime.TotalSeconds;
+            }
+            if (_collapseOpacityTime == 0)
+            {
+                _flashScreenAlpha += (float)gameTime.ElapsedGameTime.TotalMilliseconds / _flashScreenTime;
+                if (_flashScreenAlpha > 1.3f)
+                {
+                    _collapseOpacityTime = CollapseOpacityTimeMax;
+                }
+            }
+            else if (_flashScreenAlpha > 0.0f)
+            {
+                _flashScreenAlpha -= (float)gameTime.ElapsedGameTime.TotalSeconds * 2;
+            }
+            else if (CharacterSprite.Alpha > 0.0f)
             {
                 CharacterSprite.Alpha -= (float)gameTime.ElapsedGameTime.TotalMilliseconds / _collapseOpacityTime;
             }
-            else
+            else if (CharacterSprite.Alpha <= 0.0f)
             {
                 _requestingHatDrop = true;
                 _requestErase = true;
@@ -352,6 +393,7 @@ namespace Super_Pete_The_Pirate.Characters
                     var sprite = new AnimatedSprite(texture, frames, 120, position, false);
                     _collapseExplosions.Add(sprite);
                     explosionsToRemove.Add(explosion);
+                    _explosionsSes[_rand.Next(3)].PlaySafe();
                 }
                 else
                 {
@@ -380,13 +422,17 @@ namespace Super_Pete_The_Pirate.Characters
             _collapseExplosionsQueue.AddRange(new List<CollapseExplosion>()
             {
                 new CollapseExplosion() { Position = new Vector2(30, 40), Delay = 0 },
+                new CollapseExplosion() { Position = new Vector2(60, 60), Delay = 300 },
+                new CollapseExplosion() { Position = new Vector2(50, 80), Delay = 500 },
+                new CollapseExplosion() { Position = new Vector2(45, 45), Delay = 700 },
                 new CollapseExplosion() { Position = new Vector2(55, 50), Delay = 1000 },
+                new CollapseExplosion() { Position = new Vector2(22, 85), Delay = 1300 },
                 new CollapseExplosion() { Position = new Vector2(45, 65), Delay = 1500 },
+                new CollapseExplosion() { Position = new Vector2(17, 45), Delay = 1700 },
                 new CollapseExplosion() { Position = new Vector2(25, 80), Delay = 2000 },
                 new CollapseExplosion() { Position = new Vector2(48, 80), Delay = 2500 }
             });
-            _collapseOpacityTime = _collapseExplosionsQueue[_collapseExplosionsQueue.Count - 1].Delay +
-                CharacterSprite.ImmunityMaxTime;
+            _flashScreenTime = _collapseExplosionsQueue[_collapseExplosionsQueue.Count - 1].Delay;
         }
 
         public override void ReceiveAttack(int damage, Vector2 subjectPosition)
@@ -474,19 +520,21 @@ namespace Super_Pete_The_Pirate.Characters
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(_hpSpritesheetTexture, _hpBackPosition, _hpBackRegion, Color.White);
+            spriteBatch.Draw(_hpSpritesheetTexture, _hpBackPosition, _hpBackRegion, Color.White * _hudAlpha);
             var halfHP = Math.Floor(HP / 2.0f);
             for (var i = 0; i < Math.Ceiling(HP / 2.0f); i++)
             {
                 var region = i == halfHP ? _hpHalfRegion : _hpFullRegion;
                 var position = _hpSpritesPosition + (region.Width * i + 1 * i) * Vector2.UnitX;
-                spriteBatch.Draw(_hpSpritesheetTexture, position, region, Color.White);
+                spriteBatch.Draw(_hpSpritesheetTexture, position, region, Color.White * _hudAlpha);
             }
         }
 
         public void DrawInnerSprites(SpriteBatch spriteBatch)
         {
+            var mapSize = new Vector2(GameMap.Instance.MapWidth, GameMap.Instance.MapHeight);
             _cannons.ForEach(x => x.Draw(spriteBatch));
+            spriteBatch.Draw(_flashTexture, new Rectangle(0, 0, (int)mapSize.X, (int)mapSize.Y), Color.White * _flashScreenAlpha);
             _collapseExplosions.ForEach(x => x.Draw(spriteBatch));
         }
     }

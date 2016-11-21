@@ -261,7 +261,7 @@ namespace Super_Pete_The_Pirate
             previousBottom = bounds.Bottom;
         }
 
-        private float GetMoveAcceleration()
+        protected virtual float GetMoveAcceleration()
         {
             return _running ? RunningMoveAcceleration : MoveAcceleration;
         }
