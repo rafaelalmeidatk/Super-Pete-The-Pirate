@@ -92,6 +92,22 @@ namespace Super_Pete_The_Pirate.Characters
                 new Rectangle(96, 160, 32, 64)
             }, new int[] { 0, 0, 0, 0 }, new int[] { -32, -32, -32, -32 });
 
+            // Damage
+            CharacterSprite.CreateFrameList("damage", 0);
+            CharacterSprite.AddCollider("damage", new Rectangle(2, 0, 28, 32));
+            CharacterSprite.AddFrames("damage", new List<Rectangle>()
+            {
+                new Rectangle(0, 224, 32, 64),
+            }, new int[] { 0 }, new int[] { -32 });
+
+            // Dying
+            CharacterSprite.CreateFrameList("dying", 0);
+            CharacterSprite.AddCollider("dying", new Rectangle(2, 0, 28, 32));
+            CharacterSprite.AddFrames("dying", new List<Rectangle>()
+            {
+                new Rectangle(0, 224, 32, 64),
+            }, new int[] { 0 }, new int[] { -32 });
+
             // Attacks setup
             _attackFrameList = new string[]
             {
@@ -238,14 +254,19 @@ namespace Super_Pete_The_Pirate.Characters
 
         public override void UpdateFrameList()
         {
-            if (_confusionTick > 0f)
-                CharacterSprite.SetFrameList("confusion");
-            else if (_enterWheelMode)
-                CharacterSprite.SetFrameList("enter_wheel_mode");
-            else if (_wheelMode)
-                CharacterSprite.SetFrameList("wheel_mode");
+            if (!_dying && !CharacterSprite.ImmunityAnimationActive)
+            {
+                if (_confusionTick > 0f)
+                    CharacterSprite.SetFrameList("confusion");
+                else if (_enterWheelMode)
+                    CharacterSprite.SetFrameList("enter_wheel_mode");
+                else if (_wheelMode)
+                    CharacterSprite.SetFrameList("wheel_mode");
+            }
             else
+            {
                 base.UpdateFrameList();
+            }
         }
 
         public override void CreateGroundImpactParticles()

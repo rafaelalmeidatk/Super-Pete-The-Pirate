@@ -54,7 +54,7 @@ namespace Super_Pete_The_Pirate.Characters
                 new Rectangle(0, 128, 64, 64),
                 new Rectangle(64, 128, 64, 64),
                 new Rectangle(128, 128, 64, 64)
-            }, new int[] { 0, 0, 0, 0 }, new int[] { -32, -32, -32, -32 });
+            }, new int[] { 0, 0, 0 }, new int[] { -32, -32, -32 });
             CharacterSprite.AddFramesToAttack("attack_shot", 1);
 
             // Jumping
@@ -63,23 +63,23 @@ namespace Super_Pete_The_Pirate.Characters
             CharacterSprite.AddFrames("jumping", new List<Rectangle>()
             {
                 new Rectangle(0, 32, 32, 32)
-            }, new int[] { 0, 0, 0, 0 }, new int[] { 0, 0, 0, 0 });
+            }, new int[] { 0 }, new int[] { 0 });
 
             // Damage
             CharacterSprite.CreateFrameList("damage", 0);
             CharacterSprite.AddCollider("damage", new Rectangle(4, -2, 26, 34));
             CharacterSprite.AddFrames("damage", new List<Rectangle>()
             {
-                new Rectangle(0, 192, 32, 64)
-            }, new int[] { 0, 0, 0, 0 }, new int[] { -32, -32, -32, -32 });
+                new Rectangle(0, 192, 64, 64)
+            }, new int[] { 0 }, new int[] { -32 });
 
-            // Damage
+            // Dying
             CharacterSprite.CreateFrameList("dying", 0);
             CharacterSprite.AddCollider("dying", new Rectangle(4, -2, 26, 34));
             CharacterSprite.AddFrames("dying", new List<Rectangle>()
             {
-                new Rectangle(0, 192, 32, 64)
-            }, new int[] { 0, 0, 0, 0 }, new int[] { -32, -32, -32, -32 });
+                new Rectangle(0, 192, 64, 64)
+            }, new int[] { 0 }, new int[] { -32 });
 
             // Attacks setup
             _attackFrameList = new string[]
@@ -124,18 +124,20 @@ namespace Super_Pete_The_Pirate.Characters
         {
             if (_alertAnimation && CharacterSprite.Looped)
             {
-                var teste = CharacterSprite.CurrentFrameList;
                 _alertAnimation = false;
                 RequestAttack(ShotAttack);
                 base.UpdateAttack(gameTime);
             }
-            else base.UpdateAttack(gameTime);
+            else
+            {
+                base.UpdateAttack(gameTime);
+            }
         }
 
         public override void UpdateFrameList()
         {
-            if (!_alertAnimation)
-                base.UpdateFrameList();
+            if (_alertAnimation && !_dying && !CharacterSprite.ImmunityAnimationActive) return;
+            base.UpdateFrameList();
         }
 
         public override void DoAttack()
