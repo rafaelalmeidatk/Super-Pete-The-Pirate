@@ -117,7 +117,7 @@
 
         public void CompleteStage()
         {
-            if (_stagesCompleted < 5)
+            if (_stagesCompleted < 4)
                 _stagesCompleted++;
         }
 

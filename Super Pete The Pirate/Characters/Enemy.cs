@@ -40,7 +40,6 @@ namespace Super_Pete_The_Pirate.Characters
 
         protected bool _wheelMode;
         public bool InWheelMode { get { return _wheelMode; } }
-
         protected int _damage;
 
         //--------------------------------------------------
@@ -66,6 +65,7 @@ namespace Super_Pete_The_Pirate.Characters
             _viewRangeOffset = Vector2.Zero;
             _damage = 0;
             _coins = 3;
+            CharacterSprite.SetImmunityMaxTime(0.35f);
         }
 
         public void CreateViewRange()

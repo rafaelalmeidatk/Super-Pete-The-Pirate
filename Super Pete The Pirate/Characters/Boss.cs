@@ -355,6 +355,7 @@ namespace Super_Pete_The_Pirate.Characters
                 if (_flashScreenAlpha > 1.3f)
                 {
                     _collapseOpacityTime = CollapseOpacityTimeMax;
+                    EraseCannons();
                 }
             }
             else if (_flashScreenAlpha > 0.0f)
@@ -433,6 +434,11 @@ namespace Super_Pete_The_Pirate.Characters
                 new CollapseExplosion() { Position = new Vector2(48, 80), Delay = 2500 }
             });
             _flashScreenTime = _collapseExplosionsQueue[_collapseExplosionsQueue.Count - 1].Delay;
+        }
+
+        public void EraseCannons()
+        {
+            _cannons.Clear();
         }
 
         public override void ReceiveAttack(int damage, Vector2 subjectPosition)

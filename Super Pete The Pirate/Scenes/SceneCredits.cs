@@ -40,7 +40,7 @@ namespace Super_Pete_The_Pirate.Scenes
             _backgroundTexture.SetData(new Color[] { new Color(18, 18, 20) });
 
             _creditsTexture = ImageManager.loadScene("credits", "Credits");
-            _creditsPosition = new Vector2(0, 50);
+            _creditsPosition = new Vector2(0, SceneManager.Instance.VirtualSize.Y);
 
             _fadeOutTexture = new Texture2D(SceneManager.Instance.GraphicsDevice, 1, 1, false, SurfaceFormat.Color);
             _fadeOutTexture.SetData(new Color[] { Color.Black });

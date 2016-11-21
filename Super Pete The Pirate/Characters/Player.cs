@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Super_Pete_The_Pirate.Characters;
 using Super_Pete_The_Pirate.Managers;
 using Super_Pete_The_Pirate.Objects;
 using Super_Pete_The_Pirate.Scenes;
@@ -503,7 +504,7 @@ namespace Super_Pete_The_Pirate
 
         public override void DoAttack()
         {
-            var damage = _attackType == ShotAttack ? 2 : 1;
+            var damage = _attackType == ShotAttack ? 2 : 5;
 
             if (_attackType == ShotAttack)
             {
@@ -621,7 +622,7 @@ namespace Super_Pete_The_Pirate
                 else
                 {
                     _flashScreenAlpha += (float)gameTime.ElapsedGameTime.TotalSeconds * 5;
-                    if (_flashScreenAlpha >= 1.0f)
+                    if (_flashScreenAlpha >= 1.3f)
                     {
                         _hatDropping = false;
                         _withHat = true;

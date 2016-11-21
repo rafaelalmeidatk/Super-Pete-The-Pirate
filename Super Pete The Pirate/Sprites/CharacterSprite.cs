@@ -163,6 +163,11 @@ namespace Super_Pete_The_Pirate
             }
         }
 
+        public void SetImmunityMaxTime(float immunityMaxTime)
+        {
+            _immunityMaxTime = immunityMaxTime;
+        }
+
         public void SetFrameListOnly(string name)
         {
             if (_currentFrameList != name)

@@ -46,7 +46,6 @@ namespace Super_Pete_The_Pirate.Scenes
         private Vector2[] _stageSelectionPositions;
 
         private AnimatedSprite _stageSelectionPeteSprite;
-        private Rectangle _stageLockedSprite;
 
         private Vector2 _pressZTextPosition;
         private float _pressZTextInitY;
@@ -121,9 +120,9 @@ namespace Super_Pete_The_Pirate.Scenes
                 new Vector2(231, 126),
                 new Vector2(278, 134)
             };
-
-            var nextLevelPos = _stageSelectionPositions[GetCurrentStage()];
-            var currentLevelPos = _stageSelectionPositions[Math.Max(GetCurrentStage() - 1, 0)];
+            var currentStage = MathHelper.Clamp(GetCurrentStage(), 0, 4);
+            var nextLevelPos = _stageSelectionPositions[currentStage];
+            var currentLevelPos = _stageSelectionPositions[Math.Max(currentStage, 0)];
             var stageSelectionPosition = GetCurrentStage() > maxLevels ? _stageSelectionPositions[0] : GetCurrentStage() >= maxLevels ? currentLevelPos : nextLevelPos;
 
             _stageSelectionSpritesheet = ImageManager.loadScene(ScenePathName, "StageSelectionSpritesheet");
@@ -138,8 +137,6 @@ namespace Super_Pete_The_Pirate.Scenes
                 (int)stageSelectionPosition.X, (int)stageSelectionPosition.Y);
 
             _stageSelectionSprite.Origin = new Vector2(9, 9);
-
-            _stageLockedSprite = new Rectangle(95, 0, 19, 19);
 
             if (GetCurrentStage() == maxLevels)
                 _stageSelectionSprite.IsVisible = false;
@@ -269,13 +266,6 @@ namespace Super_Pete_The_Pirate.Scenes
             {
                 var position = new Rectangle((int)_stageSelectionPositions[i].X, (int)_stageSelectionPositions[i].Y, 19, 19);
                 spriteBatch.Draw(_stageSelectionSpritesheet, position, new Rectangle(76, 0, 19, 19), Color.White, 0f,
-                    new Vector2(9, 9), SpriteEffects.None, 0f);
-            }
-
-            for (var i = 2; i < 5; i++)
-            {
-                var position = new Rectangle((int)_stageSelectionPositions[i].X, (int)_stageSelectionPositions[i].Y, 19, 19);
-                spriteBatch.Draw(_stageSelectionSpritesheet, position, _stageLockedSprite, Color.White, 0f,
                     new Vector2(9, 9), SpriteEffects.None, 0f);
             }
 
