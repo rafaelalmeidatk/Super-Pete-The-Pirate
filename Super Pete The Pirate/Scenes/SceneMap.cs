@@ -467,9 +467,15 @@ namespace Super_Pete_The_Pirate.Scenes
                 }
                 if (_enemies[i] is Boss)
                 {
-                    if (((Boss)_enemies[i]).RequestingHatDrop)
+                    var boss = (Boss)_enemies[i];
+                    if (boss.RequestingHatDrop)
                     {
                         _player.PerformHatDrop();
+                    }
+                    if (boss.Collapsing)
+                    {
+                        SoundManager.SetBgmVolume(0.3f);
+                        _ambienceSe.Volume = 0.3f;
                     }
                 }
                 if (_enemies[i].RequestErase)

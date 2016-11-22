@@ -102,6 +102,7 @@ namespace Super_Pete_The_Pirate
         private SoundEffect _normalAttackSe;
         private SoundEffect _shotEmptyAttackSe;
         private SoundEffect _footstepSe;
+        private SoundEffect _hatSe;
 
         private float _footstepCooldown;
         private float _footstepTick;
@@ -319,6 +320,7 @@ namespace Super_Pete_The_Pirate
             _normalAttackSe = SoundManager.LoadSe("Sword");
             _shotEmptyAttackSe = SoundManager.LoadSe("ShotPeteEmpty");
             _footstepSe = SoundManager.LoadSe("Footstep");
+            _hatSe = SoundManager.LoadSe("Hat");
         }
 
         public override void GainHP(int amount)
@@ -504,7 +506,7 @@ namespace Super_Pete_The_Pirate
 
         public override void DoAttack()
         {
-            var damage = _attackType == ShotAttack ? 2 : 5;
+            var damage = _attackType == ShotAttack ? 2 : 999;
 
             if (_attackType == ShotAttack)
             {
@@ -598,11 +600,19 @@ namespace Super_Pete_The_Pirate
 
         private void UpdateHatDrop(GameTime gameTime)
         {
+            var lastFrame = _hatSprite.CurrentFrame;
             _hatSprite.Update(gameTime);
+
+            if (_hatSprite.IsVisible && _hatSprite.CurrentFrame == 0 && lastFrame != 0)
+            {
+                _hatSe.PlaySafe();
+            }
+
             if (_hatSprite.Position.Y >= BoundingRectangle.Top)
             {
                 _flashScreen = true;
                 _hatSprite.Pause();
+                _hatSe.Dispose();
             }
             else
             {

@@ -73,6 +73,7 @@ namespace Super_Pete_The_Pirate.Characters
         // Collapse
 
         private bool _collapsing;
+        public bool Collapsing => _collapsing;
         private class CollapseExplosion
         {
             public Vector2 Position;

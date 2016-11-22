@@ -821,3 +821,9 @@
 /processorParam:TextureFormat=Color
 /build:imgs/scenes/credits/Credits.png
 
+#begin sounds/se/Hat.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sounds/se/Hat.ogg
+

@@ -43,7 +43,7 @@ namespace Super_Pete_The_Pirate.Managers
         //--------------------------------------------------
         // For debug purposes
 
-        private static bool _soundOn = false;
+        private static bool _soundOn = true;
 
         //----------------------//------------------------//
 
@@ -95,6 +95,15 @@ namespace Super_Pete_The_Pirate.Managers
                     MediaPlayer.Play(_mapSong);
                     _bgmType = BGMType.Map;
                 }
+                MediaPlayer.Volume = 1.0f;
+            }
+        }
+
+        public static void SetBgmVolume(float volume)
+        {
+            if (_soundOn)
+            {
+                MediaPlayer.Volume = volume;
             }
         }
 

@@ -19,26 +19,26 @@ namespace Super_Pete_The_Pirate
 
         protected bool _requestAttack;
         protected bool _isAttacking;
-        public bool IsAttacking { get { return _isAttacking; } }
+        public bool IsAttacking => _isAttacking;
         protected int _attackType;
         protected float _attackCooldownTick;
         protected string[] _attackFrameList;
         protected bool _requestErase;
-        public bool RequestErase { get { return _requestErase; } }
+        public bool RequestErase => _requestErase;
         public float AttackCooldown { get; set; }
-        public bool IsImunity { get { return CharacterSprite.ImmunityAnimationActive; } }
+        public bool IsImunity => CharacterSprite.ImmunityAnimationActive;
         protected bool _shot;
         protected int _hp;
-        public int HP { get { return _hp; } }
+        public int HP => _hp;
 
         //--------------------------------------------------
         // Damage stuff
 
         protected bool _canReceiveAttacks;
-        public virtual bool CanReceiveAttacks { get { return _canReceiveAttacks; } }
+        public virtual bool CanReceiveAttacks => _canReceiveAttacks;
 
         protected bool _contactDamageEnabled;
-        public virtual bool ContactDamageEnabled { get { return _contactDamageEnabled; } }
+        public virtual bool ContactDamageEnabled => _contactDamageEnabled;
 
         //--------------------------------------------------
         // Random
