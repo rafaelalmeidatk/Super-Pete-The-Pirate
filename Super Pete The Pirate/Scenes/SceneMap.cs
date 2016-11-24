@@ -66,6 +66,11 @@ namespace Super_Pete_The_Pirate.Scenes
         private SoundEffect _coinsSe;
 
         //--------------------------------------------------
+        // Deflect SE
+
+        private SoundEffect _deflectSe;
+
+        //--------------------------------------------------
         // Camera stuff
 
         private Camera2D _camera;
@@ -161,15 +166,14 @@ namespace Super_Pete_The_Pirate.Scenes
 
             // Ambience SE init
             var ambienceSe = SoundManager.LoadSe("Ambience");
-            if (ambienceSe == null)
-            {
-                _ambienceSe = null;
-            }
-            else
+            if (_ambienceSe != null)
             {
                 _ambienceSe = ambienceSe.CreateInstance();
                 _ambienceSe.IsLooped = true;
             }
+
+            // SEs init
+            _deflectSe = SoundManager.LoadSe("Deflect");
 
             // Load the map
             LoadMap(SceneManager.Instance.MapToLoad);
@@ -443,6 +447,7 @@ namespace Super_Pete_The_Pirate.Scenes
                             if (_enemies[i].EnemyType == EnemyType.TurtleWheel && _enemies[i].InWheelMode)
                             {
                                 _projectiles[j].Acceleration = new Vector2(_projectiles[j].Acceleration.X * -1.7f, _rand.Next(-4, 5));
+                                _deflectSe.PlaySafe();
                                 CreateSparkParticle(_projectiles[j].Position);
                                 _projectiles[j].Subject = ProjectileSubject.FromEnemy;
                             }

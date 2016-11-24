@@ -827,3 +827,9 @@
 /processorParam:Quality=Best
 /build:sounds/se/Hat.ogg
 
+#begin sounds/se/Deflect.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sounds/se/Deflect.ogg
+

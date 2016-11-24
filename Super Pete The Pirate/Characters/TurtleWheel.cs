@@ -1,5 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
+using Super_Pete_The_Pirate.Managers;
 using Super_Pete_The_Pirate.Scenes;
 using Super_Pete_The_Pirate.Sprites;
 using System;
