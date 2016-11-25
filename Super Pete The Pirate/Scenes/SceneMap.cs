@@ -480,7 +480,10 @@ namespace Super_Pete_The_Pirate.Scenes
                     if (boss.Collapsing)
                     {
                         SoundManager.SetBgmVolume(0.3f);
-                        _ambienceSe.Volume = 0.3f;
+                        if (_ambienceSe != null)
+                        {
+                            _ambienceSe.Volume = 0.3f;
+                        }
                     }
                 }
                 if (_enemies[i].RequestErase)
