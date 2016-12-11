@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" renderorder="right-down" width="200" height="26" tilewidth="32" tileheight="32" nextobjectid="157">
+ <properties>
+  <property name="Completion Time" value="00:01:55"/>
+ </properties>
  <tileset firstgid="1" name="Tile" tilewidth="32" tileheight="32" tilecount="408" columns="12">
   <image source="../imgs/tilesets/tile.png" width="384" height="1088"/>
  </tileset>

@@ -77,7 +77,7 @@ namespace Super_Pete_The_Pirate
         //--------------------------------------------------
         // Maps info
 
-        public int MapToLoad = 5;
+        public int MapToLoad = 1;
         public const int MaxLevels = 5;
 
         //----------------------//------------------------//
@@ -98,7 +98,7 @@ namespace Super_Pete_The_Pirate
         private SceneManager()
         {
             TypeOfSceneSaves = SceneSavesType.Load;
-            _currentScene = new SceneMap();
+            _currentScene = new SceneGameover();
         }
 
         public void RequestExit()
@@ -115,7 +115,7 @@ namespace Super_Pete_The_Pirate
         {
             this.Content = new ContentManager(Content.ServiceProvider, "Content");
             var transitionTexture = new Texture2D(GraphicsDevice, 1, 1, false, SurfaceFormat.Color);
-            transitionTexture.SetData<Color>(new Color[] { Color.Black });
+            transitionTexture.SetData(new Color[] { Color.Black });
             _transitionImage = new Sprite(transitionTexture);
             _transitionImage.Scale = new Vector2(VirtualSize.X, VirtualSize.Y);
             _transitionImage.Alpha = 0.0f;

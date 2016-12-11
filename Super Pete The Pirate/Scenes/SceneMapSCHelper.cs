@@ -143,7 +143,7 @@ namespace Super_Pete_The_Pirate.Scenes
             _numberSe = SoundManager.LoadSe("Numbers");
             
             _background = new Texture2D(SceneManager.Instance.GraphicsDevice, 1, 1, false, SurfaceFormat.Color);
-            _background.SetData<Color>(new Color[] { Color.Black });
+            _background.SetData(new Color[] { Color.Black });
         }
 
         public void Initialize(StageCompletedData data)
@@ -284,8 +284,15 @@ namespace Super_Pete_The_Pirate.Scenes
                 }
                 else
                 {
-                    PlayerManager.Instance.ResetHeartsAndLives();
-                    SceneManager.Instance.ChangeScene("SceneStageSelect");
+                    if (!_completed)
+                    {
+                        SceneManager.Instance.ChangeScene("SceneGameover");
+                    }
+                    else
+                    {
+                        PlayerManager.Instance.ResetHeartsAndLives();
+                        SceneManager.Instance.ChangeScene("SceneStageSelect");
+                    }
                 }
             }
 

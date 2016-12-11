@@ -19,8 +19,8 @@ namespace Super_Pete_The_Pirate
         //--------------------------------------------------
         // Map Size
 
-        public int MapWidth { get { return _tiledMap == null ? 0 : _tiledMap.WidthInPixels; } }
-        public int MapHeight { get { return _tiledMap == null ? 0 : _tiledMap.HeightInPixels; } }
+        public int MapWidth => _tiledMap == null ? 0 : _tiledMap.WidthInPixels;
+        public int MapHeight => _tiledMap == null ? 0 : _tiledMap.HeightInPixels;
 
         //--------------------------------------------------
         // Colliders
@@ -74,9 +74,9 @@ namespace Super_Pete_The_Pirate
             _spikes = new List<Rectangle>();
             _tileColliderBoxes = new List<Rectangle>();
             _colliderTexture = new Texture2D(SceneManager.Instance.GraphicsDevice, 1, 1, false, SurfaceFormat.Color);
-            _colliderTexture.SetData<Color>(new Color[] { Color.Red });
+            _colliderTexture.SetData(new Color[] { Color.Red });
             _spikesTexture = new Texture2D(SceneManager.Instance.GraphicsDevice, 1, 1, false, SurfaceFormat.Color);
-            _spikesTexture.SetData<Color>(new Color[] { Color.Cyan });
+            _spikesTexture.SetData(new Color[] { Color.Cyan });
             _currentMapId = 0;
         }
 

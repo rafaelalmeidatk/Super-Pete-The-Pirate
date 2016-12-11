@@ -833,3 +833,15 @@
 /processorParam:Quality=Best
 /build:sounds/se/Deflect.ogg
 
+#begin imgs/scenes/gameOver/GameOver.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:imgs/scenes/gameOver/GameOver.png
+
