@@ -9,23 +9,17 @@ namespace Super_Pete_The_Pirate.Managers
 {
     public static class SoundManager
     {
-        //--------------------------------------------------
-        // BGMType
-
-        public enum BGMType
-        {
-            None,
-            NonMap,
-            Map
-        }
-
-        private static BGMType _bgmType;
 
         //--------------------------------------------------
         // Content Manager
 
         private static Dictionary<string, SoundEffect> _seCache = new Dictionary<string, SoundEffect>();
         private static ContentManager _contentManager = new ContentManager(SceneManager.Instance.Content.ServiceProvider, "Content");
+
+        //--------------------------------------------------
+        // BGM Name
+
+        private static string _bgmName;
 
         //--------------------------------------------------
         // SEs
@@ -37,8 +31,7 @@ namespace Super_Pete_The_Pirate.Managers
         //--------------------------------------------------
         // BGMs
 
-        private static Song _nonMapSong;
-        private static Song _mapSong;
+        private static Dictionary<string, Song> _songs;
 
         //--------------------------------------------------
         // For debug purposes
@@ -52,8 +45,11 @@ namespace Super_Pete_The_Pirate.Managers
             _cancelSe = LoadSe("Cancel");
             _confirmSe = LoadSe("Confirm");
             _selectSe = LoadSe("Select");
-            _nonMapSong = LoadBgm("AchaidhCheide");
-            _mapSong = LoadBgm("AngevinB");
+            _songs = new Dictionary<string, Song>
+            {
+                { "AchaidhCheide", LoadBgm("AchaidhCheide") },
+                { "AngevinB", LoadBgm("AngevinB") }
+            };
             MediaPlayer.IsRepeating = true;
         }
 
@@ -79,21 +75,14 @@ namespace Super_Pete_The_Pirate.Managers
             return _seCache[filename];
         }
 
-        public static void StartBgm(BGMType bgmType)
+        public static void StartBgm(string bgmName)
         {
             if (_soundOn)
             {
-                if (bgmType == BGMType.NonMap && _bgmType != BGMType.NonMap)
+                if (bgmName != _bgmName)
                 {
                     MediaPlayer.Stop();
-                    MediaPlayer.Play(_nonMapSong);
-                    _bgmType = BGMType.NonMap;
-                }
-                else if (bgmType == BGMType.Map && _bgmType != BGMType.Map)
-                {
-                    MediaPlayer.Stop();
-                    MediaPlayer.Play(_mapSong);
-                    _bgmType = BGMType.Map;
+                    MediaPlayer.Play(_songs[bgmName]);
                 }
                 MediaPlayer.Volume = 1.0f;
             }

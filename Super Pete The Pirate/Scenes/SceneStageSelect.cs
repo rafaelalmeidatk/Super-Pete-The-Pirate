@@ -104,7 +104,7 @@ namespace Super_Pete_The_Pirate.Scenes
             _selectedIndex = GetCurrentStage() >= SceneManager.MaxLevels ? SceneManager.MaxLevels - 1 : GetCurrentStage();
 
             // Start BGM
-            SoundManager.StartBgm(SoundManager.BGMType.NonMap);
+            SoundManager.StartBgm("AchaidhCheide");
 
             SetupMap();
         }

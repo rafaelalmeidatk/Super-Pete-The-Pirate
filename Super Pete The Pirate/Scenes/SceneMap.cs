@@ -143,7 +143,7 @@ namespace Super_Pete_The_Pirate.Scenes
             _projectiles = new List<GameProjectile>();
             _shotSe = SoundManager.LoadSe("Shot");
             _projectilesColliderTexture = new Texture2D(SceneManager.Instance.GraphicsDevice, 1, 1);
-            _projectilesColliderTexture.SetData<Color>(new Color[]{ Color.Orange });
+            _projectilesColliderTexture.SetData(new Color[]{ Color.Orange });
 
             // Shops init
             _shops = new List<GameShop>();
@@ -185,7 +185,7 @@ namespace Super_Pete_The_Pirate.Scenes
             _backgroundHelper = new SceneMapBackgroundHelper();
 
             // Start BGM and Ambience SE
-            SoundManager.StartBgm(SoundManager.BGMType.Map);
+            SoundManager.StartBgm("AngevinB");
             _ambienceSe.PlaySafe();
         }
 
@@ -265,7 +265,7 @@ namespace Super_Pete_The_Pirate.Scenes
 
         private GameCheckpoint CreateCheckpoints(int x, int y, bool endFlag)
         {
-            var checkpointTexture = ImageManager.loadMisc("checkPointSpritesheet");
+            var checkpointTexture = ImageManager.loadMisc("CheckPointSpritesheet");
             var yInc = endFlag ? 192 : 0;
             var checkpointFrames = new Rectangle[]
             {

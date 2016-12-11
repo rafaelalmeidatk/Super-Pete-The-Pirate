@@ -171,7 +171,7 @@ namespace Super_Pete_The_Pirate.Scenes
             _loadResponses = 0;
 
             // Play BGM
-            SoundManager.StartBgm(SoundManager.BGMType.NonMap);
+            SoundManager.StartBgm("AchaidhCheide");
 
             ReadSaves();
         }

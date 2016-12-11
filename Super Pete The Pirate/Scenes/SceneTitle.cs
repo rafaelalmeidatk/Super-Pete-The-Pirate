@@ -1,5 +1,4 @@
-﻿
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended.BitmapFonts;
@@ -95,11 +94,11 @@ namespace Super_Pete_The_Pirate.Scenes
 
             // Menu icon
             _menuIconBaseY = _menuY + SceneManager.Instance.GameFont.LineHeight / 2;
-            _menuIcon = new Sprite(ImageManager.loadScene(ScenePathName, "indexIcon"));
+            _menuIcon = new Sprite(ImageManager.loadScene(ScenePathName, "IndexIcon"));
             _menuIcon.Position = new Vector2(13, _menuIconBaseY);
 
             // Start BGM
-            SoundManager.StartBgm(SoundManager.BGMType.NonMap);
+            SoundManager.StartBgm("AchaidhCheide");
         }
 
         public override void UnloadContent()

@@ -4,7 +4,7 @@
   <property name="Completion Time" value="00:02:00"/>
  </properties>
  <tileset firstgid="1" name="Tile" tilewidth="32" tileheight="32" tilecount="408" columns="12">
-  <image source="../imgs/tilesets/tile.png" width="384" height="1088"/>
+  <image source="../imgs/tilesets/Tileset.png" width="384" height="1088"/>
  </tileset>
  <layer name="Trees" width="200" height="26">
   <data encoding="csv">

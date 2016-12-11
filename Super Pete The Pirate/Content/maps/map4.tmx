@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="200" height="26" tilewidth="32" tileheight="32" nextobjectid="157">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="200" height="26" tilewidth="32" tileheight="32" nextobjectid="158">
  <properties>
   <property name="Completion Time" value="00:01:55"/>
  </properties>
  <tileset firstgid="1" name="Tile" tilewidth="32" tileheight="32" tilecount="408" columns="12">
-  <image source="../imgs/tilesets/tile.png" width="384" height="1088"/>
+  <image source="../imgs/tilesets/Tileset.png" width="384" height="1088"/>
  </tileset>
  <layer name="Trees" width="200" height="26">
   <data encoding="csv">
@@ -403,7 +403,7 @@
   </object>
  </objectgroup>
  <objectgroup name="Player Spawn">
-  <object id="156" gid="97" x="6080" y="256" width="32" height="32"/>
+  <object id="157" gid="97" x="96" y="800" width="32" height="32"/>
  </objectgroup>
  <objectgroup name="Coins">
   <object id="47" gid="104" x="2016" y="160" width="32" height="32"/>

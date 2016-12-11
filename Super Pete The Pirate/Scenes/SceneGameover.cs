@@ -24,6 +24,9 @@ namespace Super_Pete_The_Pirate.Scenes
             base.LoadContent();
 
             _backgroundTexture = ImageManager.loadScene("gameOver", "GameOver");
+
+            // Start BGM
+            SoundManager.StartBgm("Ossuary6Air");
         }
 
         public override void Update(GameTime gameTime)

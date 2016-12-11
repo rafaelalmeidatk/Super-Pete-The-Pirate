@@ -205,7 +205,7 @@ namespace Super_Pete_The_Pirate.Scenes
             
             if (_rank == "S")
             {
-                var texture = ImageManager.loadScene(SceneResFolder, "rank" + _rank);
+                var texture = ImageManager.loadScene(SceneResFolder, "Rank" + _rank);
                 var frames = new Rectangle[]
                 {
                     new Rectangle(0, 0, 80, 80),
@@ -217,7 +217,7 @@ namespace Super_Pete_The_Pirate.Scenes
             }
             else
             {
-                _rankSprite = new Sprite(ImageManager.loadScene(SceneResFolder, "rank" + _rank));
+                _rankSprite = new Sprite(ImageManager.loadScene(SceneResFolder, "Rank" + _rank));
             }
 
             _rankSprite.Position = new Vector2(315, 199);

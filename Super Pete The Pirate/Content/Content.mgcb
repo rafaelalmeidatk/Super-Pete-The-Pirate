@@ -169,60 +169,6 @@
 /processorParam:TextureFormat=Color
 /build:imgs/particles/WhitePoint.png
 
-#begin imgs/scenes/title/indexIcon.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:imgs/scenes/title/indexIcon.png
-
-#begin imgs/tilesets/tile.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:imgs/tilesets/tile.png
-
-#begin maps/map1.tmx
-/importer:TiledMapImporter
-/processor:TiledMapProcessor
-/build:maps/map1.tmx
-
-#begin maps/map2.tmx
-/importer:TiledMapImporter
-/processor:TiledMapProcessor
-/build:maps/map2.tmx
-
-#begin maps/map3.tmx
-/importer:TiledMapImporter
-/processor:TiledMapProcessor
-/build:maps/map3.tmx
-
-#begin maps/map4.tmx
-/importer:TiledMapImporter
-/processor:TiledMapProcessor
-/build:maps/map4.tmx
-
-#begin maps/map5.tmx
-/importer:TiledMapImporter
-/processor:TiledMapProcessor
-/build:maps/map5.tmx
-
-#begin maps/map6.tmx
-/importer:TiledMapImporter
-/processor:TiledMapProcessor
-/build:maps/map6.tmx
-
 #begin imgs/system/ShopUpButton.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -360,18 +306,6 @@
 /processorParam:TextureFormat=Color
 /build:imgs/scenes/stageSelect/StageSelectionPeteSpritesheet.png
 
-#begin imgs/misc/checkPointSpritesheet.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:imgs/misc/checkPointSpritesheet.png
-
 #begin imgs/scenes/saves/SceneSavesBackground.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -448,78 +382,6 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:imgs/scenes/saves/SavesLoadingSpritesheet.png
-
-#begin imgs/scenes/map/rankA.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:imgs/scenes/map/rankA.png
-
-#begin imgs/scenes/map/rankB.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:imgs/scenes/map/rankB.png
-
-#begin imgs/scenes/map/rankC.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:imgs/scenes/map/rankC.png
-
-#begin imgs/scenes/map/rankD.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:imgs/scenes/map/rankD.png
-
-#begin imgs/scenes/map/rankF.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:imgs/scenes/map/rankF.png
-
-#begin imgs/scenes/map/rankS.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:imgs/scenes/map/rankS.png
 
 #begin sounds/se/Aerial.ogg
 /importer:OggImporter
@@ -844,4 +706,143 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:imgs/scenes/gameOver/GameOver.png
+
+#begin imgs\misc\CheckPointSpritesheet.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:imgs\misc\CheckPointSpritesheet.png
+
+#begin imgs\scenes\map\RankA.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:imgs\scenes\map\RankA.png
+
+#begin imgs\scenes\map\RankB.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:imgs\scenes\map\RankB.png
+
+#begin imgs\scenes\map\RankC.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:imgs\scenes\map\RankC.png
+
+#begin imgs\scenes\map\RankD.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:imgs\scenes\map\RankD.png
+
+#begin imgs\scenes\map\RankF.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:imgs\scenes\map\RankF.png
+
+#begin imgs\scenes\map\RankS.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:imgs\scenes\map\RankS.png
+
+#begin imgs\scenes\title\IndexIcon.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:imgs\scenes\title\IndexIcon.png
+
+#begin imgs\tilesets\Tileset.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:imgs\tilesets\Tileset.png
+
+#begin maps\Map1.tmx
+/importer:TiledMapImporter
+/processor:TiledMapProcessor
+/build:maps\Map1.tmx
+
+#begin maps\Map2.tmx
+/importer:TiledMapImporter
+/processor:TiledMapProcessor
+/build:maps\Map2.tmx
+
+#begin maps\Map4.tmx
+/importer:TiledMapImporter
+/processor:TiledMapProcessor
+/build:maps\Map4.tmx
+
+#begin maps\Map3.tmx
+/importer:TiledMapImporter
+/processor:TiledMapProcessor
+/build:maps\Map3.tmx
+
+#begin maps\Map5.tmx
+/importer:TiledMapImporter
+/processor:TiledMapProcessor
+/build:maps\Map5.tmx
+
+#begin sounds/bgm/Ossuary6Air.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:sounds/bgm/Ossuary6Air.mp3
 
