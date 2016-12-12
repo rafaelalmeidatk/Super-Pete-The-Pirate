@@ -48,7 +48,9 @@ namespace Super_Pete_The_Pirate.Managers
             _songs = new Dictionary<string, Song>
             {
                 { "AchaidhCheide", LoadBgm("AchaidhCheide") },
-                { "AngevinB", LoadBgm("AngevinB") }
+                { "AngevinB", LoadBgm("AngevinB") },
+                { "PeteThePirate", LoadBgm("PeteThePirate") },
+                { "Ossuary6Air", LoadBgm("Ossuary6Air") }
             };
             MediaPlayer.IsRepeating = true;
         }

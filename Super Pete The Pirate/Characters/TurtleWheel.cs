@@ -33,6 +33,11 @@ namespace Super_Pete_The_Pirate.Characters
 
         private float _confusionTick;
 
+        //--------------------------------------------------
+        // Deflect SE
+
+        private SoundEffect _deflectSe;
+
         //----------------------//------------------------//
 
         public TurtleWheel(Texture2D texture) : base(texture)
@@ -130,6 +135,9 @@ namespace Super_Pete_The_Pirate.Characters
             _wheelMode = false;
             _hitGroundFromImpact = 0;
             _confusionTick = 0f;
+
+            // SEs init
+            _deflectSe = SoundManager.LoadSe("Deflect");
 
             CreateViewRange();
         }
@@ -242,6 +250,7 @@ namespace Super_Pete_The_Pirate.Characters
                 _movement = 0f;
                 _movementSide *= -1;
                 _hitGroundFromImpact = 1;
+                _deflectSe.PlaySafe();
             }
         }
 

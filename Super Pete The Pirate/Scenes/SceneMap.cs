@@ -184,8 +184,7 @@ namespace Super_Pete_The_Pirate.Scenes
             // Background init
             _backgroundHelper = new SceneMapBackgroundHelper();
 
-            // Start BGM and Ambience SE
-            SoundManager.StartBgm("AngevinB");
+            // Ambience SE
             _ambienceSe.PlaySafe();
         }
 
@@ -213,6 +212,9 @@ namespace Super_Pete_The_Pirate.Scenes
         private void LoadMap(int mapId)
         {
             GameMap.Instance.LoadMap(Content, mapId);
+
+            var bgm = GameMap.Instance.GetSongName() ?? "AngevinB";
+            SoundManager.StartBgm(bgm);
 
             SpawnShops();
             SpawnEnemies();

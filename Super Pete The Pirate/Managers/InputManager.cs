@@ -34,6 +34,11 @@ namespace Super_Pete_The_Pirate
                 _currentKeyState = Keyboard.GetState();
         }
 
+        public bool AnyKeyPressed()
+        {
+            return _prevKeyState.GetPressedKeys().Length > 0 && _currentKeyState.GetPressedKeys().Length == 0;
+        }
+
         public bool KeyPressed(params Keys[] keys)
         {
             foreach (Keys key in keys)

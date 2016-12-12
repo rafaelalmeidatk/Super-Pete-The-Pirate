@@ -33,7 +33,7 @@ namespace Super_Pete_The_Pirate.Scenes
         {
             base.Update(gameTime);
 
-            if (!SceneManager.Instance.IsTransitioning && InputManager.Instace.CurrentKeyState.GetPressedKeys().Length > 0)
+            if (!SceneManager.Instance.IsTransitioning && InputManager.Instace.AnyKeyPressed())
             {
                 SoundManager.PlayConfirmSe();
                 SceneManager.Instance.ChangeScene("SceneTitle");

@@ -79,6 +79,7 @@
     <Compile Include="Scenes\SceneBase.cs" />
     <Compile Include="Scenes\SceneCredits.cs" />
     <Compile Include="Scenes\SceneGameover.cs" />
+    <Compile Include="Scenes\SceneIntro.cs" />
     <Compile Include="Scenes\SceneMap.cs" />
     <Compile Include="Scenes\SceneMapBackgroundHelper.cs" />
     <Compile Include="Scenes\SceneMapPauseHelper.cs" />

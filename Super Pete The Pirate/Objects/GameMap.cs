@@ -162,6 +162,13 @@ namespace Super_Pete_The_Pirate
             return TimeSpan.Parse(_tiledMap.Properties["Completion Time"]);
         }
 
+        public string GetSongName()
+        {
+            if (_tiledMap == null || (_tiledMap != null && !_tiledMap.Properties.ContainsKey("BGM")))
+                return null;
+            return _tiledMap.Properties["BGM"];
+        }
+
         public bool IsTileBlocked(int x, int y)
         {
             if (y < 0 || y > MapHeight || x < 0 || x > MapWidth) return false;

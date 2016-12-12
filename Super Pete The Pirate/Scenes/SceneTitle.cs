@@ -119,7 +119,7 @@ namespace Super_Pete_The_Pirate.Scenes
         {
             if (_phase == PressAnyButtonPhase)
             {
-                if (InputManager.Instace.CurrentKeyState.GetPressedKeys().Length > 0)
+                if (InputManager.Instace.AnyKeyPressed())
                 {
                     _phase = MenuPhase;
                     SoundManager.PlayConfirmSe();

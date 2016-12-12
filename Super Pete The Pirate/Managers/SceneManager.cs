@@ -49,7 +49,7 @@ namespace Super_Pete_The_Pirate
         //--------------------------------------------------
         // Debug mode
 
-        public bool DebugMode = false;
+        public bool DebugMode = true;
 
         //--------------------------------------------------
         // Game fonts
@@ -98,7 +98,7 @@ namespace Super_Pete_The_Pirate
         private SceneManager()
         {
             TypeOfSceneSaves = SceneSavesType.Load;
-            _currentScene = new SceneGameover();
+            _currentScene = new SceneIntro();
         }
 
         public void RequestExit()
