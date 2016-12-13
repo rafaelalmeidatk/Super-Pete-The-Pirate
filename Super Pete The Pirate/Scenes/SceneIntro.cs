@@ -1,10 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using MonoGame.Extended.ViewportAdapters;
 
 namespace Super_Pete_The_Pirate.Scenes
@@ -37,9 +32,9 @@ namespace Super_Pete_The_Pirate.Scenes
         // Logo frames
 
         private const float LogoInterval = 2500.0f;
-        private const int LogoFramesCount = 7;
-        private const int LogoFrameInterval = 3;
-        private const float FramesInterval = 100.0f;
+        private const int LogoFramesCount = 8;
+        private const int LogoFrameInterval = 4;
+        private const float FramesInterval = 60.0f;
         private int _currentFrame;
         private float _logoAlpha;
 
@@ -170,7 +165,7 @@ namespace Super_Pete_The_Pirate.Scenes
         private void HandleFinalInterval(float deltaTime)
         {
             _currentTick += deltaTime;
-            if (_currentTick >= MonogameInterval)
+            if (_currentTick >= MonogameInterval && !SceneManager.Instance.IsTransitioning)
             {
                 SceneManager.Instance.ChangeScene("SceneTitle");
             }
