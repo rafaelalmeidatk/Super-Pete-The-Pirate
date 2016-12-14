@@ -498,7 +498,8 @@ namespace Super_Pete_The_Pirate
 
                 if (_attackType == ShotAttack && CharacterSprite.CurrentFrameList == _attackFrameList[ShotAttackJump])
                     CharacterSprite.SetFrameListOnly(_attackFrameList[ShotAttack]);
-            } else if (_attackType == ShotAttack && CharacterSprite.CurrentFrameList == _attackFrameList[ShotAttack])
+            }
+            else if (_attackType == ShotAttack && CharacterSprite.CurrentFrameList == _attackFrameList[ShotAttack])
             {
                 CharacterSprite.SetFrameListOnly(_attackFrameList[ShotAttackJump]);
             }

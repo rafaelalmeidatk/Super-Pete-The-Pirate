@@ -34,7 +34,7 @@ namespace Super_Pete_The_Pirate.Scenes
         private const float LogoInterval = 2500.0f;
         private const int LogoFramesCount = 8;
         private const int LogoFrameInterval = 4;
-        private const float FramesInterval = 60.0f;
+        private const float FramesInterval = 70.0f;
         private int _currentFrame;
         private float _logoAlpha;
 
