@@ -2,6 +2,7 @@
 <map version="1.0" orientation="orthogonal" renderorder="right-down" width="12" height="8" tilewidth="32" tileheight="32" nextobjectid="18">
  <properties>
   <property name="BGM" value="PeteThePirate"/>
+  <property name="Completion Time" value="00:05:00"/>
  </properties>
  <tileset firstgid="1" name="Tile" tilewidth="32" tileheight="32" tilecount="408" columns="12">
   <image source="../imgs/tilesets/Tileset.png" width="384" height="1088"/>

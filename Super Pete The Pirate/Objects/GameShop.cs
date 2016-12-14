@@ -135,6 +135,15 @@ namespace Super_Pete_The_Pirate.Objects
             return _arrowState == ArrowDeny;
         }
 
+        public bool NeedDeny()
+        {
+            if (_shopType == GameShopType.Hearts)
+            {
+                return PlayerManager.Instance.Hearts >= 5;
+            }
+            return false;
+        }
+
         public void Update(GameTime gameTime)
         {
             if (_clickTimer > 0)

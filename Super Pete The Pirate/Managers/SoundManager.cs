@@ -9,7 +9,6 @@ namespace Super_Pete_The_Pirate.Managers
 {
     public static class SoundManager
     {
-
         //--------------------------------------------------
         // Content Manager
 
@@ -85,6 +84,7 @@ namespace Super_Pete_The_Pirate.Managers
                 {
                     MediaPlayer.Stop();
                     MediaPlayer.Play(_songs[bgmName]);
+                    _bgmName = bgmName;
                 }
                 MediaPlayer.Volume = 1.0f;
             }

@@ -846,12 +846,6 @@
 /processorParam:Quality=Best
 /build:sounds/bgm/Ossuary6Air.mp3
 
-#begin sounds/bgm/PeteThePirate.mp3
-/importer:Mp3Importer
-/processor:SongProcessor
-/processorParam:Quality=Best
-/build:sounds/bgm/PeteThePirate.mp3
-
 #begin imgs/scenes/intro/Logo0.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -959,4 +953,10 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:imgs/scenes/intro/Logo7.png
+
+#begin sounds/bgm/PeteThePirate.ogg
+/importer:OggImporter
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:sounds/bgm/PeteThePirate.ogg
 

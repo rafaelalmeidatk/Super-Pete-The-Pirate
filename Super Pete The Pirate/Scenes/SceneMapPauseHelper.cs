@@ -47,6 +47,7 @@ namespace Super_Pete_The_Pirate.Scenes
             _menu = new string[]
             {
                 "Continue",
+                "Restart",
                 "Exit to Menu"
             };
 
@@ -99,6 +100,11 @@ namespace Super_Pete_The_Pirate.Scenes
                         break;
 
                     case 1:
+                        PlayerManager.Instance.RestoreSavedData();
+                        SceneManager.Instance.ChangeScene("SceneMap");
+                        break;
+
+                    case 2:
                         ReturnToMenu();
                         break;
                 }

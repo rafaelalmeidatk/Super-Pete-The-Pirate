@@ -36,6 +36,20 @@
         public int Coins => _coins;
 
         //--------------------------------------------------
+        // Stored data
+
+        public struct Data
+        {
+            public int Ammo;
+            public int Lives;
+            public int Hearts;
+            public int Coins;
+        }
+
+        private Data _storedData;
+        public Data StoredData => _storedData;
+
+        //--------------------------------------------------
         // Initial data
 
         public const int InitialAmmo = 5;
@@ -55,8 +69,15 @@
             _ammo = InitialAmmo;
             _lives = InitialLives;
             _hearts = InitialHearts;
-            _coins = 0;
+            _coins = 100;
             _stagesCompleted = 0;
+            _storedData = new Data
+            {
+                Ammo = _ammo,
+                Lives = _lives,
+                Hearts = _hearts,
+                Coins = _coins
+            };
         }
 
         public void CreateNewGame()
@@ -71,6 +92,25 @@
             _hearts = hearts;
             _coins = coins;
             _stagesCompleted = stagesCompleted;
+        }
+
+        public void StoreData()
+        {
+            _storedData = new Data
+            {
+                Ammo = _ammo,
+                Lives = _lives,
+                Hearts = _hearts,
+                Coins = _coins
+            };
+        }
+
+        public void RestoreSavedData()
+        {
+            _ammo = _storedData.Ammo;
+            _lives = _storedData.Lives;
+            _hearts = _storedData.Hearts;
+            _coins = _storedData.Coins;
         }
 
         public void ResetHeartsAndLives()

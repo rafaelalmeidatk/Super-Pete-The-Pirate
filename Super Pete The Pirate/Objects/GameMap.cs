@@ -82,12 +82,13 @@ namespace Super_Pete_The_Pirate
 
         public void LoadMap(ContentManager contentManager, int id)
         {
-            _tiledMap = contentManager.Load<TiledMap>(String.Format("maps/map{0}", id));
+            _tiledMap = contentManager.Load<TiledMap>(String.Format("maps/Map{0}", id));
             _currentMapId = id;
             var tsx = (int)TileSize.X;
             var tsy = (int)TileSize.Y;
+
             _tileColliderBoxes = new List<Rectangle>();
-            var blockedLayer = _tiledMap.GetLayer< TiledTileLayer>("Block");
+            var blockedLayer = _tiledMap.GetLayer<TiledTileLayer>("Block");
             if (blockedLayer != null)
             {
                 foreach (var tile in blockedLayer.Tiles)
@@ -113,16 +114,6 @@ namespace Super_Pete_The_Pirate
         {
             _tiledMap.Dispose();
             _tileColliderBoxes.Clear();
-        }
-
-        public int GetTileByX(double x)
-        {
-            return (int)(x / TileSize.X);
-        }
-
-        public int GetTileByY(double y)
-        {
-            return (int)(y / TileSize.Y);
         }
 
         public TiledTileLayer GetBlockLayer()

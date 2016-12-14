@@ -186,6 +186,9 @@ namespace Super_Pete_The_Pirate.Scenes
 
             // Ambience SE
             _ambienceSe.PlaySafe();
+
+            // Save the initial data
+            PlayerManager.Instance.StoreData();
         }
 
         public override void UnloadContent()
@@ -536,7 +539,7 @@ namespace Super_Pete_The_Pirate.Scenes
                     _shops[i].SetActive(true);
                 }
 
-                if (_shops[i].IsActive && _player.IsAttacking && !_shops[i].IsDenied())
+                if (_shops[i].IsActive && ((_player.IsAttacking && !_shops[i].IsDenied()) || _shops[i].NeedDeny()))
                 {
                     _shops[i].SetArrowDenyState();
                 }
