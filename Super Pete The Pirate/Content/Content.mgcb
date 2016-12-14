@@ -960,3 +960,15 @@
 /processorParam:Quality=Best
 /build:sounds/bgm/PeteThePirate.ogg
 
+#begin sounds/se/Logo.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sounds/se/Logo.ogg
+
+#begin sounds/se/Monogame.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sounds/se/Monogame.ogg
+

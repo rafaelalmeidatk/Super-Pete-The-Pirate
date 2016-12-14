@@ -246,7 +246,7 @@ namespace Super_Pete_The_Pirate.Scenes
                     }
                 }
 
-                if (InputManager.Instace.Pressed(InputCommand.Confirm))
+                if (InputManager.Instace.Pressed(InputCommand.A))
                 {
                     HandleConfirm();
                 }

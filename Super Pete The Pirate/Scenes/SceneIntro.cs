@@ -1,6 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended.ViewportAdapters;
+using Super_Pete_The_Pirate.Managers;
 
 namespace Super_Pete_The_Pirate.Scenes
 {
@@ -44,6 +46,15 @@ namespace Super_Pete_The_Pirate.Scenes
         private const float MonogameInterval = 2500.0f;
         private float _monogameAlpha;
 
+        //--------------------------------------------------
+        // SEs
+
+        private SoundEffect _logoSe;
+        private SoundEffect _monogameSe;
+
+        private bool _logoPlayed;
+        private bool _monogamePlayed;
+
         //----------------------//------------------------//
 
         public override void LoadContent()
@@ -65,6 +76,10 @@ namespace Super_Pete_The_Pirate.Scenes
 
             // Load MonoGame logo
             _monogameLogoTexture = ImageManager.loadScene(PATH, "Monogame");
+
+            // Load SEs
+            _logoSe = SoundManager.LoadSe("Logo");
+            _monogameSe = SoundManager.LoadSe("Monogame");
         }
 
         public override void Update(GameTime gameTime)
@@ -108,6 +123,11 @@ namespace Super_Pete_The_Pirate.Scenes
 
         private void HandleInitialLogoFrames(float deltaTime)
         {
+            if (!_logoPlayed)
+            {
+                _logoSe.Play();
+                _logoPlayed = true;
+            }
             _currentTick += deltaTime;
             if (_currentTick >= FramesInterval)
             {
@@ -155,6 +175,11 @@ namespace Super_Pete_The_Pirate.Scenes
 
         private void HandleAlphaIncrease(float deltaTime)
         {
+            if (!_monogamePlayed)
+            {
+                _monogameSe.Play();
+                _monogamePlayed = true;
+            }
             _monogameAlpha += deltaTime / 1500;
             if (_monogameAlpha >= 1.0)
             {
