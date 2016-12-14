@@ -156,7 +156,7 @@ namespace Super_Pete_The_Pirate.Objects
                 }
             }
 
-            if (_isActive && _arrowState == ArrowDefault && InputManager.Instace.KeyPressed(Keys.Up)) {
+            if (_isActive && _arrowState == ArrowDefault && InputManager.Instace.Pressed(InputCommand.Up)) {
                 ProcessBuy();
             }
         }

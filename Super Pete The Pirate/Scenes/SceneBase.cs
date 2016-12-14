@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
 using MonoGame.Extended.ViewportAdapters;
+using Super_Pete_The_Pirate.Managers;
 using System.Collections.Generic;
 
 namespace Super_Pete_The_Pirate.Scenes

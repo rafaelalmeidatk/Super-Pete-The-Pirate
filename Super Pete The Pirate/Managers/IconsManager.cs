@@ -35,6 +35,8 @@ namespace Super_Pete_The_Pirate.Managers
 
         private Rectangle[] _zButton;
         private Rectangle[] _xButton;
+        private Rectangle[] _aButton;
+        private Rectangle[] _bButton;
         private Rectangle[] _rightArrow;
 
         //----------------------//------------------------//
@@ -54,6 +56,18 @@ namespace Super_Pete_The_Pirate.Managers
                 new Rectangle(60, 0, 15, 15)
             };
 
+            _aButton = new Rectangle[]
+            {
+                new Rectangle(0, 30, 15, 15),
+                new Rectangle(60, 30, 15, 15)
+            };
+
+            _bButton = new Rectangle[]
+            {
+                new Rectangle(15, 30, 15, 15),
+                new Rectangle(75, 30, 15, 15)
+            };
+
             _rightArrow = new Rectangle[]
             {
                 new Rectangle(45, 45, 15, 15),
@@ -61,14 +75,20 @@ namespace Super_Pete_The_Pirate.Managers
             };
         }
 
-        public void DrawActionButton(SpriteBatch spriteBatch, Vector2 position, bool pressed, string label, float alpha, bool labelWithShadow = false)
+        public void DrawAButton(SpriteBatch spriteBatch, Vector2 position, bool pressed, string label, float alpha, bool labelWithShadow = false)
         {
-            DrawButton(spriteBatch, position, pressed ? _zButton[1] : _zButton[0], label, alpha, labelWithShadow);
+            if (InputManager.Instace.IsPadConnected())
+                DrawButton(spriteBatch, position, pressed ? _aButton[1] : _aButton[0], label, alpha, labelWithShadow);
+            else
+                DrawButton(spriteBatch, position, pressed ? _zButton[1] : _zButton[0], label, alpha, labelWithShadow);
         }
 
-        public void DrawCancelButton(SpriteBatch spriteBatch, Vector2 position, bool pressed, string label, float alpha, bool labelWithShadow = false)
+        public void DrawBButton(SpriteBatch spriteBatch, Vector2 position, bool pressed, string label, float alpha, bool labelWithShadow = false)
         {
-            DrawButton(spriteBatch, position, pressed ? _xButton[1] : _xButton[0], label, alpha, labelWithShadow);
+            if (InputManager.Instace.IsPadConnected())
+                DrawButton(spriteBatch, position, pressed ? _bButton[1] : _bButton[0], label, alpha, labelWithShadow);
+            else
+                DrawButton(spriteBatch, position, pressed ? _xButton[1] : _xButton[0], label, alpha, labelWithShadow);
         }
 
         public void DrawRightArrow(SpriteBatch spriteBatch, Vector2 position, bool pressed)

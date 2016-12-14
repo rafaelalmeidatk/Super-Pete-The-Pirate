@@ -15,7 +15,8 @@ namespace Super_Pete_The_Pirate.Scenes
         // Constants
 
         private const string ScenePathName = "stageSelect";
-        private const string MapPressMessage = "Press Z to start!";
+        private const string MapPressMessageKey = "Press Z to start!";
+        private const string MapPressMessagePad = "Press A to start!";
 
         //--------------------------------------------------
         // Positions
@@ -133,7 +134,7 @@ namespace Super_Pete_The_Pirate.Scenes
                 new Rectangle(38, 0, 19, 19),
                 new Rectangle(57, 0, 19, 19)
             };
-            _stageSelectionSprite = new AnimatedSprite(_stageSelectionSpritesheet, stageSelectionFrames, 130, 
+            _stageSelectionSprite = new AnimatedSprite(_stageSelectionSpritesheet, stageSelectionFrames, 130,
                 (int)stageSelectionPosition.X, (int)stageSelectionPosition.Y);
 
             _stageSelectionSprite.Origin = new Vector2(9, 9);
@@ -157,7 +158,7 @@ namespace Super_Pete_The_Pirate.Scenes
                 (int)stageSelectionPosition.X, (int)stageSelectionPosition.Y);
             _stageSelectionPeteSprite.Origin = new Vector2(16, 24);
 
-            var stringSize = SceneManager.Instance.GameFont.MeasureString(MapPressMessage);
+            var stringSize = SceneManager.Instance.GameFont.MeasureString(MapPressMessage());
             _pressZTextPosition = new Vector2(
                 62 + (288 - (int)stringSize.X) / 2,
                 SceneManager.Instance.VirtualSize.Y - stringSize.Y - 15
@@ -172,7 +173,7 @@ namespace Super_Pete_The_Pirate.Scenes
         {
             DebugValues["Selected Index"] = _selectedIndex.ToString();
 
-            if (InputManager.Instace.KeyPressed(Keys.Right, Keys.Up))
+            if (InputManager.Instace.Pressed(InputCommand.Right))
             {
                 var lastIndex = _selectedIndex;
                 var limit = GetCurrentStage() == SceneManager.MaxLevels ? SceneManager.MaxLevels - 1 : GetCurrentStage();
@@ -184,7 +185,7 @@ namespace Super_Pete_The_Pirate.Scenes
                 }
             }
 
-            if (InputManager.Instace.KeyPressed(Keys.Left, Keys.Down))
+            if (InputManager.Instace.Pressed(InputCommand.Left))
             {
                 var lastIndex = _selectedIndex;
                 var limit = GetCurrentStage() == SceneManager.MaxLevels ? SceneManager.MaxLevels - 1 : GetCurrentStage();
@@ -196,13 +197,13 @@ namespace Super_Pete_The_Pirate.Scenes
                 }
             }
 
-            if (InputManager.Instace.KeyPressed(Keys.Enter, Keys.Z))
+            if (InputManager.Instace.Pressed(InputCommand.A))
             {
                 SoundManager.PlayConfirmSe();
                 LoadMap();
             }
 
-            if (InputManager.Instace.KeyPressed(Keys.Escape, Keys.X))
+            if (InputManager.Instace.Pressed(InputCommand.Cancel))
             {
                 SoundManager.PlayCancelSe();
                 SceneManager.Instance.ChangeScene("SceneTitle");
@@ -246,7 +247,7 @@ namespace Super_Pete_The_Pirate.Scenes
         public override void Draw(SpriteBatch spriteBatch, ViewportAdapter viewportAdapter)
         {
             base.Draw(spriteBatch, viewportAdapter);
-            
+
             spriteBatch.Begin(samplerState: SamplerState.PointClamp, transformMatrix: viewportAdapter.GetScaleMatrix());
 
             // Background
@@ -261,7 +262,7 @@ namespace Super_Pete_The_Pirate.Scenes
             // Hearts and lives
             DrawCenteredSpritesOnRectangle(spriteBatch, _hpSpritesArea, _heartSprite, PlayerManager.Instance.Hearts);
             DrawCenteredSpritesOnRectangle(spriteBatch, _livesSpritesArea, _lifeSprite, PlayerManager.Instance.Lives);
-            
+
             for (var i = 0; i < GetCurrentStage(); i++)
             {
                 var position = new Rectangle((int)_stageSelectionPositions[i].X, (int)_stageSelectionPositions[i].Y, 19, 19);
@@ -269,8 +270,8 @@ namespace Super_Pete_The_Pirate.Scenes
                     new Vector2(9, 9), SpriteEffects.None, 0f);
             }
 
-            spriteBatch.DrawString(SceneManager.Instance.GameFont, MapPressMessage, _pressZTextPosition, _fontColor);
-            
+            spriteBatch.DrawString(SceneManager.Instance.GameFont, MapPressMessage(), _pressZTextPosition, _fontColor);
+
             // Map sprites
             _stageSelectionSprite.Draw(spriteBatch);
             _stageSelectionPeteSprite.Draw(spriteBatch);
@@ -299,7 +300,7 @@ namespace Super_Pete_The_Pirate.Scenes
             for (var i = 0; i < quantity; i++)
             {
                 var position = new Vector2(
-                    area.X + spritesContainer.X + ((i % 3) * (spriteRect.Width + spritesSpacing) - 
+                    area.X + spritesContainer.X + ((i % 3) * (spriteRect.Width + spritesSpacing) -
                         (quantity > 1 ? spritesSpacing / 2 : 0)),
                     area.Y + spritesContainer.Y + ((i / 3) * (spriteRect.Height + spritesSpacing) -
                         (quantity > 1 ? spritesSpacing / 2 : 0))
@@ -313,6 +314,14 @@ namespace Super_Pete_The_Pirate.Scenes
         private int GetCurrentStage()
         {
             return PlayerManager.Instance.StagesCompleted;
+        }
+
+        private string MapPressMessage()
+        {
+            if (InputManager.Instace.IsPadConnected())
+                return MapPressMessagePad;
+            else
+                return MapPressMessageKey;
         }
     }
 }

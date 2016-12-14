@@ -70,12 +70,12 @@ namespace Super_Pete_The_Pirate.Scenes
         {
             if (!_paused)
             {
-                if (InputManager.Instace.KeyPressed(Keys.Escape, Keys.P))
+                if (InputManager.Instace.Pressed(InputCommand.Pause))
                     _paused = true;
                 return;
             }
 
-            if (InputManager.Instace.KeyPressed(Keys.Up, Keys.W))
+            if (InputManager.Instace.Pressed(InputCommand.Up))
             {
                 var lastIndex = _index;
                 _index = _index - 1 < 0 ? _menu.Length - 1 : _index - 1;
@@ -83,7 +83,7 @@ namespace Super_Pete_The_Pirate.Scenes
                     SoundManager.PlaySelectSe();
             }
 
-            if (InputManager.Instace.KeyPressed(Keys.Down, Keys.S))
+            if (InputManager.Instace.Pressed(InputCommand.Down))
             {
                 var lastIndex = _index;
                 _index = (_index + 1) % _menu.Length;
@@ -91,7 +91,7 @@ namespace Super_Pete_The_Pirate.Scenes
                     SoundManager.PlaySelectSe();
             }
 
-            if (InputManager.Instace.KeyPressed(Keys.Z, Keys.Enter))
+            if (InputManager.Instace.Pressed(InputCommand.Confirm))
             {
                 switch (_index)
                 {
@@ -111,7 +111,7 @@ namespace Super_Pete_The_Pirate.Scenes
                 SoundManager.PlayConfirmSe();
             }
 
-            if (InputManager.Instace.KeyPressed(Keys.Escape, Keys.P))
+            if (InputManager.Instace.Pressed(InputCommand.Pause))
             {
                 _paused = false;
                 SoundManager.PlayCancelSe();

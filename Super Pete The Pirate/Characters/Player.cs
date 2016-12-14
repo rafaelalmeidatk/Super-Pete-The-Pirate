@@ -421,7 +421,8 @@ namespace Super_Pete_The_Pirate
             {
                 CharacterSprite.SetFrameList("jumping");
             }
-            else if ((InputManager.Instace.KeyDown(Keys.Left) || InputManager.Instace.KeyDown(Keys.Right)) && !_keysLocked && !_onHatCutScene)
+            else if ((InputManager.Instace.Down(InputCommand.Left) || InputManager.Instace.Down(InputCommand.Right)) &&
+                !_keysLocked && !_onHatCutScene)
             {
                 CharacterSprite.SetFrameList("walking");
             }
@@ -436,30 +437,31 @@ namespace Super_Pete_The_Pirate
             if (!_dying)
             {
                 // Movement
-                if (InputManager.Instace.KeyDown(Keys.Left) && Math.Abs(_knockbackAcceleration) < 1200f)
+                if (InputManager.Instace.Down(InputCommand.Left) && Math.Abs(_knockbackAcceleration) < 1200f)
                 {
                     CharacterSprite.SetDirection(SpriteDirection.Left);
                     _movement = -1.0f;
                 }
-                else if (InputManager.Instace.KeyDown(Keys.Right) && Math.Abs(_knockbackAcceleration) < 1200f)
+                else if (InputManager.Instace.Down(InputCommand.Right) && Math.Abs(_knockbackAcceleration) < 1200f)
                 {
                     CharacterSprite.SetDirection(SpriteDirection.Right);
                     _movement = 1.0f;
                 }
 
-                _isJumping = InputManager.Instace.KeyDown(Keys.C);
+                _isJumping = InputManager.Instace.Down(InputCommand.Jump);
 
-                if (InputManager.Instace.KeyPressed(Keys.C) && _isOnGround)
+                if (InputManager.Instace.Pressed(InputCommand.Jump) && _isOnGround)
                     CreateJumpParticles();
 
                 // Attack
                 if (!_isAttacking)
                 {
                     if (!_isAttacking &&
-                        ((_isOnGround && InputManager.Instace.KeyPressed(Keys.X)) || (!_isOnGround && InputManager.Instace.KeyDown(Keys.X))))
+                        ((_isOnGround && InputManager.Instace.Pressed(InputCommand.Attack)) ||
+                        (!_isOnGround && InputManager.Instace.Down(InputCommand.Attack))))
                         StartNormalAttack();
 
-                    if (InputManager.Instace.KeyPressed(Keys.Z) && !_isAttacking && !_dying)
+                    if (InputManager.Instace.Pressed(InputCommand.Shot) && !_isAttacking && !_dying)
                         RequestAttack(ShotAttack);
                 }
 

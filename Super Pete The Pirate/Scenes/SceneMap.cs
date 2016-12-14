@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended;
 using MonoGame.Extended.Maps.Tiled;
 using MonoGame.Extended.Sprites;
@@ -407,6 +408,9 @@ namespace Super_Pete_The_Pirate.Scenes
 
             _time += gameTime.ElapsedGameTime.Duration();
             DebugValues["Timer"] = _time.ToString();
+
+            if (_player.Active && InputManager.Instace.KeyDown(Keys.D))
+                _player.ReceiveAttack(999, Vector2.Zero);
 
             _player.Update(gameTime, _stageCompleted);
 

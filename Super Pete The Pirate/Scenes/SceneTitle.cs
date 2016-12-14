@@ -23,10 +23,10 @@ namespace Super_Pete_The_Pirate.Scenes
         private Sprite _logoSprite;
 
         //--------------------------------------------------
-        // Press Any Button
+        // Press Start!
 
-        private float _pressAnyButtonInitialY;
-        private Vector2 _pressAnyButtonPosition;
+        private float _pressStartInitialY;
+        private Vector2 _pressStartPosition;
 
         //--------------------------------------------------
         // Menu
@@ -56,7 +56,7 @@ namespace Super_Pete_The_Pirate.Scenes
         //--------------------------------------------------
         // Scene phases
 
-        private const int PressAnyButtonPhase = 0;
+        private const int PressStartPhase = 0;
         private const int MenuPhase = 1;
 
         //----------------------//------------------------//
@@ -75,11 +75,11 @@ namespace Super_Pete_The_Pirate.Scenes
             _logoSprite = new Sprite(ImageManager.loadSystem("Logo"));
             _logoSprite.Position = new Vector2(viewportWidth / 2, 80);
 
-            // Press any button
-            var pabX = (viewportWidth - SceneManager.Instance.GameFont.GetSize("Press Any Button").Width) / 2;
-            var pabY = viewportHeight - SceneManager.Instance.GameFont.GetSize("Press Any Button").Height - 15;
-            _pressAnyButtonPosition = new Vector2(pabX, pabY);
-            _pressAnyButtonInitialY = pabY;
+            // Press Start!
+            var pabX = (viewportWidth - SceneManager.Instance.GameFont.GetSize("Press Start!").Width) / 2;
+            var pabY = viewportHeight - SceneManager.Instance.GameFont.GetSize("Press Start!").Height - 15;
+            _pressStartPosition = new Vector2(pabX, pabY);
+            _pressStartInitialY = pabY;
 
             // Menu init
             _menuItemColor = new Color(68, 44, 45);
@@ -117,9 +117,9 @@ namespace Super_Pete_The_Pirate.Scenes
 
         private void HandleInput(GameTime gameTime)
         {
-            if (_phase == PressAnyButtonPhase)
+            if (_phase == PressStartPhase)
             {
-                if (InputManager.Instace.AnyKeyPressed())
+                if (InputManager.Instace.Pressed(InputCommand.Confirm))
                 {
                     _phase = MenuPhase;
                     SoundManager.PlayConfirmSe();
@@ -127,24 +127,24 @@ namespace Super_Pete_The_Pirate.Scenes
                 }
 
                 var delta = (float)gameTime.TotalGameTime.TotalMilliseconds / 10;
-                _pressAnyButtonPosition.Y = (float)MathUtils.SinInterpolation(_pressAnyButtonInitialY, _pressAnyButtonInitialY + 5, delta);
+                _pressStartPosition.Y = (float)MathUtils.SinInterpolation(_pressStartInitialY, _pressStartInitialY + 5, delta);
             }
 
             if (_phase == MenuPhase)
             {
-                if (InputManager.Instace.KeyPressed(Keys.Up) || InputManager.Instace.KeyPressed(Keys.Left))
+                if (InputManager.Instace.Pressed(InputCommand.Up) || InputManager.Instace.Pressed(InputCommand.Left))
                 {
                     _index = _index - 1 < 0 ? _menuOptions.Length - 1 : _index - 1;
                     SoundManager.PlaySelectSe();
                 }
 
-                if (InputManager.Instace.KeyPressed(Keys.Down) || InputManager.Instace.KeyPressed(Keys.Right))
+                if (InputManager.Instace.Pressed(InputCommand.Down) || InputManager.Instace.Pressed(InputCommand.Right))
                 {
                     _index = _index + 1 > _menuOptions.Length - 1 ? 0 : _index + 1;
                     SoundManager.PlaySelectSe();
                 }
 
-                if (InputManager.Instace.KeyPressed(Keys.Z, Keys.Enter))
+                if (InputManager.Instace.Pressed(InputCommand.Confirm))
                 {
                     switch (_index)
                     {
@@ -188,9 +188,9 @@ namespace Super_Pete_The_Pirate.Scenes
             spriteBatch.Draw(_backgroundSprite);
             spriteBatch.Draw(_logoSprite);
 
-            if (_phase == PressAnyButtonPhase)
+            if (_phase == PressStartPhase)
             {
-                spriteBatch.DrawString(SceneManager.Instance.GameFont, "Press Any Button", _pressAnyButtonPosition, _menuItemColor);
+                spriteBatch.DrawString(SceneManager.Instance.GameFont, "Press Start!", _pressStartPosition, _menuItemColor);
             }
             else if (_phase == MenuPhase)
             {

@@ -200,7 +200,7 @@ namespace Super_Pete_The_Pirate.Scenes
         {
             if (!_loadingVisible)
             {
-                if (InputManager.Instace.KeyPressed(Keys.Down, Keys.Right))
+                if (InputManager.Instace.Pressed(InputCommand.Down))
                 {
                     var lastIndex = _slotIndex;
                     if (SceneManager.Instance.TypeOfSceneSaves == SceneManager.SceneSavesType.Load)
@@ -223,7 +223,7 @@ namespace Super_Pete_The_Pirate.Scenes
                     }
                 }
 
-                if (InputManager.Instace.KeyPressed(Keys.Up, Keys.Left))
+                if (InputManager.Instace.Pressed(InputCommand.Up))
                 {
                     var lastIndex = _slotIndex;
                     if (SceneManager.Instance.TypeOfSceneSaves == SceneManager.SceneSavesType.Load)
@@ -246,12 +246,12 @@ namespace Super_Pete_The_Pirate.Scenes
                     }
                 }
 
-                if (InputManager.Instace.KeyPressed(Keys.Z, Keys.Enter))
+                if (InputManager.Instace.Pressed(InputCommand.Confirm))
                 {
                     HandleConfirm();
                 }
 
-                if (InputManager.Instace.KeyPressed(Keys.X, Keys.Escape))
+                if (InputManager.Instace.Pressed(InputCommand.Cancel))
                 {
                     SoundManager.PlayCancelSe();
                     HandleExit();
@@ -426,8 +426,8 @@ namespace Super_Pete_The_Pirate.Scenes
             IconsManager.Instance.DrawRightArrow(spriteBatch, _arrowPosition + _arrowPositionInc * Vector2.UnitY, false);
 
             var xOffset = SceneManager.Instance.GameFontSmall.MeasureString(ConfirmButtonLabel).X + 30;
-            IconsManager.Instance.DrawActionButton(spriteBatch, new Vector2(5, screenSize.Y - 18), false, ConfirmButtonLabel, 1.0f, true);
-            IconsManager.Instance.DrawCancelButton(spriteBatch, new Vector2(xOffset, screenSize.Y - 18), false, CancelButtonLabel, 1.0f, true);
+            IconsManager.Instance.DrawAButton(spriteBatch, new Vector2(5, screenSize.Y - 18), false, ConfirmButtonLabel, 1.0f, true);
+            IconsManager.Instance.DrawBButton(spriteBatch, new Vector2(xOffset, screenSize.Y - 18), false, CancelButtonLabel, 1.0f, true);
 
             if (_loadingVisible)
             {

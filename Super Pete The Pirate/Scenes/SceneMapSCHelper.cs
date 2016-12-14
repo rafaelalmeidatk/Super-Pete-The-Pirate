@@ -244,7 +244,7 @@ namespace Super_Pete_The_Pirate.Scenes
 
         public void Update(GameTime gameTime)
         {
-            if (InputManager.Instace.KeyPressed(Keys.Enter, Keys.Z))
+            if (InputManager.Instace.Pressed(InputCommand.A))
             {
                 if (_phase == 0)
                 {
@@ -273,7 +273,7 @@ namespace Super_Pete_The_Pirate.Scenes
                 }
             }
 
-            if (InputManager.Instace.KeyPressed(Keys.Z, Keys.Enter) && _phase >= 2)
+            if (InputManager.Instace.Pressed(InputCommand.A) && _phase >= 2)
             {
                 if (PlayerManager.Instance.Lives > 0)
                 {
@@ -296,7 +296,7 @@ namespace Super_Pete_The_Pirate.Scenes
                 }
             }
 
-            if (InputManager.Instace.KeyPressed(Keys.X))
+            if (InputManager.Instace.Pressed(InputCommand.B))
             {
                 PlayerManager.Instance.ResetHeartsAndLives();
                 SceneManager.Instance.ChangeScene("SceneMap"); // Restart the stage
@@ -427,8 +427,8 @@ namespace Super_Pete_The_Pirate.Scenes
                     _rankSprite.Draw(spriteBatch);
             }
 
-            IconsManager.Instance.DrawActionButton(spriteBatch, new Vector2(5, screenSize.Y - 40), false, "Continue", _buttonsAlpha, true);
-            IconsManager.Instance.DrawCancelButton(spriteBatch, new Vector2(5, screenSize.Y - 20), false, "Again", _buttonsAlpha, true);
+            IconsManager.Instance.DrawAButton(spriteBatch, new Vector2(5, screenSize.Y - 40), false, "Continue", _buttonsAlpha, true);
+            IconsManager.Instance.DrawBButton(spriteBatch, new Vector2(5, screenSize.Y - 20), false, "Again", _buttonsAlpha, true);
         }
 
         private Color CalculateColor(int value, int maxValue)
