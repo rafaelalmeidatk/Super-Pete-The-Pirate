@@ -271,7 +271,7 @@
     <property name="type" value="Parrot"/>
    </properties>
   </object>
-  <object id="13" gid="99" x="2400" y="480" width="32" height="32">
+  <object id="13" gid="99" x="2400" y="448" width="32" height="32">
    <properties>
     <property name="FlyWidth" value="64"/>
     <property name="type" value="Parrot"/>
@@ -385,13 +385,13 @@
   <object id="35" gid="104" x="384" y="672" width="32" height="32"/>
   <object id="36" gid="104" x="416" y="672" width="32" height="32"/>
   <object id="37" gid="104" x="352" y="672" width="32" height="32"/>
-  <object id="41" gid="104" x="512" y="576" width="32" height="32"/>
-  <object id="42" gid="104" x="544" y="576" width="32" height="32"/>
+  <object id="41" gid="104" x="503" y="586" width="32" height="32"/>
+  <object id="42" gid="104" x="558" y="585" width="32" height="32"/>
   <object id="43" gid="104" x="704" y="544" width="32" height="32"/>
-  <object id="47" gid="104" x="896" y="448" width="32" height="32"/>
-  <object id="48" gid="104" x="928" y="416" width="32" height="32"/>
-  <object id="49" gid="104" x="960" y="416" width="32" height="32"/>
-  <object id="50" gid="104" x="992" y="448" width="32" height="32"/>
+  <object id="47" gid="104" x="889" y="453" width="32" height="32"/>
+  <object id="48" gid="104" x="919" y="421" width="32" height="32"/>
+  <object id="49" gid="104" x="963" y="422" width="32" height="32"/>
+  <object id="50" gid="104" x="995" y="454" width="32" height="32"/>
   <object id="51" gid="104" x="1024" y="736" width="32" height="32"/>
   <object id="52" gid="104" x="1056" y="736" width="32" height="32"/>
   <object id="53" gid="104" x="1216" y="512" width="32" height="32"/>
@@ -406,14 +406,14 @@
   <object id="70" gid="104" x="2144" y="672" width="32" height="32"/>
   <object id="71" gid="104" x="2208" y="640" width="32" height="32"/>
   <object id="72" gid="104" x="704" y="608" width="32" height="32"/>
-  <object id="73" gid="104" x="2432" y="416" width="32" height="32"/>
-  <object id="74" gid="104" x="2432" y="480" width="32" height="32"/>
-  <object id="75" gid="104" x="2432" y="576" width="32" height="32"/>
-  <object id="76" gid="104" x="2432" y="672" width="32" height="32"/>
-  <object id="77" gid="104" x="2400" y="352" width="32" height="32"/>
-  <object id="78" gid="104" x="2368" y="352" width="32" height="32"/>
-  <object id="79" gid="104" x="2336" y="416" width="32" height="32"/>
-  <object id="80" gid="104" x="2432" y="736" width="32" height="32"/>
+  <object id="73" gid="104" x="2368" y="384" width="32" height="32"/>
+  <object id="74" gid="104" x="2368" y="544" width="32" height="32"/>
+  <object id="75" gid="104" x="2368" y="608" width="32" height="32"/>
+  <object id="76" gid="104" x="2368" y="672" width="32" height="32"/>
+  <object id="77" gid="104" x="2368" y="416" width="32" height="32"/>
+  <object id="78" gid="104" x="2368" y="480" width="32" height="32"/>
+  <object id="79" gid="104" x="2368" y="448" width="32" height="32"/>
+  <object id="80" gid="104" x="2368" y="704" width="32" height="32"/>
   <object id="81" gid="104" x="2816" y="416" width="32" height="32"/>
   <object id="82" gid="104" x="2816" y="448" width="32" height="32"/>
   <object id="83" gid="104" x="2816" y="480" width="32" height="32"/>
@@ -439,9 +439,9 @@
   <object id="105" gid="104" x="4608" y="448" width="32" height="32"/>
   <object id="106" gid="104" x="4736" y="512" width="32" height="32"/>
   <object id="107" gid="104" x="4864" y="512" width="32" height="32"/>
-  <object id="108" gid="104" x="4768" y="480" width="32" height="32"/>
-  <object id="109" gid="104" x="4832" y="480" width="32" height="32"/>
-  <object id="110" gid="104" x="4800" y="448" width="32" height="32"/>
+  <object id="108" gid="104" x="4761" y="468" width="32" height="32"/>
+  <object id="109" gid="104" x="4840" y="467" width="32" height="32"/>
+  <object id="110" gid="104" x="4800" y="432" width="32" height="32"/>
   <object id="112" gid="104" x="4992" y="480" width="32" height="32"/>
   <object id="113" gid="104" x="4992" y="448" width="32" height="32"/>
   <object id="114" gid="104" x="4992" y="416" width="32" height="32"/>
