@@ -65,6 +65,14 @@ namespace Super_Pete_The_Pirate.Scenes
         private Texture2D _iconsTexture;
 
         //--------------------------------------------------
+        // Rank S Mark
+
+        private Rectangle[] _sStageMarkFrames;
+        private int _sStageIndex;
+        private float _sStageTick;
+        private const float SStageInterval = 200.0f;
+
+        //--------------------------------------------------
         // Selected index
 
         private int _selectedIndex;
@@ -138,8 +146,8 @@ namespace Super_Pete_The_Pirate.Scenes
                 (int)stageSelectionPosition.X, (int)stageSelectionPosition.Y);
 
             _stageSelectionSprite.Origin = new Vector2(9, 9);
-
-            if (GetCurrentStage() == maxLevels)
+            
+            if (GetCurrentStage() == maxLevels - 1)
                 _stageSelectionSprite.IsVisible = false;
 
             var _stageSelectionPeteSpritesheet = ImageManager.loadScene(ScenePathName, "StageSelectionPeteSpritesheet");
@@ -157,6 +165,12 @@ namespace Super_Pete_The_Pirate.Scenes
             _stageSelectionPeteSprite = new AnimatedSprite(_stageSelectionPeteSpritesheet, _stageSelectionPeteFrames, 100,
                 (int)stageSelectionPosition.X, (int)stageSelectionPosition.Y);
             _stageSelectionPeteSprite.Origin = new Vector2(16, 24);
+
+            _sStageMarkFrames = new Rectangle[]
+            {
+                new Rectangle(114, 0, 19, 19),
+                new Rectangle(133, 0, 19, 19)
+            };
 
             var stringSize = SceneManager.Instance.GameFont.MeasureString(MapPressMessage());
             _pressZTextPosition = new Vector2(
@@ -228,6 +242,14 @@ namespace Super_Pete_The_Pirate.Scenes
                     _pressZTextSide = true;
                 }
             }
+
+            _sStageTick += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+            if (_sStageTick >= SStageInterval)
+            {
+                _sStageTick = 0;
+                _sStageIndex = _sStageIndex == 0 ? 1 : 0;
+            }
+
             base.Update(gameTime);
         }
 
@@ -263,11 +285,20 @@ namespace Super_Pete_The_Pirate.Scenes
             DrawCenteredSpritesOnRectangle(spriteBatch, _hpSpritesArea, _heartSprite, PlayerManager.Instance.Hearts);
             DrawCenteredSpritesOnRectangle(spriteBatch, _livesSpritesArea, _lifeSprite, PlayerManager.Instance.Lives);
 
+            var stages = PlayerManager.Instance.StagesCompleted;
             for (var i = 0; i < GetCurrentStage(); i++)
             {
                 var position = new Rectangle((int)_stageSelectionPositions[i].X, (int)_stageSelectionPositions[i].Y, 19, 19);
-                spriteBatch.Draw(_stageSelectionSpritesheet, position, new Rectangle(76, 0, 19, 19), Color.White, 0f,
-                    new Vector2(9, 9), SpriteEffects.None, 0f);
+                if (stages[i].RankS)
+                {
+                    spriteBatch.Draw(_stageSelectionSpritesheet, position, _sStageMarkFrames[_sStageIndex], Color.White, 0f,
+                        new Vector2(9, 9), SpriteEffects.None, 0f);
+                }
+                else
+                {
+                    spriteBatch.Draw(_stageSelectionSpritesheet, position, new Rectangle(76, 0, 19, 19), Color.White, 0f,
+                        new Vector2(9, 9), SpriteEffects.None, 0f);
+                }
             }
 
             spriteBatch.DrawString(SceneManager.Instance.GameFont, MapPressMessage(), _pressZTextPosition, _fontColor);
@@ -313,7 +344,14 @@ namespace Super_Pete_The_Pirate.Scenes
 
         private int GetCurrentStage()
         {
-            return PlayerManager.Instance.StagesCompleted;
+            var stagesCompleted = PlayerManager.Instance.StagesCompleted;
+            var count = 0;
+            for (var i = 0; i < stagesCompleted.Length; i++)
+            {
+                if (stagesCompleted[i].Completed)
+                    count++;
+            }
+            return Math.Min(count, SceneManager.MaxLevels - 1);
         }
 
         private string MapPressMessage()

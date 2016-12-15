@@ -59,8 +59,8 @@
         //--------------------------------------------------
         // Stages completed
 
-        private int _stagesCompleted;
-        public int StagesCompleted => _stagesCompleted;
+        private StageStatus[] _stagesCompleted;
+        public StageStatus[] StagesCompleted => _stagesCompleted;
 
         //----------------------//------------------------//
 
@@ -70,7 +70,7 @@
             _lives = InitialLives;
             _hearts = InitialHearts;
             _coins = 100;
-            _stagesCompleted = 0;
+            _stagesCompleted = new StageStatus[SceneManager.MaxLevels];
             _storedData = new Data
             {
                 Ammo = _ammo,
@@ -82,10 +82,10 @@
 
         public void CreateNewGame()
         {
-            SetData(InitialAmmo, InitialLives, InitialHearts, 0, 0);
+            SetData(InitialAmmo, InitialLives, InitialHearts, 0, new StageStatus[SceneManager.MaxLevels]);
         }
 
-        public void SetData(int ammo, int lives, int hearts, int coins, int stagesCompleted)
+        public void SetData(int ammo, int lives, int hearts, int coins, StageStatus[] stagesCompleted)
         {
             _ammo = ammo;
             _lives = lives;
@@ -155,15 +155,19 @@
             _coins = coins;
         }
 
-        public void CompleteStage()
+        public void CompleteStage(int mapId, bool rankS)
         {
-            if (_stagesCompleted < 4)
-                _stagesCompleted++;
+            if (_stagesCompleted[mapId - 1].Completed) return;
+            _stagesCompleted[mapId - 1].Completed = true;
+            _stagesCompleted[mapId - 1].RankS = rankS;
         }
 
         public void CompleteAllStages()
         {
-            _stagesCompleted = 5;
+            for (var i = 0; i < SceneManager.MaxLevels; i++)
+            {
+                _stagesCompleted[i].Completed = true;
+            }
         }
     }
 }

@@ -141,6 +141,10 @@ namespace Super_Pete_The_Pirate.Objects
             {
                 return PlayerManager.Instance.Hearts >= 5;
             }
+            if (_shopType == GameShopType.Lives)
+            {
+                return PlayerManager.Instance.Lives >= 3;
+            }
             return false;
         }
 

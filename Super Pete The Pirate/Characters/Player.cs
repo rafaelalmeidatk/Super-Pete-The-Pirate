@@ -437,12 +437,12 @@ namespace Super_Pete_The_Pirate
             if (!_dying)
             {
                 // Movement
-                if (InputManager.Instace.GetPadDirection() == Buttons.DPadLeft && Math.Abs(_knockbackAcceleration) < 1200f)
+                if (RequestingMoveLeft() && Math.Abs(_knockbackAcceleration) < 1200f)
                 {
                     CharacterSprite.SetDirection(SpriteDirection.Left);
                     _movement = -1.0f;
                 }
-                else if (InputManager.Instace.GetPadDirection() == Buttons.DPadRight && Math.Abs(_knockbackAcceleration) < 1200f)
+                else if (RequestingMoveRight() && Math.Abs(_knockbackAcceleration) < 1200f)
                 {
                     CharacterSprite.SetDirection(SpriteDirection.Right);
                     _movement = 1.0f;
@@ -671,9 +671,11 @@ namespace Super_Pete_The_Pirate
             if (_walkingWithHat)
             {
                 _movement = 1.0f;
-                if (Position.X >= GameMap.Instance.MapWidth - 48)
+                if (BoundingRectangle.Right >= GameMap.Instance.MapWidth - 48)
                 {
-                    PlayerManager.Instance.CompleteAllStages();
+                    var heartsLost = ((SceneMap)SceneManager.Instance.GetCurrentScene()).GetHeartsLost();
+                    var rankS = heartsLost == 0;
+                    PlayerManager.Instance.CompleteStage(GameMap.Instance.CurrentMapId, rankS);
                     SceneManager.Instance.ChangeScene("SceneCredits");
                 }
             }
@@ -695,6 +697,16 @@ namespace Super_Pete_The_Pirate
         protected override float GetMoveAcceleration()
         {
             return _onHatCutScene ? 4000.0f : base.GetMoveAcceleration();
+        }
+
+        private bool RequestingMoveLeft()
+        {
+            return InputManager.Instace.GetPadDirection() == Buttons.DPadLeft || InputManager.Instace.Down(InputCommand.Left);
+        }
+
+        private bool RequestingMoveRight()
+        {
+            return InputManager.Instace.GetPadDirection() == Buttons.DPadRight || InputManager.Instace.Down(InputCommand.Right);
         }
     }
 }
