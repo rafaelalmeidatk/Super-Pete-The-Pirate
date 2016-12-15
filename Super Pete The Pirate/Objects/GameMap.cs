@@ -210,7 +210,7 @@ namespace Super_Pete_The_Pirate
         public void Draw(Camera2D camera, SpriteBatch spriteBatch)
         {
             spriteBatch.Begin(transformMatrix: camera.GetViewMatrix(), samplerState: SamplerState.PointClamp);
-            _tiledMap.Draw(camera);
+            _tiledMap.Draw(spriteBatch);
             if (SceneManager.Instance.DebugMode)
                 DrawColliders(spriteBatch);
             spriteBatch.End();
