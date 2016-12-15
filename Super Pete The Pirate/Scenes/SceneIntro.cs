@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended.ViewportAdapters;
 using Super_Pete_The_Pirate.Managers;
 
@@ -84,6 +85,8 @@ namespace Super_Pete_The_Pirate.Scenes
 
         public override void Update(GameTime gameTime)
         {
+            base.Update(gameTime);
+
             var deltaTime = (float)gameTime.ElapsedGameTime.TotalMilliseconds;
             switch (_phase)
             {

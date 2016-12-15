@@ -20,9 +20,11 @@ namespace Super_Pete_The_Pirate
         public Vector2 VirtualSize = new Vector2(360, 240);
         public GraphicsDevice GraphicsDevice;
         public SpriteBatch SpriteBatch;
-        public ViewportAdapter ViewportAdapter { get { return GameMain.ViewportAdapter; } }
-        public GameWindow GameMap { get { return GameMain.GameWindow; } }
+        public ViewportAdapter ViewportAdapter => GameMain.ViewportAdapter;
+        public GameWindow GameMap => GameMain.GameWindow;
         public ContentManager Content { private set; get; }
+
+        private GraphicsDeviceManager _graphicsDeviceManager;
 
         public bool RequestingExit = false;
 
@@ -98,7 +100,28 @@ namespace Super_Pete_The_Pirate
         private SceneManager()
         {
             TypeOfSceneSaves = SceneSavesType.Load;
-            _currentScene = new SceneSaves();
+            _currentScene = new SceneIntro();
+        }
+
+        public void SetGraphicsDeviceManager(GraphicsDeviceManager graphicsDeviceManager)
+        {
+            _graphicsDeviceManager = graphicsDeviceManager;
+        }
+
+        public void SetFullscreen(bool isFullscreen)
+        {
+            var displayMode = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode;
+
+            var width = isFullscreen ? displayMode.Width : (int)WindowSize.X;
+            var height = isFullscreen ? displayMode.Height : (int)WindowSize.Y;
+
+            if (_graphicsDeviceManager != null)
+            {
+                _graphicsDeviceManager.PreferredBackBufferWidth = width;
+                _graphicsDeviceManager.PreferredBackBufferHeight = height;
+                _graphicsDeviceManager.IsFullScreen = isFullscreen;
+                _graphicsDeviceManager.ApplyChanges();
+            }
         }
 
         public void RequestExit()

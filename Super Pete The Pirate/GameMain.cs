@@ -35,6 +35,7 @@ namespace Super_Pete_The_Pirate
             this.Window.AllowUserResizing = true;
 
             GameWindow = this.Window;
+            SceneManager.Instance.SetGraphicsDeviceManager(graphics);
         }
 
         /// <summary>

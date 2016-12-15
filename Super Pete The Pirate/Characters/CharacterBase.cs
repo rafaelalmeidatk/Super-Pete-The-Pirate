@@ -98,7 +98,6 @@ namespace Super_Pete_The_Pirate
             _firstGroudLand = false;
 
             // SE init
-
             _hitSe = SoundManager.LoadSe("Hit");
         }
 

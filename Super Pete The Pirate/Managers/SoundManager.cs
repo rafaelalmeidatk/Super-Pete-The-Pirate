@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Audio;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Media;
 using System;
@@ -33,9 +34,15 @@ namespace Super_Pete_The_Pirate.Managers
         private static Dictionary<string, Song> _songs;
 
         //--------------------------------------------------
+        // Volumes
+
+        private static float _bgmVolume;
+        private static float _seVolume;
+
+        //--------------------------------------------------
         // For debug purposes
 
-        private static bool _soundOn = false;
+        private static bool _soundOn = true;
 
         //----------------------//------------------------//
 
@@ -52,6 +59,20 @@ namespace Super_Pete_The_Pirate.Managers
                 { "Ossuary6Air", LoadBgm("Ossuary6Air") }
             };
             MediaPlayer.IsRepeating = true;
+
+            _bgmVolume = 1.0f;
+            _seVolume = 1.0f;
+        }
+
+        public static void SetBgmVolume(float volume)
+        {
+            _bgmVolume = volume;
+            MediaPlayer.Volume = _bgmVolume;
+        }
+
+        public static void SetSeVolume(float volume)
+        {
+            _seVolume = volume;
         }
 
         public static Song LoadBgm(string filename)
@@ -86,28 +107,28 @@ namespace Super_Pete_The_Pirate.Managers
                     MediaPlayer.Play(_songs[bgmName]);
                     _bgmName = bgmName;
                 }
-                MediaPlayer.Volume = 1.0f;
-            }
-        }
-
-        public static void SetBgmVolume(float volume)
-        {
-            if (_soundOn)
-            {
-                MediaPlayer.Volume = volume;
+                MediaPlayer.Volume = _bgmVolume;
             }
         }
 
         public static void PlaySafe(this SoundEffect se)
         {
-            if (_soundOn)
-                se?.Play();
+            if (_soundOn && se != null)
+            {
+                var seIntance = se.CreateInstance();
+                seIntance.Volume = _seVolume;
+                seIntance.Play();
+            }
         }
 
         public static void PlaySafe(this SoundEffectInstance seInstance)
         {
-            if (_soundOn)
-                seInstance?.Play();
+            if (_soundOn && seInstance != null)
+            {
+                seInstance.Volume -= 1 - _seVolume;
+                seInstance.Volume = MathHelper.Clamp(seInstance.Volume, 0.0f, 1.0f);
+                seInstance.Play();
+            }
         }
 
         public static void PlayCancelSe()

@@ -39,7 +39,7 @@ namespace Super_Pete_The_Pirate.Scenes
         private const int NewGame = 0;
         private const int LoadGame = 1;
         private const int Options = 2;
-        private const int Exit = 2;
+        private const int Exit = 3;
 
         //--------------------------------------------------
         // Menu icon
@@ -58,6 +58,12 @@ namespace Super_Pete_The_Pirate.Scenes
 
         private const int PressStartPhase = 0;
         private const int MenuPhase = 1;
+        private const int OptionsPhase = 2;
+
+        //--------------------------------------------------
+        // Option Helper
+
+        private SceneTitleOptionsHelper _optionsHelper;
 
         //----------------------//------------------------//
 
@@ -88,6 +94,7 @@ namespace Super_Pete_The_Pirate.Scenes
             {
                 "New Game",
                 "Load Game",
+                "Options",
                 "Exit"
             };
             _menuY = viewportHeight - (_menuOptions.Length * SceneManager.Instance.GameFont.LineHeight) - 7;
@@ -96,6 +103,9 @@ namespace Super_Pete_The_Pirate.Scenes
             _menuIconBaseY = _menuY + SceneManager.Instance.GameFont.LineHeight / 2;
             _menuIcon = new Sprite(ImageManager.loadScene(ScenePathName, "IndexIcon"));
             _menuIcon.Position = new Vector2(13, _menuIconBaseY);
+
+            // Helper init
+            _optionsHelper = new SceneTitleOptionsHelper();
 
             // Start BGM
             SoundManager.StartBgm("AchaidhCheide");
@@ -108,9 +118,25 @@ namespace Super_Pete_The_Pirate.Scenes
 
         public override void Update(GameTime gameTime)
         {
+            if (InputManager.Instace.KeyPressed(Keys.C))
+                SettingsManager.Instance.LoadSettings();
             base.Update(gameTime);
 
-            HandleInput(gameTime);
+            if (_phase == OptionsPhase)
+            {
+                _optionsHelper.Update(gameTime);
+                _index = _optionsHelper.Index;
+                if (_optionsHelper.RequestingExit)
+                {
+                    _phase = MenuPhase;
+                    _index = Options;
+                    SettingsManager.Instance.SaveSettings();
+                }
+            }
+            else
+            {
+                HandleInput(gameTime);
+            }
 
             _menuIcon.Position = new Vector2(_menuIcon.Position.X, _menuIconBaseY + (SceneManager.Instance.GameFont.LineHeight * _index));
         }
@@ -158,6 +184,11 @@ namespace Super_Pete_The_Pirate.Scenes
                             SoundManager.PlayConfirmSe();
                             break;
 
+                        case Options:
+                            _optionsHelper.Activate();
+                            _phase = OptionsPhase;
+                            break;
+
                         case Exit:
                             SceneManager.Instance.RequestExit();
                             SoundManager.PlayConfirmSe();
@@ -198,6 +229,11 @@ namespace Super_Pete_The_Pirate.Scenes
                 for (var i = 0; i < _menuOptions.Length; i++)
                     spriteBatch.DrawString(SceneManager.Instance.GameFont, _menuOptions[i],
                         new Vector2(25, _menuY + (i * SceneManager.Instance.GameFont.LineHeight)), _menuItemColor);
+                spriteBatch.Draw(_menuIcon);
+            }
+            else if (_phase == OptionsPhase)
+            {
+                _optionsHelper.Draw(spriteBatch);
                 spriteBatch.Draw(_menuIcon);
             }
 

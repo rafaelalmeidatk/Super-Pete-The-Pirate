@@ -95,7 +95,7 @@ namespace Super_Pete_The_Pirate.Scenes
         private float _buttonsAlpha;
 
         //--------------------------------------------------
-        // Sounds FX
+        // SEs
 
         private SoundEffect _numberSe;
 
@@ -328,7 +328,7 @@ namespace Super_Pete_The_Pirate.Scenes
                         var newValue = (int)MathHelper.Lerp(0, _values[i, 1], delta);
                         if (_values[i, 0] != newValue)
                         {
-                            _numberSe.Play();
+                            _numberSe.PlaySafe();
                         }
                         _values[i, 0] = newValue;
 
@@ -344,7 +344,7 @@ namespace Super_Pete_The_Pirate.Scenes
                         var newValue = TimeSpan.FromTicks((long)MathHelper.Lerp(0.0f, _timeValues[1].Ticks, delta));
                         if ((int)_timeValues[0].TotalSeconds != (int)newValue.TotalSeconds)
                         {
-                            _numberSe.Play();
+                            _numberSe.PlaySafe();
                         }
                         _timeValues[0] = newValue;
                         if (_timeValues[0] >= _timeValues[1])

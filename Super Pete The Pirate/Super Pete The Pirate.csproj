@@ -65,6 +65,7 @@
     <Compile Include="Managers\PlayerManager.cs" />
     <Compile Include="Managers\SavesManager.cs" />
     <Compile Include="Managers\SceneManager.cs" />
+    <Compile Include="Managers\SettingsManager.cs" />
     <Compile Include="Managers\SoundManager.cs" />
     <Compile Include="Objects\GameCannon.cs" />
     <Compile Include="Objects\GameCheckpoint.cs" />
@@ -87,6 +88,7 @@
     <Compile Include="Scenes\SceneSaves.cs" />
     <Compile Include="Scenes\SceneStageSelect.cs" />
     <Compile Include="Scenes\SceneTitle.cs" />
+    <Compile Include="Scenes\SceneTitleOptionsHelper.cs" />
     <Compile Include="Sprites\AnimatedSprite.cs" />
     <Compile Include="Sprites\CharacterSprite.cs" />
     <Compile Include="Sprites\FrameInfo.cs" />
