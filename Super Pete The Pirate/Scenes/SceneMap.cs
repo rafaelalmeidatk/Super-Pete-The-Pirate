@@ -670,7 +670,7 @@ namespace Super_Pete_The_Pirate.Scenes
                     UseCustomVelocity = true,
                     VelocityMultiplier = 1f,
                     Width = (int)scale.X,
-                    H = 57f
+                    H = 57.0f
                 };
 
                 SceneManager.Instance.ParticleManager.CreateParticle(texture, position, color, 200f, scale, state);
@@ -693,6 +693,11 @@ namespace Super_Pete_The_Pirate.Scenes
                 Failed = failed
             };
             _stageCompletedHelper.Initialize(data);
+        }
+
+        public int GetHeartsLost()
+        {
+            return _heartsLost;
         }
 
         private void CallSavesSceneToSave()

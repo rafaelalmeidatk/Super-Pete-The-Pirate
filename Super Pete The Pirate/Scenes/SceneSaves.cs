@@ -43,6 +43,14 @@ namespace Super_Pete_The_Pirate.Scenes
         private Rectangle _coinFrame;
 
         //--------------------------------------------------
+        // Rank S Mark
+
+        private Rectangle[] _sStageMarkFrames;
+        private int _sStageIndex;
+        private float _sStageTick;
+        private const float SStageInterval = 200.0f;
+
+        //--------------------------------------------------
         // Font color
 
         private Color _fontColor;
@@ -91,7 +99,7 @@ namespace Super_Pete_The_Pirate.Scenes
 
             // Textures init
             _loadingBackgroundTexture = new Texture2D(SceneManager.Instance.GraphicsDevice, 1, 1, false, SurfaceFormat.Color);
-            _loadingBackgroundTexture.SetData<Color>(new Color[] { Color.Black });
+            _loadingBackgroundTexture.SetData(new Color[] { Color.Black });
 
             _backgroundTexture = ImageManager.loadScene("saves", "SceneSavesBackground");
             _peteSpritesheet = ImageManager.loadScene("saves", "PeteSpritesheet");
@@ -120,6 +128,7 @@ namespace Super_Pete_The_Pirate.Scenes
                 new Rectangle(224, 0, 32, 32)
             };
             _peteAnimatedSprite = new AnimatedSprite(_peteSpritesheet, peteFrames, 100, _peteHeadPosition);
+
             var nextStageMarkFrames = new Rectangle[]
             {
                 new Rectangle(0, 0, 19, 19),
@@ -128,6 +137,12 @@ namespace Super_Pete_The_Pirate.Scenes
                 new Rectangle(57, 0, 19, 19)
             };
             _nextStageMarkAnimatedSprite = new AnimatedSprite(_stageSpritesheet, nextStageMarkFrames, 130, _stagesPosition);
+
+            _sStageMarkFrames = new Rectangle[]
+            {
+                new Rectangle(114, 0, 19, 19),
+                new Rectangle(133, 0, 19, 19)
+            };
 
             _peteDefaultFrame = new Rectangle(0, 0, 32, 32);
             _stagePeteMarkFrame = new Rectangle(76, 0, 19, 19);
@@ -179,6 +194,10 @@ namespace Super_Pete_The_Pirate.Scenes
         private void ReadSaves()
         {
             _gameSaves = new SavesManager.GameSave[3];
+            for (var i = 0; i < 3; i++)
+            {
+                _gameSaves[i].StagesCompleted = new StageStatus[5];
+            }
             SavesManager.Instance.ExecuteLoad(0, AfterLoad);
         }
 
@@ -208,7 +227,7 @@ namespace Super_Pete_The_Pirate.Scenes
                         for (var i = 0; i < 3; i++)
                         {
                             _slotIndex = _slotIndex >= 2 ? 0 : _slotIndex + 1;
-                            if (_gameSaves[_slotIndex].StagesCompleted > 0)
+                            if (SavesManager.Instance.GetCompletedStages(_gameSaves[_slotIndex].StagesCompleted) > 0)
                                 break;
                         }
                     }
@@ -231,7 +250,7 @@ namespace Super_Pete_The_Pirate.Scenes
                         for (var i = 0; i < 3; i++)
                         {
                             _slotIndex = _slotIndex <= 0 ? 2 : _slotIndex - 1;
-                            if (_gameSaves[_slotIndex].StagesCompleted > 0)
+                            if (SavesManager.Instance.GetCompletedStages(_gameSaves[_slotIndex].StagesCompleted) > 0)
                                 break;
                         }
                     }
@@ -261,6 +280,13 @@ namespace Super_Pete_The_Pirate.Scenes
             _peteAnimatedSprite.Update(gameTime);
             _nextStageMarkAnimatedSprite.Update(gameTime);
             _arrowPositionInc = (float)MathUtils.SinInterpolation(-1.2, 1.2, gameTime.TotalGameTime.TotalMilliseconds / 3);
+
+            _sStageTick += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+            if (_sStageTick >= SStageInterval)
+            {
+                _sStageTick = 0;
+                _sStageIndex = _sStageIndex == 0 ? 1 : 0;
+            }
 
             DebugValues["slot index"] = _slotIndex.ToString();
 
@@ -295,7 +321,7 @@ namespace Super_Pete_The_Pirate.Scenes
         private void Load()
         {
             var save = _gameSaves[_slotIndex];
-            if (save.StagesCompleted > 0)
+            if (SavesManager.Instance.GetCompletedStages(save.StagesCompleted) > 0)
             {
                 SoundManager.PlayConfirmSe();
                 PlayerManager.Instance.SetData(save.Ammo, save.Lives, save.Hearts, save.Coins, save.StagesCompleted);
@@ -342,7 +368,7 @@ namespace Super_Pete_The_Pirate.Scenes
                 var slotPosition = _slotsPosition[i].Location.ToVector2();
 
                 // Check if the slot isn't empty
-                if (_gameSaves[i].StagesCompleted > 0)
+                if (SavesManager.Instance.GetCompletedStages(_gameSaves[i].StagesCompleted) > 0)
                 {
                     // Pete Head
                     if (_slotIndex == i)
@@ -360,10 +386,20 @@ namespace Super_Pete_The_Pirate.Scenes
 
                     // Stages
                     var divisorPosition = Vector2.Zero;
-                    for (var j = 0; j < _gameSaves[i].StagesCompleted; j++)
+                    var stagesCompleted = SavesManager.Instance.GetCompletedStages(_gameSaves[i].StagesCompleted);
+                    for (var j = 0; j < stagesCompleted; j++)
                     {
                         var markPosition = slotPosition + _stagesPosition + ((_stagePeteMarkFrame.Width + 4) * j * Vector2.UnitX);
-                        spriteBatch.Draw(_stageSpritesheet, markPosition, _stagePeteMarkFrame, Color.White);
+
+                        if (_gameSaves[i].StagesCompleted[j].RankS)
+                        {
+                            spriteBatch.Draw(_stageSpritesheet, markPosition, _sStageMarkFrames[_sStageIndex], Color.White);
+                        }
+                        else
+                        {
+                            spriteBatch.Draw(_stageSpritesheet, markPosition, _stagePeteMarkFrame, Color.White);
+                        }
+
                         if (j < SceneManager.MaxLevels - 1)
                         {
                             divisorPosition = markPosition + (_stagePeteMarkFrame.Width + 1) * Vector2.UnitX + (9 * Vector2.UnitY);
@@ -371,7 +407,7 @@ namespace Super_Pete_The_Pirate.Scenes
                         }
                     }
 
-                    if (_gameSaves[i].StagesCompleted < SceneManager.MaxLevels)
+                    if (SavesManager.Instance.GetCompletedStages(_gameSaves[i].StagesCompleted) < SceneManager.MaxLevels)
                     {
                         var nextMarkPos = (divisorPosition == Vector2.Zero) ? (slotPosition + _stagesPosition) : (divisorPosition - (9 * Vector2.UnitY) + (3 * Vector2.UnitX));
                         if (_slotIndex == i)

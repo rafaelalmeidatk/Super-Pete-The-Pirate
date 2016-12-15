@@ -9,6 +9,16 @@ using System.Threading;
 
 namespace Super_Pete_The_Pirate.Managers
 {
+    //--------------------------------------------------
+    // Stage Status
+
+    [Serializable]
+    public struct StageStatus
+    {
+        public bool Completed;
+        public bool RankS;
+    }
+
     public class SavesManager
     {
         //--------------------------------------------------
@@ -40,7 +50,7 @@ namespace Super_Pete_The_Pirate.Managers
             public int Lives;
             public int Hearts;
             public int Coins;
-            public int StagesCompleted;
+            public StageStatus[] StagesCompleted;
         }
 
         //--------------------------------------------------
@@ -116,6 +126,7 @@ namespace Super_Pete_The_Pirate.Managers
             if (_storageDevice != null && _storageDevice.IsConnected)
             {
                 GameSave saveData = new GameSave();
+                saveData.StagesCompleted = new StageStatus[SceneManager.MaxLevels];
                 var filename = String.Format("save{0:00}.dat", _slot);
                 IAsyncResult r = _storageDevice.BeginOpenContainer(_storageContainerName, null, null);
                 result.AsyncWaitHandle.WaitOne();
@@ -144,6 +155,17 @@ namespace Super_Pete_The_Pirate.Managers
                 if (_loadCallback != null)
                     _loadCallback(_slot, saveData);
             }
+        }
+
+        public int GetCompletedStages(StageStatus[] stages)
+        {
+            var count = 0;
+            for (var i = 0; i < stages.Length; i++)
+            {
+                if (stages[i].Completed)
+                    count++;
+            }
+            return count;
         }
     }
 }

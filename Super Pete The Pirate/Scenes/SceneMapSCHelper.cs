@@ -277,8 +277,8 @@ namespace Super_Pete_The_Pirate.Scenes
             {
                 if (PlayerManager.Instance.Lives > 0)
                 {
-                    if (PlayerManager.Instance.StagesCompleted < GameMap.Instance.CurrentMapId)
-                        PlayerManager.Instance.CompleteStage();
+                    var rankS = _rank == "S";
+                    PlayerManager.Instance.CompleteStage(GameMap.Instance.CurrentMapId, rankS);
                     SceneManager.Instance.TypeOfSceneSaves = SceneManager.SceneSavesType.Save;
                     SceneManager.Instance.ChangeScene("SceneSaves");
                 }
