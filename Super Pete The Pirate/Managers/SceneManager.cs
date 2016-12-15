@@ -26,7 +26,8 @@ namespace Super_Pete_The_Pirate
 
         private GraphicsDeviceManager _graphicsDeviceManager;
 
-        public bool RequestingExit = false;
+        public bool RequestingFullscreen { get; set; }
+        public bool RequestingExit { get; set; }
 
         //--------------------------------------------------
         // SceneManager Singleton variables
@@ -124,6 +125,11 @@ namespace Super_Pete_The_Pirate
             }
         }
 
+        public void RequestFullscreen()
+        {
+            RequestingFullscreen = true;
+        }
+
         public void RequestExit()
         {
             RequestingExit = true;
@@ -160,13 +166,23 @@ namespace Super_Pete_The_Pirate
         public void Update(GameTime gameTime)
         {
             if (_isTransitioning)
+            {
                 UpdateTransition(gameTime);
+            }
             else if (InputManager.Instace.KeyPressed(Keys.F5))
+            {
                 DebugMode = !DebugMode;
+            }
 
             ParticleManager.Update(gameTime);
 
             _currentScene.Update(gameTime);
+
+            if (RequestingFullscreen)
+            {
+                SetFullscreen(true);
+                RequestingFullscreen = false;
+            }
         }
 
         public void Draw(SpriteBatch spriteBatch)

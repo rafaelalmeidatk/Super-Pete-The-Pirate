@@ -100,7 +100,7 @@ namespace Super_Pete_The_Pirate.Managers
 
             if (!_gameSettings.WindowedMode)
             {
-                SceneManager.Instance.SetFullscreen(true);
+                SceneManager.Instance.RequestFullscreen();
             }
         }
 

@@ -118,8 +118,6 @@ namespace Super_Pete_The_Pirate.Scenes
 
         public override void Update(GameTime gameTime)
         {
-            if (InputManager.Instace.KeyPressed(Keys.C))
-                SettingsManager.Instance.LoadSettings();
             base.Update(gameTime);
 
             if (_phase == OptionsPhase)

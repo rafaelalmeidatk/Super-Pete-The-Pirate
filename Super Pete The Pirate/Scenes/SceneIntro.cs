@@ -81,6 +81,9 @@ namespace Super_Pete_The_Pirate.Scenes
             // Load SEs
             _logoSe = SoundManager.LoadSe("Logo");
             _monogameSe = SoundManager.LoadSe("Monogame");
+
+            // Load game settings
+            SettingsManager.Instance.LoadSettings();
         }
 
         public override void Update(GameTime gameTime)

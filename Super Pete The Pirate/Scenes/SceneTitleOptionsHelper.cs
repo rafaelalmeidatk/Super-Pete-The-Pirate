@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended.BitmapFonts;
 using Super_Pete_The_Pirate.Managers;
 using System;
@@ -62,6 +63,9 @@ namespace Super_Pete_The_Pirate.Scenes
 
         public void Update(GameTime gameTime)
         {
+            if (InputManager.Instace.KeyPressed(Keys.C))
+                SettingsManager.Instance.LoadSettings();
+
             if (InputManager.Instace.Pressed(InputCommand.B))
                 _requestingExit = true;
 
