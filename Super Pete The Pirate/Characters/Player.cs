@@ -183,7 +183,7 @@ namespace Super_Pete_The_Pirate
             }, 64);
 
             // Aerial Attack
-            CharacterSprite.CreateFrameList("attack_aerial", 60);
+            CharacterSprite.CreateFrameList("attack_aerial", 50);
             CharacterSprite.AddCollider("attack_aerial", new Rectangle(9, 2, 17, 30));
             CharacterSprite.AddFrames("attack_aerial", new List<Rectangle>()
             {
@@ -289,7 +289,7 @@ namespace Super_Pete_The_Pirate
                 "attack_shot_jumping"
             };
 
-            AttackCooldown = 300f;
+            AttackCooldown = 200f;
             _deathTick = 0.0f;
             _requestRespawn = false;
             _active = true;

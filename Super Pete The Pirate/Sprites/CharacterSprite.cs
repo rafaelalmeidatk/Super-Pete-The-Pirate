@@ -84,7 +84,7 @@ namespace Super_Pete_The_Pirate
             _framesList = new Dictionary<string, FramesList>();
             _looped = false;
 
-            _immunityMaxTime = 0.5f;
+            _immunityMaxTime = 2f;
             _immunityTick = 0;
             _immunityTimeElapsed = 0;
             _immunityAnimation = false;
