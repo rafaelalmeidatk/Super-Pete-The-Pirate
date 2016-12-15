@@ -227,6 +227,25 @@ namespace Super_Pete_The_Pirate.Managers
             return false;
         }
 
+        public Buttons GetPadDirection()
+        {
+            float thumbstickTolerance = 0.35f;
+            Vector2 direction = _currentPadState.ThumbSticks.Left;
+
+            float absX = Math.Abs(direction.X);
+            float absY = Math.Abs(direction.Y);
+
+            if (absX > absY && absX > thumbstickTolerance)
+            {
+                return (direction.X > 0) ? Buttons.DPadRight : Buttons.DPadLeft;
+            }
+            else if (absX < absY && absY > thumbstickTolerance)
+            {
+                return (direction.Y > 0) ? Buttons.DPadUp : Buttons.DPadDown;
+            }
+            return 0;
+        }
+
         public bool IsPadConnected()
         {
             return _padCapabilities.IsConnected;

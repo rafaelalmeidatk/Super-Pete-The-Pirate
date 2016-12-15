@@ -437,12 +437,12 @@ namespace Super_Pete_The_Pirate
             if (!_dying)
             {
                 // Movement
-                if (InputManager.Instace.Down(InputCommand.Left) && Math.Abs(_knockbackAcceleration) < 1200f)
+                if (InputManager.Instace.GetPadDirection() == Buttons.DPadLeft && Math.Abs(_knockbackAcceleration) < 1200f)
                 {
                     CharacterSprite.SetDirection(SpriteDirection.Left);
                     _movement = -1.0f;
                 }
-                else if (InputManager.Instace.Down(InputCommand.Right) && Math.Abs(_knockbackAcceleration) < 1200f)
+                else if (InputManager.Instace.GetPadDirection() == Buttons.DPadRight && Math.Abs(_knockbackAcceleration) < 1200f)
                 {
                     CharacterSprite.SetDirection(SpriteDirection.Right);
                     _movement = 1.0f;
