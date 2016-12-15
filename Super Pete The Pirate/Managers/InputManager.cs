@@ -38,7 +38,12 @@ namespace Super_Pete_The_Pirate.Managers
         private KeyboardState _currentKeyState, _prevKeyState;
         private GamePadState _currentPadState, _prevPadState;
         private GamePadCapabilities _padCapabilities;
-        
+
+        //--------------------------------------------------
+        // Thumbstick tolerance
+
+        private const float ThumbstickTolerance = 0.5f;
+
         //--------------------------------------------------
         // Singleton instance
 
@@ -101,22 +106,6 @@ namespace Super_Pete_The_Pirate.Managers
                 _currentKeyState = Keyboard.GetState();
                 _currentPadState = GamePad.GetState(PlayerIndex.One);
             }
-        }
-
-        public bool AnyKeyPressed()
-        {
-            return _prevKeyState.GetPressedKeys().Length > 0 && _currentKeyState.GetPressedKeys().Length == 0;
-        }
-
-        public bool AnyButtonPressed()
-        {
-            var buttonList = (Buttons[])Enum.GetValues(typeof(Buttons));
-            foreach (var button in buttonList)
-            {
-                if (_currentPadState.IsButtonDown(button))
-                    return true;
-            }
-            return false;
         }
 
         public bool Pressed(params InputCommand[] commands)
@@ -229,19 +218,18 @@ namespace Super_Pete_The_Pirate.Managers
 
         public Buttons GetPadDirection()
         {
-            float thumbstickTolerance = 0.35f;
             Vector2 direction = _currentPadState.ThumbSticks.Left;
 
             float absX = Math.Abs(direction.X);
             float absY = Math.Abs(direction.Y);
 
-            if (absX > absY && absX > thumbstickTolerance)
+            if (absX > absY && absX > ThumbstickTolerance)
             {
-                return (direction.X > 0) ? Buttons.DPadRight : Buttons.DPadLeft;
+                return direction.X > 0 ? Buttons.DPadRight : Buttons.DPadLeft;
             }
-            else if (absX < absY && absY > thumbstickTolerance)
+            else if (absX < absY && absY > ThumbstickTolerance)
             {
-                return (direction.Y > 0) ? Buttons.DPadUp : Buttons.DPadDown;
+                return direction.Y > 0 ? Buttons.DPadUp : Buttons.DPadDown;
             }
             return 0;
         }
