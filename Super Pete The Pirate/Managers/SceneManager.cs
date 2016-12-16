@@ -26,8 +26,8 @@ namespace Super_Pete_The_Pirate
 
         private GraphicsDeviceManager _graphicsDeviceManager;
 
-        public bool RequestingFullscreen { get; set; }
-        public bool RequestingExit { get; set; }
+        public bool RequestingFullscreen = false;
+        public bool RequestingExit = false;
 
         //--------------------------------------------------
         // SceneManager Singleton variables
@@ -52,7 +52,7 @@ namespace Super_Pete_The_Pirate
         //--------------------------------------------------
         // Debug mode
 
-        public bool DebugMode = true;
+        public bool DebugMode = false;
 
         //--------------------------------------------------
         // Game fonts
@@ -168,10 +168,6 @@ namespace Super_Pete_The_Pirate
             if (_isTransitioning)
             {
                 UpdateTransition(gameTime);
-            }
-            else if (InputManager.Instace.KeyPressed(Keys.F5))
-            {
-                DebugMode = !DebugMode;
             }
 
             ParticleManager.Update(gameTime);
