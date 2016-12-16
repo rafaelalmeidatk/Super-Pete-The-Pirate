@@ -700,12 +700,12 @@ namespace Super_Pete_The_Pirate
 
         private bool RequestingMoveLeft()
         {
-            return InputManager.Instace.GetPadDirection() == Buttons.DPadLeft || InputManager.Instace.KeyDown(Keys.Left);
+            return InputManager.Instace.GetPadDirection(true) == Buttons.DPadLeft || InputManager.Instace.KeyDown(Keys.Left);
         }
 
         private bool RequestingMoveRight()
         {
-            return InputManager.Instace.GetPadDirection() == Buttons.DPadRight || InputManager.Instace.KeyDown(Keys.Right);
+            return InputManager.Instace.GetPadDirection(true) == Buttons.DPadRight || InputManager.Instace.KeyDown(Keys.Right);
         }
     }
 }

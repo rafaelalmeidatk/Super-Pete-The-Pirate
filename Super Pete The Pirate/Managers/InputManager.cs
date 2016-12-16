@@ -115,8 +115,30 @@ namespace Super_Pete_The_Pirate.Managers
                 if (KeyPressed(_keyCommands[command]))
                     return true;
 
-                if (IsPadConnected() && ButtonPressed(_buttonCommands[command]))
-                    return true;
+                if (IsPadConnected())
+                {
+                    if (IsDirectionalCommand(command))
+                    {
+                        var prevButton = GetPadDirection(true);
+                        var currentButton = GetPadDirection(false);
+                        switch (command)
+                        {
+                            case InputCommand.Up:
+                                return currentButton != Buttons.DPadUp && prevButton == Buttons.DPadUp;
+                            case InputCommand.Down:
+                                return currentButton != Buttons.DPadDown && prevButton == Buttons.DPadDown;
+                            case InputCommand.Left:
+                                return currentButton != Buttons.DPadLeft && prevButton == Buttons.DPadLeft;
+                            case InputCommand.Right:
+                                return currentButton != Buttons.DPadRight && prevButton == Buttons.DPadRight;
+                        }
+                        return false;
+                    }
+                    else if (ButtonPressed(_buttonCommands[command]))
+                    {
+                        return true;
+                    }
+                }
             }
             return false;
         }
@@ -216,9 +238,9 @@ namespace Super_Pete_The_Pirate.Managers
             return false;
         }
 
-        public Buttons GetPadDirection()
+        public Buttons GetPadDirection(bool useCurrentState)
         {
-            Vector2 direction = _currentPadState.ThumbSticks.Left;
+            Vector2 direction = useCurrentState ? _currentPadState.ThumbSticks.Left : _prevPadState.ThumbSticks.Left;
 
             float absX = Math.Abs(direction.X);
             float absY = Math.Abs(direction.Y);
