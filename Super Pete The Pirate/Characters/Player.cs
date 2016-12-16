@@ -421,8 +421,7 @@ namespace Super_Pete_The_Pirate
             {
                 CharacterSprite.SetFrameList("jumping");
             }
-            else if ((InputManager.Instace.Down(InputCommand.Left) || InputManager.Instace.Down(InputCommand.Right)) &&
-                !_keysLocked && !_onHatCutScene)
+            else if ((RequestingMoveLeft() || RequestingMoveRight()) && !_keysLocked && !_onHatCutScene)
             {
                 CharacterSprite.SetFrameList("walking");
             }
