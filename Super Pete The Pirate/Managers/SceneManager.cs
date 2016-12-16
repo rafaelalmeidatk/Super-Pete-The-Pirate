@@ -58,13 +58,13 @@ namespace Super_Pete_The_Pirate
         // Game fonts
 
         private BitmapFont _gameFont;
-        public BitmapFont GameFont { get { return _gameFont; } }
+        public BitmapFont GameFont => _gameFont;
 
         private BitmapFont _gameFontSmall;
-        public BitmapFont GameFontSmall { get { return _gameFontSmall; } }
+        public BitmapFont GameFontSmall => _gameFontSmall;
 
         private BitmapFont _gameFontBig;
-        public BitmapFont GameFontBig { get { return _gameFontBig; } }
+        public BitmapFont GameFontBig => _gameFontBig;
 
         //--------------------------------------------------
         // Saves scene type

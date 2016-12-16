@@ -553,7 +553,7 @@ namespace Super_Pete_The_Pirate
                 if (CharacterSprite.Effect == SpriteEffects.FlipHorizontally)
                     position -= new Vector2(23, 0);
                 CreateConfettiParticles(position, Math.Sign(dx));
-                SoundManager.PlaySafe(_shotEmptyAttackSe);
+                _shotEmptyAttackSe.PlaySafe();
                 return;
             }
 

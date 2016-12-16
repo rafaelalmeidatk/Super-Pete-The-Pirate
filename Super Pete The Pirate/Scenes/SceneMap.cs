@@ -374,7 +374,7 @@ namespace Super_Pete_The_Pirate.Scenes
         public void CreateProjectile(string name, Vector2 position, int dx, int dy, int damage, ProjectileSubject subject)
         {
             if (name == "common")
-                SoundManager.PlaySafe(_shotSe);
+                _shotSe.PlaySafe();
             _projectiles.Add(new GameProjectile(_projectilesTextures[name], position, dx, dy, damage, subject));
         }
 
@@ -528,7 +528,7 @@ namespace Super_Pete_The_Pirate.Scenes
                     PlayerManager.Instance.AddCoins(1);
                     sprite.SetTexture(ImageManager.loadMisc("CoinSparkle"), false);
                     sprite.SetDelay(80);
-                    SoundManager.PlaySafe(_coinsSe);
+                    _coinsSe.PlaySafe();
                 }
             }
 
