@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended.ViewportAdapters;
 using Super_Pete_The_Pirate.Managers;
 
@@ -162,6 +161,12 @@ namespace Super_Pete_The_Pirate.Scenes
 
         private void HandleLastLogoFrames(float deltaTime)
         {
+            if (!_monogamePlayed)
+            {
+                _monogameSe.Play();
+                _monogamePlayed = true;
+            }
+
             _currentTick += deltaTime;
             if (_currentTick >= FramesInterval)
             {
@@ -181,11 +186,6 @@ namespace Super_Pete_The_Pirate.Scenes
 
         private void HandleAlphaIncrease(float deltaTime)
         {
-            if (!_monogamePlayed)
-            {
-                _monogameSe.Play();
-                _monogamePlayed = true;
-            }
             _monogameAlpha += deltaTime / 1500;
             if (_monogameAlpha >= 1.0)
             {

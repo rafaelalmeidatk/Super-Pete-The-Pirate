@@ -4,10 +4,7 @@ using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended.BitmapFonts;
 using Super_Pete_The_Pirate.Managers;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Globalization;
 
 namespace Super_Pete_The_Pirate.Scenes
 {
@@ -146,18 +143,18 @@ namespace Super_Pete_The_Pirate.Scenes
                     new Vector2(140, _menuY + (i * SceneManager.Instance.GameFont.LineHeight)), _menuItemColor);
             }
         }
-
+            
         private string GetSettingsStringValue(int index)
         {
             switch (index)
             {
                 case BGM_Volume:
                     var bgmVolume = SettingsManager.Instance.GameSettings.BGMVolume;
-                    return Math.Ceiling(bgmVolume * 100).ToString() + "%";
+                    return bgmVolume.ToString("P0", new NumberFormatInfo { PercentPositivePattern = 1 });
 
                 case SE_Volume:
                     var seVolume = SettingsManager.Instance.GameSettings.SEVolume;
-                    return Math.Ceiling(seVolume * 100).ToString() + "%";
+                    return seVolume.ToString("P0", new NumberFormatInfo { PercentPositivePattern = 1 });
 
                 case Display:
                     return SettingsManager.Instance.GameSettings.WindowedMode ? "Window" : "Fullscreen";
