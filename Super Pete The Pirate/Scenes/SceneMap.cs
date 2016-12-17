@@ -409,9 +409,6 @@ namespace Super_Pete_The_Pirate.Scenes
             _time += gameTime.ElapsedGameTime.Duration();
             DebugValues["Timer"] = _time.ToString();
 
-            if (_player.Active && InputManager.Instace.KeyDown(Keys.D))
-                _player.ReceiveAttack(999, Vector2.Zero);
-
             _player.Update(gameTime, _stageCompleted);
 
             if (_player.RequestRespawn)
@@ -421,7 +418,12 @@ namespace Super_Pete_The_Pirate.Scenes
             {
                 _projectiles[i].Update(gameTime);
                 if (_projectiles[i].Subject == ProjectileSubject.FromEnemy && _projectiles[i].BoundingBox.Intersects(_player.BoundingRectangle))
+                {
+                    var lastHearts = _player.HP;
                     _player.ReceiveAttack(_projectiles[i].Damage, _projectiles[i].LastPosition);
+                    if (lastHearts - _player.HP > 0)
+                        _heartsLost += lastHearts - _player.HP;
+                }
 
                 if (_projectiles[i].RequestErase)
                     _projectiles.Remove(_projectiles[i]);

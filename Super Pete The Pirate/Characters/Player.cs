@@ -462,9 +462,6 @@ namespace Super_Pete_The_Pirate
                     if (InputManager.Instace.Pressed(InputCommand.Shot) && !_isAttacking && !_dying)
                         RequestAttack(ShotAttack);
                 }
-
-                // Run
-                _running = InputManager.Instace.KeyDown(Keys.A);
             }
         }
 
