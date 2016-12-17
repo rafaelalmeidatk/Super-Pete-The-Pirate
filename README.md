@@ -2,7 +2,7 @@
 
 # Description
 
-In the game you control Pete, a captain that is in your adventure at the sea. In the middle of the travel, his ship is looted by other pirates while a dense mist. They take a very important thing to Pete: his hat. Pete is put on the board and is expelled from his ship. After the mist, Pete reach a coast and decides explore it, but something happens: he found the pirates that are with his hat! Now Pete needs recover the hat no matter what happens.
+In the game you control Pete, a captain that is in your adventure at the sea. In the middle of the travel, his ship is looted by other pirates inside a dense mist. They take a very important thing to Pete: his hat. Pete is put on the board and is expelled from his ship. After the mist, Pete reaches a coast and decides to explore it, but something happens: he found the pirates that are with his hat! Now Pete want to recover his hat no matter what happens.
 
 # Controls
 
