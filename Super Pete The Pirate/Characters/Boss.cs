@@ -369,7 +369,6 @@ namespace Super_Pete_The_Pirate.Characters
             {
                 _requestingHatDrop = true;
                 _requestErase = true;
-                _flashTexture.Dispose();
             }
 
             var explosionsToRemove = new List<CollapseExplosion>();
@@ -551,6 +550,12 @@ namespace Super_Pete_The_Pirate.Characters
                 spriteBatch.Draw(_flashTexture, new Rectangle(0, 0, (int)mapSize.X, (int)mapSize.Y), Color.White * _flashScreenAlpha);
             }
             _collapseExplosions.ForEach(x => x.Draw(spriteBatch));
+        }
+
+        public override void DisposeEnemyTextures()
+        {
+            _flashTexture.Dispose();
+            base.DisposeEnemyTextures();
         }
     }
 }

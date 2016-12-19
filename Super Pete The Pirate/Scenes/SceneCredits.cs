@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended.ViewportAdapters;
+using Super_Pete_The_Pirate.Managers;
 
 namespace Super_Pete_The_Pirate.Scenes
 {
@@ -63,7 +64,8 @@ namespace Super_Pete_The_Pirate.Scenes
                 }
                 return;
             }
-            var newy = _creditsPosition.Y - (float)gameTime.ElapsedGameTime.TotalSeconds * 30;
+            var fallSpeed = InputManager.Instace.Down(InputCommand.Confirm) || InputManager.Instace.Down(InputCommand.A) ? 120 : 30;
+            var newy = _creditsPosition.Y - (float)gameTime.ElapsedGameTime.TotalSeconds * fallSpeed;
             _creditsPosition = new Vector2(0, newy);
             if (newy <= (_creditsTexture.Height - SceneManager.Instance.VirtualSize.Y) * -1)
             {

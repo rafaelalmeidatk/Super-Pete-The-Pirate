@@ -425,7 +425,8 @@ namespace Super_Pete_The_Pirate.Scenes
             _time += gameTime.ElapsedGameTime.Duration();
             DebugValues["Timer"] = _time.ToString();
 
-            _player.Update(gameTime, _stageCompleted);
+            var bossCollapsing = GameMap.Instance.CurrentMapId == 5 && _enemies.Count > 0 && ((Boss)_enemies[0]).Collapsing;
+            _player.Update(gameTime, _stageCompleted || bossCollapsing);
 
             if (_player.RequestRespawn)
                 HandlePlayerRespawn();

@@ -351,6 +351,17 @@ namespace Super_Pete_The_Pirate.Scenes
             SceneManager.Instance.ChangeScene("SceneStageSelect");
         }
 
+        private string GetSaveName(int slotId)
+        {
+            var totalS = 0;
+            for (var i = 0; i < _gameSaves[slotId].StagesCompleted.Length; i++)
+            {
+                if (_gameSaves[slotId].StagesCompleted[i].RankS)
+                    totalS++;
+            }
+            return totalS == SceneManager.MaxLevels ? "BADASS" : "SAVE " + (slotId + 1).ToString();
+        }
+
         public override void Draw(SpriteBatch spriteBatch, ViewportAdapter viewportAdapter)
         {
             base.Draw(spriteBatch, viewportAdapter);
@@ -388,7 +399,7 @@ namespace Super_Pete_The_Pirate.Scenes
                     }
 
                     // Save Name
-                    spriteBatch.DrawString(gameFont, "SAVE NAME", slotPosition + _namePosition, _fontColor);
+                    spriteBatch.DrawString(gameFont, GetSaveName(i), slotPosition + _namePosition, _fontColor);
 
                     // Stages
                     var divisorPosition = Vector2.Zero;

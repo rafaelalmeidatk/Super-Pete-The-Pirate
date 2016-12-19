@@ -147,7 +147,7 @@ namespace Super_Pete_The_Pirate.Scenes
 
             _stageSelectionSprite.Origin = new Vector2(9, 9);
             
-            if (GetCurrentStage() == maxLevels - 1)
+            if (GetCurrentStage() == maxLevels)
                 _stageSelectionSprite.IsVisible = false;
 
             var _stageSelectionPeteSpritesheet = ImageManager.loadScene(ScenePathName, "StageSelectionPeteSpritesheet");
@@ -351,7 +351,7 @@ namespace Super_Pete_The_Pirate.Scenes
                 if (stagesCompleted[i].Completed)
                     count++;
             }
-            return Math.Min(count, SceneManager.MaxLevels - 1);
+            return count;
         }
 
         private string MapPressMessage()
