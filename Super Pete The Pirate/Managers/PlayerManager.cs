@@ -157,7 +157,11 @@
 
         public void CompleteStage(int mapId, bool rankS)
         {
-            if (_stagesCompleted[mapId - 1].Completed) return;
+            if (_stagesCompleted[mapId - 1].Completed)
+            {
+                if (rankS) _stagesCompleted[mapId - 1].RankS = true;
+                return;
+            }
             _stagesCompleted[mapId - 1].Completed = true;
             _stagesCompleted[mapId - 1].RankS = rankS;
         }

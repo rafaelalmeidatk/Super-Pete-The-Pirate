@@ -229,6 +229,11 @@ namespace Super_Pete_The_Pirate.Scenes
         private void CalculateRank(StageCompletedData data)
         {
             var ranks = new string[] { "D", "C", "B", "A", "S" };
+            if (GameMap.Instance.CurrentMapId == 5 && data.HeartsLost == 0 && data.EnemiesDefeated >= data.MaxEnemies)
+            {
+                _rank = "S";
+                return;
+            }
             var count = 0;
             if (data.CoinsCollected >= data.MaxCoins)
                 count++;

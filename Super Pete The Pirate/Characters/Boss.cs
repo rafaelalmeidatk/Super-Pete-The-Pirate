@@ -325,8 +325,7 @@ namespace Super_Pete_The_Pirate.Characters
 
             if (HP < MaxHP * 0.5f)
                 _dashDelayMaxTick = 500.0f;
-
-            // Update cannons
+            
             foreach (var cannon in _cannons)
             {
                 cannon.Update(gameTime);
