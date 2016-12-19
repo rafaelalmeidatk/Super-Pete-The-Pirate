@@ -3,7 +3,6 @@ using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Super_Pete_The_Pirate.Managers;
 using Super_Pete_The_Pirate.Objects;
-using Super_Pete_The_Pirate.Scenes;
 using Super_Pete_The_Pirate.Sprites;
 using System;
 using System.Collections.Generic;
@@ -371,6 +370,7 @@ namespace Super_Pete_The_Pirate.Characters
             {
                 _requestingHatDrop = true;
                 _requestErase = true;
+                _flashTexture.Dispose();
             }
 
             var explosionsToRemove = new List<CollapseExplosion>();
@@ -403,7 +403,10 @@ namespace Super_Pete_The_Pirate.Characters
                 }
             }
 
-            explosionsToRemove.ForEach(x => _collapseExplosionsQueue.Remove(x));
+            foreach (var explosion in explosionsToRemove)
+            {
+                _collapseExplosionsQueue.Remove(explosion);
+            }
             
             foreach (var explosionSprite in _collapseExplosions)
             {
@@ -414,7 +417,10 @@ namespace Super_Pete_The_Pirate.Characters
                 }
             }
 
-            explosionsSpriteToRemove.ForEach(x => _collapseExplosions.Remove(x));
+            foreach (var explosionSprite in explosionsSpriteToRemove)
+            {
+                _collapseExplosions.Remove(explosionSprite);
+            }
         }
 
         public override void OnDie()
@@ -541,7 +547,10 @@ namespace Super_Pete_The_Pirate.Characters
         {
             var mapSize = new Vector2(GameMap.Instance.MapWidth, GameMap.Instance.MapHeight);
             _cannons.ForEach(x => x.Draw(spriteBatch));
-            spriteBatch.Draw(_flashTexture, new Rectangle(0, 0, (int)mapSize.X, (int)mapSize.Y), Color.White * _flashScreenAlpha);
+            if (_flashScreenAlpha > 0.0f)
+            {
+                spriteBatch.Draw(_flashTexture, new Rectangle(0, 0, (int)mapSize.X, (int)mapSize.Y), Color.White * _flashScreenAlpha);
+            }
             _collapseExplosions.ForEach(x => x.Draw(spriteBatch));
         }
     }

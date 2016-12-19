@@ -26,6 +26,7 @@ namespace Super_Pete_The_Pirate.Scenes
         //--------------------------------------------------
         // Enemies
 
+        private List<Enemy> _enemiesToRemove;
         private List<Enemy> _enemies;
         public List<Enemy> Enemies { get { return _enemies; } }
 
@@ -34,6 +35,7 @@ namespace Super_Pete_The_Pirate.Scenes
 
         private Dictionary<string, Texture2D> _projectilesTextures;
         private Texture2D _projectilesColliderTexture;
+        private List<GameProjectile> _projectilesToRemove;
         private List<GameProjectile> _projectiles;
         private SoundEffect _shotSe;
 
@@ -63,6 +65,7 @@ namespace Super_Pete_The_Pirate.Scenes
         //--------------------------------------------------
         // Coins
 
+        private List<GameCoin> _coinsToRemove;
         private List<GameCoin> _coins;
         private SoundEffect _coinsSe;
 
@@ -134,6 +137,7 @@ namespace Super_Pete_The_Pirate.Scenes
 
             // Enemies init
             _enemies = new List<Enemy>();
+            _enemiesToRemove = new List<Enemy>();
 
             // Projectiles init
             _projectilesTextures = new Dictionary<string, Texture2D>()
@@ -141,6 +145,7 @@ namespace Super_Pete_The_Pirate.Scenes
                 {"common", ImageManager.loadProjectile("Common")},
                 {"cannonball", ImageManager.loadProjectile("Cannonball")}
             };
+            _projectilesToRemove = new List<GameProjectile>();
             _projectiles = new List<GameProjectile>();
             _shotSe = SoundManager.LoadSe("Shot");
             _projectilesColliderTexture = new Texture2D(SceneManager.Instance.GraphicsDevice, 1, 1);
@@ -153,6 +158,7 @@ namespace Super_Pete_The_Pirate.Scenes
             _checkpoints = new List<GameCheckpoint>();
 
             // Coins init
+            _coinsToRemove = new List<GameCoin>();
             _coins = new List<GameCoin>();
             _coinsSe = SoundManager.LoadSe("Coins");
 
@@ -194,6 +200,16 @@ namespace Super_Pete_The_Pirate.Scenes
 
         public override void UnloadContent()
         {
+            foreach (var enemy in _enemies)
+            {
+                enemy.DisposeEnemyTextures();
+                enemy.Dispose();
+            }
+            _player.DisposeTextures();
+            _player.Dispose();
+            _pauseHelper.Dispose();
+            _stageCompletedHelper.Dispose();
+            _projectilesColliderTexture.Dispose();
             GameMap.Instance.UnloadMap();
             base.UnloadContent();
         }
@@ -414,76 +430,76 @@ namespace Super_Pete_The_Pirate.Scenes
             if (_player.RequestRespawn)
                 HandlePlayerRespawn();
 
-            for (var i = 0; i < _projectiles.Count; i++)
+            foreach (var projectile in _projectiles)
             {
-                _projectiles[i].Update(gameTime);
-                if (_projectiles[i].Subject == ProjectileSubject.FromEnemy && _projectiles[i].BoundingBox.Intersects(_player.BoundingRectangle))
+                projectile.Update(gameTime);
+                if (projectile.Subject == ProjectileSubject.FromEnemy && projectile.BoundingBox.Intersects(_player.BoundingRectangle))
                 {
                     var lastHearts = _player.HP;
-                    _player.ReceiveAttack(_projectiles[i].Damage, _projectiles[i].LastPosition);
+                    _player.ReceiveAttack(projectile.Damage, projectile.LastPosition);
                     if (lastHearts - _player.HP > 0)
                         _heartsLost += lastHearts - _player.HP;
                 }
 
-                if (_projectiles[i].RequestErase)
-                    _projectiles.Remove(_projectiles[i]);
+                if (projectile.RequestErase)
+                    _projectilesToRemove.Add(projectile);
             }
 
-            for (var i = 0; i < _enemies.Count; i++)
+            foreach (var enemy in _enemies)
             {
-                _enemies[i].Update(gameTime);
+                enemy.Update(gameTime);
 
-                if (_enemies[i].HasViewRange &&
-                    _enemies[i].ViewRangeCooldown <= 0f &&
-                    _camera.Contains(_enemies[i].BoundingRectangle) != ContainmentType.Disjoint &&
-                    _enemies[i].ViewRange.Intersects(_player.BoundingRectangle))
+                if (enemy.HasViewRange && enemy.ViewRangeCooldown <= 0f &&
+                    _camera.Contains(enemy.BoundingRectangle) != ContainmentType.Disjoint &&
+                    enemy.ViewRange.Intersects(_player.BoundingRectangle))
                 {
-                    _enemies[i].PlayerOnSight(_player.Position);
+                    enemy.PlayerOnSight(_player.Position);
                 }
 
-                if (!_enemies[i].Dying && _enemies[i].ContactDamageEnabled && _enemies[i].BoundingRectangle.Intersects(_player.BoundingRectangle))
+                if (!enemy.Dying && enemy.ContactDamageEnabled && enemy.BoundingRectangle.Intersects(_player.BoundingRectangle))
                 {
                     var lastHearts = _player.HP;
-                    _player.ReceiveAttackWithRect(1, _enemies[i].BoundingRectangle);
+                    _player.ReceiveAttackWithRect(1, enemy.BoundingRectangle);
                     if (lastHearts - _player.HP > 0)
                         _heartsLost += lastHearts - _player.HP;
                 }
 
-                for (var j = 0; j < _projectiles.Count; j++)
+                foreach (var projectile in _projectiles)
                 {
-                    if (_projectiles[j].Subject == ProjectileSubject.FromPlayer)
+                    if (projectile.Subject == ProjectileSubject.FromPlayer)
                     {
-                        if (!_enemies[i].Dying && !_enemies[i].IsImunity && _enemies[i].CanReceiveAttacks && _projectiles[j].BoundingBox.Intersects(_enemies[i].BoundingRectangle))
+                        if (!enemy.Dying && !enemy.IsImunity && enemy.CanReceiveAttacks && projectile.BoundingBox.Intersects(enemy.BoundingRectangle))
                         {
-                            if (_enemies[i].EnemyType == EnemyType.TurtleWheel && _enemies[i].InWheelMode)
+                            if (enemy.EnemyType == EnemyType.TurtleWheel && enemy.InWheelMode)
                             {
-                                _projectiles[j].Acceleration = new Vector2(_projectiles[j].Acceleration.X * -1.7f, _rand.Next(-4, 5));
+                                projectile.Acceleration = new Vector2(projectile.Acceleration.X * -1.7f, _rand.Next(-4, 5));
                                 _deflectSe.PlaySafe();
-                                CreateSparkParticle(_projectiles[j].Position);
-                                _projectiles[j].Subject = ProjectileSubject.FromEnemy;
+                                CreateSparkParticle(projectile.Position);
+                                projectile.Subject = ProjectileSubject.FromEnemy;
                             }
                             else
                             {
-                                _enemies[i].ReceiveAttack(_projectiles[j].Damage, _projectiles[j].LastPosition);
-                                _projectiles[j].Destroy();
+                                enemy.ReceiveAttack(projectile.Damage, projectile.LastPosition);
+                                projectile.Destroy();
                             }
                         }
                     }
-                    else if (_projectiles[j].BoundingBox.Intersects(_player.BoundingRectangle))
+                    else if (projectile.BoundingBox.Intersects(_player.BoundingRectangle))
                     {
                         var lastHearts = _player.HP;
-                        _player.ReceiveAttack(_projectiles[j].Damage, _projectiles[j].LastPosition);
+                        _player.ReceiveAttack(projectile.Damage, projectile.LastPosition);
                         if (lastHearts - _player.HP > 0)
                             _heartsLost += lastHearts - _player.HP;
-                        _projectiles[j].Destroy();
+                        projectile.Destroy();
                     }
 
-                    if (_projectiles[j].RequestErase)
-                        _projectiles.Remove(_projectiles[j]);
+                    if (projectile.RequestErase)
+                        _projectilesToRemove.Add(projectile);
                 }
-                if (_enemies[i] is Boss)
+
+                if (enemy is Boss)
                 {
-                    var boss = (Boss)_enemies[i];
+                    var boss = (Boss)enemy;
                     if (boss.RequestingHatDrop)
                     {
                         _player.PerformHatDrop();
@@ -497,16 +513,15 @@ namespace Super_Pete_The_Pirate.Scenes
                         }
                     }
                 }
-                if (_enemies[i].RequestErase)
+                if (enemy.RequestErase)
                 {
-                    _enemies.Remove(_enemies[i]);
+                    _enemiesToRemove.Add(enemy);
                     _enemiesDefeated++;
                 }
             }
 
-            for (var i = 0; i < GameMap.Instance.Spikes.Count; i++)
+            foreach (var spike in GameMap.Instance.Spikes)
             {
-                var spike = GameMap.Instance.Spikes[i];
                 if (_player.BoundingRectangle.Intersects(spike) && !_player.TouchedSpikes)
                 {
                     _heartsLost += _player.HP;
@@ -516,13 +531,13 @@ namespace Super_Pete_The_Pirate.Scenes
                 }
             }
 
-            for (var i = 0; i < _coins.Count; i++)
+            foreach (var coin in _coins)
             {
-                _coins[i].Update(gameTime);
-                var sprite = _coins[i].CoinSprite;
+                coin.Update(gameTime);
+                var sprite = coin.CoinSprite;
                 if (sprite.TextureRegion.Name.IndexOf("CoinSparkle") > 0 && sprite.Looped)
                 {
-                    _coins.Remove(_coins[i]);
+                    _coinsToRemove.Add(coin);
                 }
                 else if (sprite.TextureRegion.Name.IndexOf("CoinSparkle") < 0 && _player.BoundingRectangle.Intersects(sprite.BoundingBox))
                 {
@@ -534,43 +549,43 @@ namespace Super_Pete_The_Pirate.Scenes
                 }
             }
 
-            for (var i = 0; i < _shops.Count; i++)
+            foreach (var shop in _shops)
             {
-                if (_shops[i].IsActive && !_player.BoundingRectangle.Intersects(_shops[i].BoundingRectangle))
+                if (shop.IsActive && !_player.BoundingRectangle.Intersects(shop.BoundingRectangle))
                 {
-                    _shops[i].SetActive(false);
+                    shop.SetActive(false);
                 }
-                else if (!_shops[i].IsActive && _player.BoundingRectangle.Intersects(_shops[i].BoundingRectangle))
+                else if (!shop.IsActive && _player.BoundingRectangle.Intersects(shop.BoundingRectangle))
                 {
-                    _shops[i].SetActive(true);
+                    shop.SetActive(true);
                 }
 
-                if (_shops[i].IsActive && ((_player.IsAttacking && !_shops[i].IsDenied()) || _shops[i].NeedDeny()))
+                if (shop.IsActive && ((_player.IsAttacking && !shop.IsDenied()) || shop.NeedDeny()))
                 {
-                    _shops[i].SetArrowDenyState();
+                    shop.SetArrowDenyState();
                 }
-                else if (_shops[i].IsDenied() && !_player.IsAttacking)
+                else if (shop.IsDenied() && !_player.IsAttacking)
                 {
-                    _shops[i].SetArrowNormalState();
+                    shop.SetArrowNormalState();
                 }
-                _shops[i].Update(gameTime);
+                shop.Update(gameTime);
             }
 
-            for (var i = 0; i < _checkpoints.Count; i++)
+            foreach (var checkpoint in _checkpoints)
             {
-                if (!_checkpoints[i].IsChecked && _player.BoundingRectangle.Intersects(_checkpoints[i].BoundingBox))
+                if (!checkpoint.IsChecked && _player.BoundingRectangle.Intersects(checkpoint.BoundingBox))
                 {
-                    if (_checkpoints[i].IsEndFlag)
+                    if (checkpoint.IsEndFlag)
                     {
                         FinishStage(false);
                     }
                     else
                     {
-                        _checkpoints[i].OnPlayerCheck();
+                        checkpoint.OnPlayerCheck();
                         var checkpointData = new CheckpointData()
                         {
                             Activated = true,
-                            Checkpoint = _checkpoints[i],
+                            Checkpoint = checkpoint,
                             MapEnemies = new List<Enemy>(_enemies.Select(enemy => enemy.Clone<Enemy>())),
                             MapCoins = new List<GameCoin>(_coins.Select(coin => coin.Clone())),
                             Ammo = PlayerManager.Instance.Ammo,
@@ -580,8 +595,29 @@ namespace Super_Pete_The_Pirate.Scenes
                         _lastCheckpoint = checkpointData;
                     }
                 }
-                _checkpoints[i].Update(gameTime);
+                checkpoint.Update(gameTime);
             }
+
+            foreach (var enemy in _enemiesToRemove)
+            {
+                enemy.DisposeEnemyTextures();
+                enemy.Dispose();
+                _enemies.Remove(enemy);
+            }
+
+            foreach (var projectile in _projectilesToRemove)
+            {
+                _projectiles.Remove(projectile);
+            }
+
+            foreach (var coin in _coinsToRemove)
+            {
+                _coins.Remove(coin);
+            }
+
+            _enemiesToRemove.Clear();
+            _projectilesToRemove.Clear();
+            _coinsToRemove.Clear();
 
             UpdateCamera();
         }
@@ -606,6 +642,8 @@ namespace Super_Pete_The_Pirate.Scenes
             if (PlayerManager.Instance.Lives > 1)
             {
                 PlayerManager.Instance.HandleRespawn();
+                _player.DisposeTextures();
+                _player.Dispose();
                 _player = new Player(ImageManager.loadCharacter("Player"));
                 if (_lastCheckpoint.UsePosition)
                 {
@@ -616,6 +654,11 @@ namespace Super_Pete_The_Pirate.Scenes
                 {
                     var position = _lastCheckpoint.Checkpoint.Position;
                     _player.Position = new Vector2(position.X, position.Y + _player.CharacterSprite.GetColliderHeight());
+                }
+                foreach (var enemy in _enemies)
+                {
+                    enemy.DisposeEnemyTextures();
+                    enemy.Dispose();
                 }
                 _enemies.Clear();
                 _enemies = new List<Enemy>(_lastCheckpoint.MapEnemies.Select(x => x.Clone<Enemy>()));
@@ -730,14 +773,12 @@ namespace Super_Pete_The_Pirate.Scenes
             for (var i = 0; i < _checkpoints.Count; i++)
             {
                 _checkpoints[i].Draw(spriteBatch);
-                if (debugMode) _checkpoints[i].DrawCollider(spriteBatch);
             }
 
             // Draw the coins
             for (var i = 0; i < _coins.Count; i++)
             {
                 _coins[i].CoinSprite.Draw(spriteBatch);
-                if (debugMode) _coins[i].CoinSprite.DrawCollider(spriteBatch);
             }
 
             // Draw the player

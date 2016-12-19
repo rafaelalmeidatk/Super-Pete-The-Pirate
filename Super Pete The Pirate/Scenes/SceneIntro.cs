@@ -21,7 +21,6 @@ namespace Super_Pete_The_Pirate.Scenes
         private Texture2D _monogameLogoTexture;
 
         private Texture2D _backgroundTexture;
-        private Texture2D _currentTexture;
 
         //--------------------------------------------------
         // Phase related
@@ -64,9 +63,6 @@ namespace Super_Pete_The_Pirate.Scenes
             _backgroundTexture = new Texture2D(SceneManager.Instance.GraphicsDevice, 1, 1);
             _backgroundTexture.SetData(new Color[] { new Color(18, 18, 20) });
 
-            _currentTexture = new Texture2D(SceneManager.Instance.GraphicsDevice, 1, 1);
-            _currentTexture.SetData(new Color[] { Color.Black });
-
             // Load the logo sequence
             _logoTextures = new Texture2D[LogoFramesCount];
             for (var i = 0; i < LogoFramesCount; i++)
@@ -83,6 +79,12 @@ namespace Super_Pete_The_Pirate.Scenes
 
             // Load game settings
             SettingsManager.Instance.LoadSettings();
+        }
+
+        public override void UnloadContent()
+        {
+            _backgroundTexture.Dispose();
+            base.UnloadContent();
         }
 
         public override void Update(GameTime gameTime)

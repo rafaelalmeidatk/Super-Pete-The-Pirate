@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended.Sprites;
 using MonoGame.Extended.TextureAtlases;
+using System;
 
 namespace Super_Pete_The_Pirate.Sprites
 {
@@ -19,11 +20,6 @@ namespace Super_Pete_The_Pirate.Sprites
         public bool Looped => _looped;
         private bool _repeat;
         private bool _paused;
-
-        //--------------------------------------------------
-        // Collider
-
-        private Texture2D _colliderTexture;
         
         //--------------------------------------------------
         // Bouding Box
@@ -51,9 +47,6 @@ namespace Super_Pete_The_Pirate.Sprites
 
             Position = new Vector2(x, y);
             OriginNormalized = new Vector2(0, 0);
-
-            _colliderTexture = new Texture2D(SceneManager.Instance.GraphicsDevice, 1, 1, false, SurfaceFormat.Color);
-            _colliderTexture.SetData<Color>(new Color[] { Color.Orange });
 
             _boundingBox = Rectangle.Empty;
         }
@@ -116,11 +109,6 @@ namespace Super_Pete_The_Pirate.Sprites
             {
                 spriteBatch.Draw(TextureRegion.Texture, Position, _frames[_currentFrame], Color * Alpha, Rotation, Origin, Scale, Effect, 0);
             }
-        }
-
-        public void DrawCollider(SpriteBatch spriteBatch)
-        {
-            spriteBatch.Draw(_colliderTexture, BoundingBox, Color.White * 0.5f);
         }
 
         public AnimatedSprite Clone()

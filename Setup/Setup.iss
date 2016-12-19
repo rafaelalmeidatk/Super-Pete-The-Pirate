@@ -1,8 +1,5 @@
-; Script generated for the MonoGame Ruge Project Deploy Tool
-; Don't run this script in Inno Setup; use the Ruge Deploy Tool
-
 #define MyAppName "Super Pete The Pirate"
-#define MyAppVersion "1.0"
+#define MyAppVersion "1.0.1"
 #define MyAppPublisher "Phantom Ignition"
 #define MyAppExeName "Super Pete The Pirate.exe"
 #define MyReleaseDir "C:\Users\Rafael\Documents\Visual Studio 2015\Projects\Super Pete The Pirate\Super Pete The Pirate\bin\DesktopGL\x86\Release"

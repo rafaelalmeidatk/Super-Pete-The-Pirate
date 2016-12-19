@@ -6,6 +6,7 @@ namespace Super_Pete_The_Pirate.Characters
 {
     //--------------------------------------------------
     // Enemy Type
+
     public enum EnemyType
     {
         None,
@@ -57,7 +58,7 @@ namespace Super_Pete_The_Pirate.Characters
 
         public Enemy(Texture2D texture) : base(texture) {
             _viewRangeTexture = new Texture2D(SceneManager.Instance.GraphicsDevice, 1, 1, false, SurfaceFormat.Color);
-            _viewRangeTexture.SetData<Color>(new Color[] { Color.Green });
+            _viewRangeTexture.SetData(new Color[] { Color.Green });
             _lastPosition = Position;
             _enemyType = EnemyType.None;
             _hasViewRange = false;
@@ -125,6 +126,11 @@ namespace Super_Pete_The_Pirate.Characters
         private void DrawViewRange(SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(_viewRangeTexture, _viewRange, Color.White * 0.2f);
+        }
+
+        public virtual void DisposeEnemyTextures()
+        {
+            _viewRangeTexture.Dispose();
         }
     }
 }

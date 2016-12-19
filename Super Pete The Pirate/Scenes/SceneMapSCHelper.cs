@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended.Sprites;
 using Super_Pete_The_Pirate.Managers;
 using Super_Pete_The_Pirate.Sprites;
@@ -10,7 +9,7 @@ using System.Collections.Generic;
 
 namespace Super_Pete_The_Pirate.Scenes
 {
-    class SceneMapSCHelper
+    class SceneMapSCHelper : IDisposable
     {
         //--------------------------------------------------
         // Scene
@@ -48,7 +47,7 @@ namespace Super_Pete_The_Pirate.Scenes
         //--------------------------------------------------
         // Background
 
-        private Texture2D _background;
+        private Texture2D _backgroundTexture;
 
         //--------------------------------------------------
         // Positions
@@ -142,8 +141,8 @@ namespace Super_Pete_The_Pirate.Scenes
             _buttonsAlpha = 0.0f;
             _numberSe = SoundManager.LoadSe("Numbers");
             
-            _background = new Texture2D(SceneManager.Instance.GraphicsDevice, 1, 1, false, SurfaceFormat.Color);
-            _background.SetData(new Color[] { Color.Black });
+            _backgroundTexture = new Texture2D(SceneManager.Instance.GraphicsDevice, 1, 1, false, SurfaceFormat.Color);
+            _backgroundTexture.SetData(new Color[] { Color.Black });
         }
 
         public void Initialize(StageCompletedData data)
@@ -383,7 +382,7 @@ namespace Super_Pete_The_Pirate.Scenes
             var font = SceneManager.Instance.GameFont;
             var format = "{0}/{1}";
 
-            spriteBatch.Draw(_background, new Rectangle(0, 0, (int)screenSize.X, (int)screenSize.Y), Color.White * 0.5f);
+            spriteBatch.Draw(_backgroundTexture, new Rectangle(0, 0, (int)screenSize.X, (int)screenSize.Y), Color.White * 0.5f);
             
             var coinsLPos = new Vector2(_rowsInnerPositionsLeft[0, Current], 60);
             var coinsRPos = new Vector2(_rowsInnerPositionsRight[0], 60);
@@ -467,6 +466,11 @@ namespace Super_Pete_The_Pirate.Scenes
         private string FormatTime(TimeSpan time)
         {
             return String.Format("{0}:{1}", (int)time.TotalMinutes, time.Seconds.ToString("D2"));
+        }
+
+        public void Dispose()
+        {
+            _backgroundTexture.Dispose();
         }
     }
 }

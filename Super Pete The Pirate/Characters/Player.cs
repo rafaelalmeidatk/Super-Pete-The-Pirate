@@ -703,5 +703,10 @@ namespace Super_Pete_The_Pirate
         {
             return InputManager.Instace.GetPadDirection(true) == Buttons.DPadRight || InputManager.Instace.KeyDown(Keys.Right);
         }
+
+        public void DisposeTextures()
+        {
+            _flashTexture.Dispose();
+        }
     }
 }

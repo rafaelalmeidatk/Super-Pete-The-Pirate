@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended.Sprites;
 using Super_Pete_The_Pirate.Sprites;
+using System;
 using System.Collections.Generic;
 
 namespace Super_Pete_The_Pirate
@@ -17,7 +18,7 @@ namespace Super_Pete_The_Pirate
 
     //----------------------//------------------------//
 
-    public class CharacterSprite : Sprite
+    public class CharacterSprite : Sprite, IDisposable
     {
         //--------------------------------------------------
         // Frames stuff
@@ -96,10 +97,10 @@ namespace Super_Pete_The_Pirate
             Origin = Vector2.Zero;
 
             _colliderRedTexture = new Texture2D(SceneManager.Instance.GraphicsDevice, 1, 1, false, SurfaceFormat.Color);
-            _colliderRedTexture.SetData<Color>(new Color[] { Color.Red });
+            _colliderRedTexture.SetData(new Color[] { Color.Red });
 
             _colliderYellowTexture = new Texture2D(SceneManager.Instance.GraphicsDevice, 1, 1, false, SurfaceFormat.Color);
-            _colliderYellowTexture.SetData<Color>(new Color[] { Color.Yellow });
+            _colliderYellowTexture.SetData(new Color[] { Color.Yellow });
         }
 
         public void CreateFrameList(string name, int delay)
@@ -361,6 +362,12 @@ namespace Super_Pete_The_Pirate
         public CharacterSprite Clone()
         {
             return (CharacterSprite)MemberwiseClone();
+        }
+
+        public void Dispose()
+        {
+            _colliderRedTexture.Dispose();
+            _colliderYellowTexture.Dispose();
         }
     }
 }

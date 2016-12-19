@@ -114,6 +114,8 @@ namespace Super_Pete_The_Pirate
         {
             _tiledMap.Dispose();
             _tileColliderBoxes.Clear();
+            _colliderTexture.Dispose();
+            _spikesTexture.Dispose();
         }
 
         public TiledTileLayer GetBlockLayer()

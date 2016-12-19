@@ -1,11 +1,11 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using Super_Pete_The_Pirate.Managers;
+using System;
 
 namespace Super_Pete_The_Pirate.Scenes
 {
-    class SceneMapPauseHelper
+    class SceneMapPauseHelper : IDisposable
     {
         //--------------------------------------------------
         // Paused
@@ -39,7 +39,7 @@ namespace Super_Pete_The_Pirate.Scenes
         public SceneMapPauseHelper()
         {
             _backgroundTexture = new Texture2D(SceneManager.Instance.GraphicsDevice, 1, 1, false, SurfaceFormat.Color);
-            _backgroundTexture.SetData<Color>(new Color[] { Color.Black });
+            _backgroundTexture.SetData(new Color[] { Color.Black });
             _backgroundDrawArea = new Rectangle(0, 0, (int)SceneManager.Instance.VirtualSize.X, (int)SceneManager.Instance.VirtualSize.Y);
 
             var virtualSize = SceneManager.Instance.VirtualSize;
@@ -138,6 +138,11 @@ namespace Super_Pete_The_Pirate.Scenes
             }
 
             spriteBatch.Draw(_cursor, new Vector2(_menuItemsX[_index] - 16, _menuY + (_index * SceneManager.Instance.GameFont.LineHeight) - 1), Color.White);
+        }
+
+        public void Dispose()
+        {
+            _backgroundTexture.Dispose();
         }
     }
 }

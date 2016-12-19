@@ -7,7 +7,7 @@ using System;
 
 namespace Super_Pete_The_Pirate
 {
-    public class CharacterBase : PhysicalObject
+    public class CharacterBase : PhysicalObject, IDisposable
     {
         //--------------------------------------------------
         // Character sprite
@@ -325,5 +325,10 @@ namespace Super_Pete_The_Pirate
         }
 
         #endregion
+
+        public void Dispose()
+        {
+            CharacterSprite.Dispose();
+        }
     }
 }

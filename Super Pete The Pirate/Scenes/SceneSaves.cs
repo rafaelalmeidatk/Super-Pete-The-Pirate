@@ -191,6 +191,12 @@ namespace Super_Pete_The_Pirate.Scenes
             ReadSaves();
         }
 
+        public override void UnloadContent()
+        {
+            _loadingBackgroundTexture.Dispose();
+            base.UnloadContent();
+        }
+
         private void ReadSaves()
         {
             _gameSaves = new SavesManager.GameSave[3];
@@ -270,7 +276,7 @@ namespace Super_Pete_The_Pirate.Scenes
                     HandleConfirm();
                 }
 
-                if (InputManager.Instace.Pressed(InputCommand.Cancel))
+                if (InputManager.Instace.Pressed(InputCommand.Cancel) || InputManager.Instace.Pressed(InputCommand.B))
                 {
                     SoundManager.PlayCancelSe();
                     HandleExit();

@@ -42,6 +42,8 @@ namespace Super_Pete_The_Pirate.Scenes
         }
         public override void UnloadContent()
         {
+            _backgroundTexture.Dispose();
+            _fadeOutTexture.Dispose();
             base.UnloadContent();
         }
 

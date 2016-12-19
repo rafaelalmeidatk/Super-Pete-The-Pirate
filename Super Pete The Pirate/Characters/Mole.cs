@@ -105,7 +105,7 @@ namespace Super_Pete_The_Pirate.Characters
 
             // Texture init
             _holeTexture = new Texture2D(SceneManager.Instance.GraphicsDevice, 1, 1, false, SurfaceFormat.Color);
-            _holeTexture.SetData<Color>(new Color[] { Color.Blue });
+            _holeTexture.SetData(new Color[] { Color.Blue });
 
             CreateViewRange();
         }
@@ -281,6 +281,12 @@ namespace Super_Pete_The_Pirate.Characters
         public void DrawHolePoint(SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(_holeTexture, new Rectangle((int)_holePoint.X, (int)_holePoint.Y, 32, 32), Color.White * 0.5f);
+        }
+
+        public override void DisposeEnemyTextures()
+        {
+            base.DisposeEnemyTextures();
+            _holeTexture.Dispose();
         }
     }
 }
