@@ -1,0 +1,1 @@
+This is the Inno Setup script that creates the Windows installer

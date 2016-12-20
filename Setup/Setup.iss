@@ -1,5 +1,5 @@
 #define MyAppName "Super Pete The Pirate"
-#define MyAppVersion "1.0.1"
+#define MyAppVersion "1.0.2"
 #define MyAppPublisher "Phantom Ignition"
 #define MyAppExeName "Super Pete The Pirate.exe"
 #define MyReleaseDir "C:\Users\Rafael\Documents\Visual Studio 2015\Projects\Super Pete The Pirate\Super Pete The Pirate\bin\DesktopGL\x86\Release"
