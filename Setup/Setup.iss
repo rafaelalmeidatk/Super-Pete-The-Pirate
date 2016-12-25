@@ -2,11 +2,11 @@
 #define MyAppVersion "1.0.3"
 #define MyAppPublisher "Phantom Ignition"
 #define MyAppExeName "Super Pete The Pirate.exe"
-#define MyReleaseDir "C:\Users\Rafael\Documents\Visual Studio 2015\Projects\Super Pete The Pirate\Super Pete The Pirate\bin\DesktopGL\x86\Release"
-#define MyDeployDir "C:\Users\Rafael\Desktop\Pete Deploy"
+#define MyReleaseDir "..\Super Pete The Pirate\bin\DesktopGL\x86\Release"
+#define MyDeployDir "Deploy"
 #define MyNamespace "Super Pete The Pirate"
 #define MyGuid "210141a5-42e8-4ffa-a785-e1ddbbce1242"
-#define MyIcon "C:\Users\Rafael\Desktop\pete.ico"                
+#define MyIcon "pete.ico"                
 #define OpenAL "oalinst.exe"
 
 [Setup]
