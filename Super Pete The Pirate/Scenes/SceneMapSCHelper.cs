@@ -288,15 +288,8 @@ namespace Super_Pete_The_Pirate.Scenes
                 }
                 else
                 {
-                    if (!_completed)
-                    {
-                        SceneManager.Instance.ChangeScene("SceneGameover");
-                    }
-                    else
-                    {
-                        PlayerManager.Instance.ResetHeartsAndLives();
-                        SceneManager.Instance.ChangeScene("SceneStageSelect");
-                    }
+                    PlayerManager.Instance.ResetHeartsAndLives();
+                    SceneManager.Instance.ChangeScene("SceneStageSelect");
                 }
             }
 

@@ -55,8 +55,7 @@ namespace Super_Pete_The_Pirate.Managers
             {
                 { "AchaidhCheide", LoadBgm("AchaidhCheide") },
                 { "AngevinB", LoadBgm("AngevinB") },
-                { "PeteThePirate", LoadBgm("PeteThePirate") },
-                { "Ossuary6Air", LoadBgm("Ossuary6Air") }
+                { "PeteThePirate", LoadBgm("PeteThePirate") }
             };
             MediaPlayer.IsRepeating = true;
 

@@ -109,6 +109,9 @@ namespace Super_Pete_The_Pirate.Scenes
 
             // Start BGM
             SoundManager.StartBgm("AchaidhCheide");
+
+            if (SceneManager.Instance.TitleStarted)
+                _phase = 1;
         }
 
         public override void UnloadContent()
@@ -145,6 +148,7 @@ namespace Super_Pete_The_Pirate.Scenes
             {
                 if (InputManager.Instace.Pressed(InputCommand.Confirm))
                 {
+                    SceneManager.Instance.TitleStarted = true;
                     _phase = MenuPhase;
                     SoundManager.PlayConfirmSe();
                     return;

@@ -77,6 +77,11 @@ namespace Super_Pete_The_Pirate
         public SceneSavesType TypeOfSceneSaves = SceneSavesType.Load;
 
         //--------------------------------------------------
+        // Intro started
+
+        public bool TitleStarted = false;
+
+        //--------------------------------------------------
         // Maps info
 
         public int MapToLoad = 1;

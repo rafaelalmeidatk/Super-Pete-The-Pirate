@@ -840,12 +840,6 @@
 /processor:TiledMapProcessor
 /build:maps\Map5.tmx
 
-#begin sounds/bgm/Ossuary6Air.mp3
-/importer:Mp3Importer
-/processor:SongProcessor
-/processorParam:Quality=Best
-/build:sounds/bgm/Ossuary6Air.mp3
-
 #begin imgs/scenes/intro/Logo0.png
 /importer:TextureImporter
 /processor:TextureProcessor
